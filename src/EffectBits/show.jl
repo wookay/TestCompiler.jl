@@ -4,13 +4,9 @@ function Base.show(io::IO, mime::MIME"text/plain", letter::EffectLetter)
     if letter.prefix == '_'
         print(io, "EffectLetter")
         print(io, "(")
-        if letter.suffix == 'c'
-            if letter.bitmask === CONSISTENT_IF_NOTRETURNED
-                printstyled(io, :CONSISTENT_IF_NOTRETURNED; color = :cyan)
-            elseif letter.bitmask === CONSISTENT_IF_INACCESSIBLEMEMONLY
-                printstyled(io, :CONSISTENT_IF_INACCESSIBLEMEMONLY; color = :cyan)
-            end
-        end
+        field_name::Symbol = effects_field_name(letter)
+        const_name::Symbol = effect_bits_const_name(field_name, letter.bitmask)
+        printstyled(io, const_name; color = :cyan)
         print(io, ", ")
         print(io, repr(letter.suffix))
         print(io, ")")
@@ -25,7 +21,7 @@ function Base.show(io::IO, mime::MIME"text/plain", letter::EffectLetter)
 end
 
 function Base.show(io::IO, mime::MIME"text/plain", suffix::EffectSuffix)
-    name = nameof(suffix)
+    name::Symbol = effects_field_name(suffix)
     printstyled(io, repr(name); color = :cyan)
 end
 

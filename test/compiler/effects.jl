@@ -51,6 +51,10 @@ effects = Base.infer_effects(f2, (Integer,))
 @test string(EFFECTS_THROWS)  == "(+c,+e,!n,+t,+s,+m,+u,+o,+r)"
 @test string(EFFECTS_UNKNOWN) == "(!c,!e,!n,!t,!s,!m,!u,+o,!r)" # unknown mostly, but it's not overlayed at least (e.g. it's not a call)
 
+@test  EFFECT_FREE_IF_INACCESSIBLEMEMONLY == 0x02
+@test ~EFFECT_FREE_IF_INACCESSIBLEMEMONLY == 0xfd
+@test bitstring( 0x02) == "00000010"
+@test bitstring(~0x02) == "11111101"
 
 CC.is_consistent
 CC.is_consistent_if_notreturned

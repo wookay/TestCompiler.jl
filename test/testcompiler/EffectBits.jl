@@ -4,6 +4,7 @@ using Test
 using Core: Compiler as CC
 using .CC: Effects, EFFECTS_TOTAL, EFFECTS_THROWS, EFFECTS_UNKNOWN
 using .CC: EFFECT_FREE_IF_INACCESSIBLEMEMONLY, # 0x02
+           EFFECT_FREE_GLOBALLY,               # 0x03
            INACCESSIBLEMEM_OR_ARGMEMONLY,      # 0x02
            NOUB_IF_NOINBOUNDS,                 # 0x02
            CONSISTENT_OVERLAY,                 # 0x02
@@ -11,6 +12,8 @@ using .CC: EFFECT_FREE_IF_INACCESSIBLEMEMONLY, # 0x02
            CONSISTENT_IF_INACCESSIBLEMEMONLY   # 0x04
 using TestCompiler.EffectBits # c e n t s m u o r
                               # EffectLetter EffectSuffix
+                              # effects_field_name
+                              # effects_suffix
                               # effect_bits
 using LogicalOperators: AND, OR
 using Jive # sprint_plain sprint_colored
@@ -30,8 +33,9 @@ using Jive # sprint_plain sprint_colored
 
 @test  n == EffectSuffix('n')
 @test ~n == EffectLetter('?', 'n')
-@test nameof( n) === :nothrow
-@test nameof(~n) === :nothrow
+@test effects_field_name( n) === :nothrow
+@test effects_field_name(~n) === :nothrow
+@test effects_suffix(:nothrow) == 'n'
 
 @test Effects(~e, ~m, ~u, ~o) == Effects(; effect_free = EFFECT_FREE_IF_INACCESSIBLEMEMONLY,
                                            inaccessiblememonly = INACCESSIBLEMEM_OR_ARGMEMONLY,
@@ -59,6 +63,9 @@ letter = EffectLetter(CONSISTENT_IF_NOTRETURNED, 'c')
 @test sprint_plain(letter) == "EffectLetter(CONSISTENT_IF_NOTRETURNED, 'c')"
 effects = Effects(letter)
 @test sprint_plain(effects) == "(?c,!e,!n,!t,!s,!m,!u,!o,!r)"
+
+letter = EffectLetter(EFFECT_FREE_GLOBALLY, 'e')
+@test sprint_plain(letter) == "EffectLetter(EFFECT_FREE_GLOBALLY, 'e')"
 
 letter = EffectLetter(CONSISTENT_IF_INACCESSIBLEMEMONLY, 'c')
 @test sprint_plain(letter) == "EffectLetter(CONSISTENT_IF_INACCESSIBLEMEMONLY, 'c')"
