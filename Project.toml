@@ -1,0 +1,19 @@
+name = "TestCompiler"
+uuid = "a627c61c-6c20-4001-b596-bf51b2370e84"
+authors = ["WooKyoung Noh <wookay.noh@gmail.com>"]
+version = "0.1.0"
+
+[compat]
+julia = "1.10"
+Compiler = "0, 1"
+Jive = "0.2"
+
+[weakdeps]
+Compiler = "807dbc54-b67e-4c79-8afb-eafe4df6f2e1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Jive = "ba5e3d4b-8524-549f-bc71-e76ad9e9deed"
+
+[targets]
+test = ["Test", "Jive"]

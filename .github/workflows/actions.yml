@@ -1,0 +1,29 @@
+# https://github.com/julia-actions/cache#usage
+name: CI
+
+on: [pull_request, push]
+
+# needed to allow julia-actions/cache to delete old caches that it has created
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  Test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        julia-version: [nightly]
+        julia-arch: [x64]
+        os: [ubuntu-latest, macos-latest]
+        include:
+          - julia-version: 1.11.4
+            os: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: julia-actions/setup-julia@v1
+      with:
+        version: ${{ matrix.julia-version }}
+    - uses: julia-actions/cache@v1
+    - uses: julia-actions/julia-buildpkg@v1
+    - uses: julia-actions/julia-runtest@v1
