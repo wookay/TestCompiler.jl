@@ -17,6 +17,8 @@ jobs:
         julia-arch: [x64]
         os: [ubuntu-latest, macos-latest]
         include:
+          - julia-version: 1.12.0-beta1
+            os: ubuntu-latest
           - julia-version: 1.11.4
             os: ubuntu-latest
     steps:
