@@ -1,3 +1,5 @@
+module test_compiler_use
+
 module A
 using Test
 using Jive
@@ -21,3 +23,5 @@ end
 
 using .A: f
 f()
+
+end # module test_compiler_use
