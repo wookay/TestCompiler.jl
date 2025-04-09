@@ -159,7 +159,7 @@ jl_partition_kind
      ->restriction holds the ultimately imported constant value
     """
     PARTITION_KIND_IMPLICIT_CONST
- 
+
     """
     Explicit: The binding was explicitly `using`'d by name
 
