@@ -1,28 +1,16 @@
-# module TestCompiler
+module PartitionKinds # TestCompiler
 
-export PartitionKind
+export PartitionKind, kinds
+export CONST, CONST_IMPORT, GLOBAL, IMPLICIT_GLOBAL, IMPLICIT_CONST,
+       EXPLICIT, IMPORTED, FAILED, DECLARED, GUARD, UNDEF_CONST, BACKDATED_CONST
 
 struct PartitionKind
     kind::UInt8
 end
 
-public      PARTITION_KIND_CONST,
-            PARTITION_KIND_CONST_IMPORT,
-            PARTITION_KIND_GLOBAL,
-            PARTITION_KIND_IMPLICIT_GLOBAL,
-            PARTITION_KIND_IMPLICIT_CONST,
-            PARTITION_KIND_EXPLICIT,
-            PARTITION_KIND_IMPORTED,
-            PARTITION_KIND_FAILED,
-            PARTITION_KIND_DECLARED,
-            PARTITION_KIND_GUARD,
-            PARTITION_KIND_UNDEF_CONST,
-            PARTITION_KIND_BACKDATED_CONST
-
-
-module PartitionKinds # TestCompiler
-# from julia/base/runtime_internals.jl
-@enum(PARTITION_KIND,
+module Enums # TestCompiler.PartitionKinds
+# julia/base/runtime_internals.jl
+@enum(PARTITION_KIND::UInt8,
       PARTITION_KIND_CONST              = 0x0,
       PARTITION_KIND_CONST_IMPORT       = 0x1,
       PARTITION_KIND_GLOBAL             = 0x2,
@@ -36,8 +24,7 @@ module PartitionKinds # TestCompiler
       PARTITION_KIND_UNDEF_CONST        = 0xa,
       PARTITION_KIND_BACKDATED_CONST    = 0xb,
 )
-end # module TestCompiler.PartitionKinds
-
+end # TestCompiler.PartitionKinds.Enums
 
 if VERSION >= v"1.13.0-DEV.280"
 using Base: PARTITION_KIND_CONST,
@@ -53,20 +40,32 @@ using Base: PARTITION_KIND_CONST,
             PARTITION_KIND_UNDEF_CONST,
             PARTITION_KIND_BACKDATED_CONST
 else
-using .PartitionKinds:
-            PARTITION_KIND_CONST,
-            PARTITION_KIND_CONST_IMPORT,
-            PARTITION_KIND_GLOBAL,
-            PARTITION_KIND_IMPLICIT_GLOBAL,
-            PARTITION_KIND_IMPLICIT_CONST,
-            PARTITION_KIND_EXPLICIT,
-            PARTITION_KIND_IMPORTED,
-            PARTITION_KIND_FAILED,
-            PARTITION_KIND_DECLARED,
-            PARTITION_KIND_GUARD,
-            PARTITION_KIND_UNDEF_CONST,
-            PARTITION_KIND_BACKDATED_CONST
+using .Enums: PARTITION_KIND_CONST,
+              PARTITION_KIND_CONST_IMPORT,
+              PARTITION_KIND_GLOBAL,
+              PARTITION_KIND_IMPLICIT_GLOBAL,
+              PARTITION_KIND_IMPLICIT_CONST,
+              PARTITION_KIND_EXPLICIT,
+              PARTITION_KIND_IMPORTED,
+              PARTITION_KIND_FAILED,
+              PARTITION_KIND_DECLARED,
+              PARTITION_KIND_GUARD,
+              PARTITION_KIND_UNDEF_CONST,
+              PARTITION_KIND_BACKDATED_CONST
 end # if VERSION >= v"1.13.0-DEV.280"
+
+CONST           = PartitionKind(UInt8(PARTITION_KIND_CONST))
+CONST_IMPORT    = PartitionKind(UInt8(PARTITION_KIND_CONST_IMPORT))
+GLOBAL          = PartitionKind(UInt8(PARTITION_KIND_GLOBAL))
+IMPLICIT_GLOBAL = PartitionKind(UInt8(PARTITION_KIND_IMPLICIT_GLOBAL))
+IMPLICIT_CONST  = PartitionKind(UInt8(PARTITION_KIND_IMPLICIT_CONST))
+EXPLICIT        = PartitionKind(UInt8(PARTITION_KIND_EXPLICIT))
+IMPORTED        = PartitionKind(UInt8(PARTITION_KIND_IMPORTED))
+FAILED          = PartitionKind(UInt8(PARTITION_KIND_FAILED))
+DECLARED        = PartitionKind(UInt8(PARTITION_KIND_DECLARED))
+GUARD           = PartitionKind(UInt8(PARTITION_KIND_GUARD))
+UNDEF_CONST     = PartitionKind(UInt8(PARTITION_KIND_UNDEF_CONST))
+BACKDATED_CONST = PartitionKind(UInt8(PARTITION_KIND_BACKDATED_CONST))
 
 
 # from julia/src/julia.h
@@ -221,8 +220,25 @@ jl_partition_kind
 
 using REPL
 
+function Base.show(io::IO, mime::MIME"text/plain", partition_kinds::NTuple{N, PartitionKind}) where N
+    prefix_length = length("PARTITION_KIND_")
+    print(io, "(")
+    isfirst = true
+    for partition in partition_kinds
+        if isfirst
+            isfirst = false 
+        else
+            print(io, ", ")
+        end
+        sym = Symbol(Enums.PARTITION_KIND(partition.kind))
+        str = string(sym)
+        printstyled(io, str[prefix_length+1:lastindex(str)], color = :cyan)
+    end
+    print(io, ")")
+end
+
 function Base.show(io::IO, mime::MIME"text/plain", partition::PartitionKind)
-    sym = Symbol(PartitionKinds.PARTITION_KIND(partition.kind))
+    sym = Symbol(Enums.PARTITION_KIND(partition.kind))
     printstyled(io, "const ", color = :light_green, )
     printstyled(io, sym, color = :cyan)
     printstyled(io, " = ", color = :light_green)
@@ -232,4 +248,16 @@ function Base.show(io::IO, mime::MIME"text/plain", partition::PartitionKind)
     Base.show(io, mime, doc)
 end
 
-# module TestCompiler
+# julia/base/runtime_internals.jl
+function kinds end
+if VERSION >= v"1.13.0-DEV.280"
+kinds(::typeof(Base.is_defined_const_binding))  = (CONST, CONST_IMPORT, IMPLICIT_CONST, BACKDATED_CONST)
+kinds(::typeof(Base.is_some_const_binding))     = (kinds(Base.is_defined_const_binding)..., UNDEF_CONST)
+kinds(::typeof(Base.is_some_imported))          = (IMPLICIT_GLOBAL, IMPLICIT_CONST, EXPLICIT, IMPORTED)
+kinds(::typeof(Base.is_some_implicit))          = (IMPLICIT_GLOBAL, IMPLICIT_CONST, GUARD, FAILED)
+kinds(::typeof(Base.is_some_explicit_imported)) = (EXPLICIT, IMPORTED)
+kinds(::typeof(Base.is_some_binding_imported))  = (kinds(Base.is_some_explicit_imported)..., IMPLICIT_GLOBAL)
+kinds(::typeof(Base.is_some_guard))             = (GUARD, FAILED, UNDEF_CONST)
+end
+
+end # module TestCompiler.PartitionKinds
