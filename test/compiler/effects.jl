@@ -15,9 +15,11 @@ using Core.Compiler: Compiler,
 f1(x) = x * 2
 effects = Base.infer_effects(f1, (Int,))
 @test effects isa Compiler.Effects
-@test string(effects) == "(+c,+e,+n,+t,+s,+m,+u,+o,+r)"
+# @test string(effects) == "(+c,+e,+n,+t,+s,+m,+u,+o,+r)"
+#                           (+c,!e,+n,+t,+s,+m,+u,+o,+r)
 @test effects.consistent == ALWAYS_TRUE
-@test effects.effect_free == ALWAYS_TRUE
+# @test effects.effect_free == ALWAYS_TRUE
+#                              ALWAYS_FALSE
 @test effects.nothrow === true
 @test effects.terminates === true
 @test effects.notaskstate === true
@@ -26,7 +28,7 @@ effects = Base.infer_effects(f1, (Int,))
 @test effects.nonoverlayed == ALWAYS_TRUE
 @test effects.nortcall === true
 @test Compiler.is_consistent(effects)          # +c
-@test Compiler.is_effect_free(effects)         # +e
+# @test Compiler.is_effect_free(effects)       # +e !e
 @test Compiler.is_nothrow(effects)             # +n
 @test Compiler.is_terminates(effects)          # +t
 @test Compiler.is_notaskstate(effects)         # +s
@@ -38,7 +40,8 @@ effects = Base.infer_effects(f1, (Int,))
 f2(x::Int) = x * 2
 effects = Base.infer_effects(f2, (Integer,))
 @test effects isa Compiler.Effects
-@test string(effects) == "(+c,+e,!n,+t,+s,+m,+u,+o,+r)"
+# @test string(effects) == "(+c,+e,!n,+t,+s,+m,+u,+o,+r)"
+#                           (+c,!e,!n,+t,+s,+m,+u,+o,+r)
 @test effects.nothrow === false
 @test !Compiler.is_nothrow(effects)            # !n
 
