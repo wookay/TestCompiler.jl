@@ -33,4 +33,10 @@ Base.delete_binding(@__MODULE__, :Foo)
 # function lookup_binding_partition(world::UInt, gr::Core.GlobalRef)
 Base.lookup_binding_partition
 
+world = Base.get_world_counter()
+gr = GlobalRef(@__MODULE__, :Foo)
+partition = Base.lookup_binding_partition(world, gr)
+@test partition isa Core.BindingPartition
+@test partition.kind == Base.PARTITION_KIND_GUARD
+
 end # module test_compiler_jl_partition_kind
