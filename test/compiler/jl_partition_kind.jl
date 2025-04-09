@@ -26,17 +26,27 @@ Base.delete_binding(@__MODULE__, :Foo)
 
 const Foo = 1
 @test Base.binding_kind(@__MODULE__, :Foo) == Base.PARTITION_KIND_CONST
+
 Base.delete_binding(@__MODULE__, :Foo)
+@test Base.binding_kind(@__MODULE__, :Foo) == Base.PARTITION_KIND_GUARD
 
 # from julia/base/runtime_internals.jl
 # function lookup_binding_partition(world::UInt, b::Core.Binding)
 # function lookup_binding_partition(world::UInt, gr::Core.GlobalRef)
 Base.lookup_binding_partition
 
-world = Base.get_world_counter()
-gr = GlobalRef(@__MODULE__, :Foo)
-partition = Base.lookup_binding_partition(world, gr)
-@test partition isa Core.BindingPartition
-@test partition.kind == Base.PARTITION_KIND_GUARD
+world1 = Base.get_world_counter()
+gr1 = GlobalRef(@__MODULE__, :Foo)
+partition1 = Base.lookup_binding_partition(world1, gr1)
+@test partition1.kind == Base.PARTITION_KIND_GUARD
+@test partition1 isa Core.BindingPartition
+
+struct Foo
+    x2::Int
+end
+world2 = Base.get_world_counter()
+gr2 = GlobalRef(@__MODULE__, :Foo)
+partition2 = Base.lookup_binding_partition(world2, gr2)
+@test partition2.kind == Base.PARTITION_KIND_CONST
 
 end # module test_compiler_jl_partition_kind
