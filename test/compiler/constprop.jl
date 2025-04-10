@@ -8,10 +8,14 @@ using Core.Compiler
 @test !Compiler.is_aggressive_constprop(only(methods(f_constprop_simple)))
 
 Base.@constprop :aggressive f_constprop_aggressive(f, x) = f(x)
-@test Compiler.is_aggressive_constprop(only(methods(f_constprop_aggressive)))
+method = only(methods(f_constprop_aggressive))
+@test Compiler.is_aggressive_constprop(method)
+@test method.constprop == 0x01
 
 Base.@constprop :none       f_constprop_none(f, x) = f(x)
-@test Compiler.is_no_constprop(only(methods(f_constprop_none)))
+method = only(methods(f_constprop_none))
+@test Compiler.is_no_constprop(method)
+@test method.constprop == 0x02
 
 
 #=
