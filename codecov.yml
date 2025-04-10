@@ -1,2 +1,0 @@
-ignore:
-  - "test/compiler/assume_effects.jl"

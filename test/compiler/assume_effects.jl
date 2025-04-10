@@ -2,6 +2,8 @@ module test_compiler_assume_effects
 
 using Test
 
+codecov = Base.JLOptions().code_coverage != 0
+
 # Base.@assume_effects :terminates_locally f
 # function `f` to be constant-folded
 
@@ -20,7 +22,12 @@ end
 pair = code_typed() do
     fact(12)
 end |> only
-@test pair.first.code[1] == Core.ReturnNode(479001600)
+
+if codecov
+    @test pair.first.code[1] == Expr(:code_coverage_effect)
+else
+    @test pair.first.code[1] == Core.ReturnNode(479001600)
+end
 @test pair.second === Int64
 
 pair = code_typed() do
@@ -37,7 +44,11 @@ pair = code_typed() do
         return res
     end
 end |> only
-@test pair.first.code[1] == Core.ReturnNode((2, 6, 24))
+if codecov
+    @test pair.first.code[1] == Expr(:code_coverage_effect)
+else
+    @test pair.first.code[1] == Core.ReturnNode((2, 6, 24))
+end
 @test pair.second === Tuple{Int64, Int64, Int64}
 
 pair = code_typed() do
@@ -55,7 +66,11 @@ pair = code_typed() do
         return res
     end
 end |> only
-@test pair.first.code[1] == Core.ReturnNode((2, 6, 24))
+if codecov
+    @test pair.first.code[1] == Expr(:code_coverage_effect)
+else
+    @test pair.first.code[1] == Core.ReturnNode((2, 6, 24))
+end
 @test pair.second === Tuple{Int64, Int64, Int64}
 
 
