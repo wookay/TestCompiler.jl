@@ -226,7 +226,7 @@ function Base.show(io::IO, mime::MIME"text/plain", partition_kinds::NTuple{N, Pa
     isfirst = true
     for partition in partition_kinds
         if isfirst
-            isfirst = false 
+            isfirst = false
         else
             print(io, ", ")
         end

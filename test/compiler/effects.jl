@@ -73,19 +73,4 @@ Compiler.is_foldable_nothrow # is_foldable && is_nothrow
 Compiler.is_removable_if_unused # is_effect_free && is_terminates && is_nothrow
 Compiler.is_finalizer_inlineable # is_nothrow && is_notaskstate
 
-#=
-Base.@assume_effects :foldable
-                     :removable
-                     :total
-                     :effect_free
-                     :nothrow
-                     :terminates_globally
-                     :terminates_locally
-                     :notaskstate
-                     :noub
-
-Base.@constprop :aggressive
-                :none
-=#
-
 end # module test_compiler_effects
