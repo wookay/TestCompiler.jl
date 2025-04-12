@@ -59,18 +59,19 @@ Compiler.is_effect_free
 Compiler.is_effect_free_if_inaccessiblememonly
 Compiler.is_nothrow
 Compiler.is_terminates
-Compiler.is_notaskstate
-Compiler.is_inaccessiblememonly
+Compiler.is_notaskstate # :notaskstate setting asserts that the method does not use or modify the local task state
+Compiler.is_inaccessiblememonly # :inaccessiblememonly setting asserts that the method does not access or modify externally accessible mutable memory
 Compiler.is_inaccessiblemem_or_argmemonly
-Compiler.is_noub
+Compiler.is_noub # :noub settings that the method will not execute any undefined behavior
 Compiler.is_noub_if_noinbounds
 Compiler.is_nonoverlayed
-Compiler.is_nortcall
+Compiler.is_nortcall # :nortcall setting asserts that the method does not call Core.Compiler.return_type
 
 Compiler.is_foldable # +c,+e,  ,+t,+s,+m,+u,  ,+r
                      #                   ?u
 Compiler.is_foldable_nothrow # is_foldable && is_nothrow
 Compiler.is_removable_if_unused # is_effect_free && is_terminates && is_nothrow
 Compiler.is_finalizer_inlineable # is_nothrow && is_notaskstate
+
 
 end # module test_compiler_effects

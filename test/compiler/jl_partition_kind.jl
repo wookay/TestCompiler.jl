@@ -29,7 +29,7 @@ Base.lookup_binding_partition
 world1 = Base.get_world_counter()
 gr1 = GlobalRef(@__MODULE__, :Foo)
 partition1 = Base.lookup_binding_partition(world1, gr1)
-@test partition1.kind == Base.PARTITION_KIND_GUARD
+@test Base.binding_kind(partition1) == partition1.kind == Base.PARTITION_KIND_GUARD
 @test partition1 isa Core.BindingPartition
 
 struct Foo
