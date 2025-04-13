@@ -1,7 +1,10 @@
 module EffectBits # TestCompiler
 
 export c, e, n, t, s, m, u, o, r
-export EffectLetter, EffectSuffix
+export EffectLetter, EffectSuffix, EffectsArgumentError
+
+export Effects # Core.Compiler.Effects
+import Core.Compiler: Effects
 
 struct EffectLetter
     prefix::Char
@@ -102,6 +105,59 @@ function Base.in(letter::EffectLetter, effects::Core.Compiler.Effects)
         end
     end
     return false
+end
+
+struct EffectsArgumentError <: Exception
+    msg
+end
+
+function Effects(letters::Vararg{EffectLetter, N})::Effects where N
+    effects_dict = Dict{Symbol, Union{Bool, UInt8}}(
+        :consistent => ALWAYS_FALSE,
+        :effect_free => ALWAYS_FALSE,
+        :nothrow => false,
+        :terminates => false,
+        :notaskstate => false,
+        :inaccessiblememonly => ALWAYS_FALSE,
+        :noub => ALWAYS_FALSE,
+        :nonoverlayed => ALWAYS_FALSE,
+        :nortcall => false
+    )
+    for letter::EffectLetter in letters
+        name = nameof(letter)
+        effect = getindex(effects_dict, name)
+        typ = typeof(effect)
+        if letter.prefix == '+'
+            if typ === Bool
+                setindex!(effects_dict, true, name)
+            elseif typ === UInt8
+                setindex!(effects_dict, ALWAYS_TRUE, name)
+            end
+        elseif letter.prefix == '!'
+            if typ === Bool
+                setindex!(effects_dict, false, name)
+            elseif typ === UInt8
+                setindex!(effects_dict, ALWAYS_FALSE, name)
+            end
+        elseif letter.prefix == '?'
+            if :inaccessiblememonly === name ||
+               :noub === name ||
+               :nonoverlayed === name
+                setindex!(effects_dict, 0x01 << 1, name)
+            else
+                throw(EffectsArgumentError(letter))
+            end
+        end
+    end
+    Effects(getindex(effects_dict, :consistent),
+            getindex(effects_dict, :effect_free),
+            getindex(effects_dict, :nothrow),
+            getindex(effects_dict, :terminates),
+            getindex(effects_dict, :notaskstate),
+            getindex(effects_dict, :inaccessiblememonly),
+            getindex(effects_dict, :noub),
+            getindex(effects_dict, :nonoverlayed),
+            getindex(effects_dict, :nortcall))
 end
 
 # const EffectLetters = NTuple{9, EffectLetter}
