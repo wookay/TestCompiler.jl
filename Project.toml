@@ -6,7 +6,7 @@ version = "0.1.0"
 [compat]
 julia = "1.11"
 Compiler = "0, 1"
-Jive = "0.2"
+Jive = "0.3"
 
 [deps]
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"

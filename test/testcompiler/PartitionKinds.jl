@@ -5,10 +5,7 @@ using Test
 using TestCompiler.PartitionKinds # PartitionKind kinds
                                   # CONST CONST_IMPORT GLOBAL IMPLICIT_GLOBAL IMPLICIT_CONST
                                   # EXPLICIT IMPORTED FAILED DECLARED GUARD UNDEF_CONST BACKDATED_CONST
-
-function sprint_plain(x)::String
-    sprint(io -> show(io, MIME"text/plain"(), x))
-end
+using Jive # sprint_plain
 
 @test PartitionKind(0x9) == PartitionKind(Base.PARTITION_KIND_GUARD)
 @test string(PartitionKind(Base.PARTITION_KIND_GUARD)) == "TestCompiler.PartitionKinds.PartitionKind(0x09)"
