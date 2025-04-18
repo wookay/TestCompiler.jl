@@ -2,9 +2,11 @@ module EffectBits # TestCompiler
 
 export c, e, n, t, s, m, u, o, r
 export EffectLetter, EffectSuffix, EffectsArgumentError
+export effect_bits
 
-export Effects # Core.Compiler.Effects
-import Core.Compiler: Effects
+using LogicalOperators: OR, AND
+using Core: Compiler
+import .Compiler: Effects
 
 struct EffectLetter
     prefix::Char
@@ -83,7 +85,7 @@ end
 
 using Core.Compiler: ALWAYS_TRUE, ALWAYS_FALSE
 
-function Base.in(letter::EffectLetter, effects::Core.Compiler.Effects)
+function Base.in(letter::EffectLetter, effects::Effects)
     name = nameof(letter)
     effect = getfield(effects, name)
     typ = typeof(effect)
@@ -140,9 +142,7 @@ function Effects(letters::Vararg{EffectLetter, N})::Effects where N
                 setindex!(effects_dict, ALWAYS_FALSE, name)
             end
         elseif letter.prefix == '?'
-            if :inaccessiblememonly === name ||
-               :noub === name ||
-               :nonoverlayed === name
+            if name in (:effect_free, :inaccessiblememonly, :noub, :nonoverlayed)
                 setindex!(effects_dict, 0x01 << 1, name)
             else
                 throw(EffectsArgumentError(letter))
@@ -161,5 +161,44 @@ function Effects(letters::Vararg{EffectLetter, N})::Effects where N
 end
 
 # const EffectLetters = NTuple{9, EffectLetter}
+
+effect_bits(::typeof(Compiler.is_consistent))          = (+c, )
+effect_bits(::typeof(Compiler.is_effect_free))         = (   +e, )
+effect_bits(::typeof(Compiler.is_nothrow))             = (      +n, )
+effect_bits(::typeof(Compiler.is_terminates))          = (         +t, )
+effect_bits(::typeof(Compiler.is_notaskstate))         = (            +s, )
+effect_bits(::typeof(Compiler.is_inaccessiblememonly)) = (               +m, )
+effect_bits(::typeof(Compiler.is_noub))                = (                  +u, )
+effect_bits(::typeof(Compiler.is_noub_if_noinbounds))  = (                     ~u, ) # .noub === NOUB_IF_NOINBOUNDS
+effect_bits(::typeof(Compiler.is_nonoverlayed))        = (                        +o, )
+effect_bits(::typeof(Compiler.is_nortcall))            = (                           +r, )
+
+function effect_bits(::typeof(Compiler.is_foldable), check_rtcall::Bool=false)
+    AND((+c, OR(+u, ~u), +e, +t, OR(!check_rtcall, +r)))
+end
+function effect_bits(::typeof(Compiler.is_foldable_nothrow), check_rtcall::Bool=false)
+    AND((effect_bits(Compiler.is_foldable, check_rtcall)..., +n))
+end
+function effect_bits(::typeof(Compiler.is_removable_if_unused))
+    AND((+e, +t, +n))
+end
+function effect_bits(::typeof(Compiler.is_finalizer_inlineable))
+    AND((+n, +s))
+end
+function effect_bits(::typeof(Compiler.is_consistent_if_notreturned))
+    c & CONSISTENT_IF_NOTRETURNED
+end
+function effect_bits(::typeof(Compiler.is_consistent_if_inaccessiblememonly))
+    c & CONSISTENT_IF_INACCESSIBLEMEMONLY
+end
+function effect_bits(::typeof(Compiler.is_effect_free_if_inaccessiblememonly))
+    ~e # .effect_free === EFFECT_FREE_IF_INACCESSIBLEMEMONLY
+end
+function effect_bits(::typeof(Compiler.is_inaccessiblemem_or_argmemonly))
+    ~m # .inaccessiblememonly === INACCESSIBLEMEM_OR_ARGMEMONLY
+end
+function effect_bits(::typeof(Compiler.is_consistent_overlay))
+    ~o # .nonoverlayed === CONSISTENT_OVERLAY
+end
 
 end # module TestCompiler.EffectBits

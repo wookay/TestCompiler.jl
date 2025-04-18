@@ -73,5 +73,4 @@ Compiler.is_foldable_nothrow # is_foldable && is_nothrow
 Compiler.is_removable_if_unused # is_effect_free && is_terminates && is_nothrow
 Compiler.is_finalizer_inlineable # is_nothrow && is_notaskstate
 
-
 end # module test_compiler_effects
