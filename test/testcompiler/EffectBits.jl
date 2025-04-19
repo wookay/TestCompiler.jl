@@ -33,7 +33,7 @@ using Core.Compiler: EFFECT_FREE_IF_INACCESSIBLEMEMONLY, INACCESSIBLEMEM_OR_ARGM
 @test_throws EffectsArgumentError Effects(~n)
 
 @test effect_bits(Compiler.is_effect_free_if_inaccessiblememonly) == ~e
-@test effect_bits(Compiler.is_inaccessiblemem_or_argmemonly) == ~m
-@test effect_bits(Compiler.Compiler.is_consistent_overlay) == ~o
+@test effect_bits(Compiler.is_inaccessiblemem_or_argmemonly)      == ~m
+@test effect_bits(Compiler.Compiler.is_consistent_overlay)        == ~o
 
 end # module test_testcompiler_EffectBits

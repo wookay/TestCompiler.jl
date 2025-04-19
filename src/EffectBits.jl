@@ -162,28 +162,30 @@ end
 
 # const EffectLetters = NTuple{9, EffectLetter}
 
-effect_bits(::typeof(Compiler.is_consistent))          = (+c, )
-effect_bits(::typeof(Compiler.is_effect_free))         = (   +e, )
-effect_bits(::typeof(Compiler.is_nothrow))             = (      +n, )
-effect_bits(::typeof(Compiler.is_terminates))          = (         +t, )
-effect_bits(::typeof(Compiler.is_notaskstate))         = (            +s, )
-effect_bits(::typeof(Compiler.is_inaccessiblememonly)) = (               +m, )
-effect_bits(::typeof(Compiler.is_noub))                = (                  +u, )
-effect_bits(::typeof(Compiler.is_noub_if_noinbounds))  = (                     ~u, ) # .noub === NOUB_IF_NOINBOUNDS
-effect_bits(::typeof(Compiler.is_nonoverlayed))        = (                        +o, )
-effect_bits(::typeof(Compiler.is_nortcall))            = (                           +r, )
+using .Compiler: CONSISTENT_IF_NOTRETURNED, CONSISTENT_IF_INACCESSIBLEMEMONLY
+
+effect_bits(::typeof(Compiler.is_consistent))          = +c
+effect_bits(::typeof(Compiler.is_effect_free))         =    +e
+effect_bits(::typeof(Compiler.is_nothrow))             =       +n
+effect_bits(::typeof(Compiler.is_terminates))          =          +t
+effect_bits(::typeof(Compiler.is_notaskstate))         =             +s
+effect_bits(::typeof(Compiler.is_inaccessiblememonly)) =                +m
+effect_bits(::typeof(Compiler.is_noub))                =                   +u
+effect_bits(::typeof(Compiler.is_noub_if_noinbounds))  =                      ~u # .noub === NOUB_IF_NOINBOUNDS
+effect_bits(::typeof(Compiler.is_nonoverlayed))        =                         +o
+effect_bits(::typeof(Compiler.is_nortcall))            =                            +r
 
 function effect_bits(::typeof(Compiler.is_foldable), check_rtcall::Bool=false)
-    AND((+c, OR(+u, ~u), +e, +t, OR(!check_rtcall, +r)))
+    AND(+c, OR(+u, ~u), +e, +t, OR(!check_rtcall, +r))
 end
 function effect_bits(::typeof(Compiler.is_foldable_nothrow), check_rtcall::Bool=false)
-    AND((effect_bits(Compiler.is_foldable, check_rtcall)..., +n))
+    AND(effect_bits(Compiler.is_foldable, check_rtcall)..., +n)
 end
 function effect_bits(::typeof(Compiler.is_removable_if_unused))
-    AND((+e, +t, +n))
+    AND(+e, +t, +n)
 end
 function effect_bits(::typeof(Compiler.is_finalizer_inlineable))
-    AND((+n, +s))
+    AND(+n, +s)
 end
 function effect_bits(::typeof(Compiler.is_consistent_if_notreturned))
     c & CONSISTENT_IF_NOTRETURNED
