@@ -3,12 +3,6 @@ uuid = "a627c61c-6c20-4001-b596-bf51b2370e84"
 authors = ["WooKyoung Noh <wookay.noh@gmail.com>"]
 version = "0.1.0"
 
-[compat]
-julia = "1.11"
-Compiler = "0, 1"
-LogicalOperators = "0.1"
-Jive = "0.3"
-
 [deps]
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 LogicalOperators = "6ac76662-4673-4d6a-8390-a82adc3670cf"
@@ -16,14 +10,22 @@ LogicalOperators = "6ac76662-4673-4d6a-8390-a82adc3670cf"
 [weakdeps]
 Compiler = "807dbc54-b67e-4c79-8afb-eafe4df6f2e1"
 
+[sources]
+LogicalOperators = {url = "https://github.com/wookay/LogicalOperators.jl", rev = "main"}
+
+[compat]
+julia = "1.11"
+Compiler = "0, 1"
+LogicalOperators = "0.1"
+Jive = "0.3"
+LoweredCodeUtils = "3.2"
+
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 Jive = "ba5e3d4b-8524-549f-bc71-e76ad9e9deed"
+LoweredCodeUtils = "6f1432cf-f94c-5a45-995e-cdbf5db27b0b"
 
 [targets]
-test = ["Test", "UUIDs", "InteractiveUtils", "Jive"]
-
-[sources]
-LogicalOperators = {url = "https://github.com/wookay/LogicalOperators.jl", rev = "main"}
+test = ["Test", "UUIDs", "InteractiveUtils", "Jive", "LoweredCodeUtils"]
