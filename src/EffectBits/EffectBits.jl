@@ -2,15 +2,18 @@ module EffectBits # TestCompiler
 
 export c, e, n, t, s, m, u, o, r
 export EffectLetter, EffectSuffix, EffectsArgumentError
-export effect_bits
+export effect_bits, detect
 
-using LogicalOperators: OR, AND
+using LogicalOperators: AND, OR
 using Core: Compiler
 import .Compiler: Effects
 
 struct EffectLetter
     prefix::Char
     suffix::Char
+    bitmask::UInt8
+    EffectLetter(prefix::Char, suffix::Char) = new(prefix, suffix, 0xFF)
+    EffectLetter(suffix::Char, bitmask::UInt8) = new('_', suffix, bitmask)
 end
 
 struct EffectSuffix
@@ -65,25 +68,38 @@ function nameof(suffix::EffectSuffix)::Symbol
     elseif suffix.char == 'r'
         :nortcall
     else
+        @info :suffix suffix.char
         :unknown_effectbits
     end
 end
 
-function Base.show(io::IO, mime::MIME"text/plain", letter::EffectLetter)
-    color = if letter.prefix == '+'
-        :green
-    else
-        letter.prefix == '!' ? :red : :yellow
-    end
-    printstyled(io, string(letter.prefix, letter.suffix); color = color)
-end
-
-function Base.show(io::IO, mime::MIME"text/plain", suffix::EffectSuffix)
-    name = nameof(suffix)
-    printstyled(io, repr(name); color = :cyan)
-end
-
 using Core.Compiler: ALWAYS_TRUE, ALWAYS_FALSE
+
+function EffectLetter(suffix::Char, effects::Effects)::EffectLetter
+    name = nameof(EffectSuffix(suffix))
+    effect = getfield(effects, name)
+    if effect isa Bool
+        return EffectLetter(effect ? '+' : '!', suffix)
+    elseif effect isa UInt8
+        if 'c' == suffix
+            if effect === ALWAYS_TRUE
+                return EffectLetter('+', suffix)
+            elseif effect === ALWAYS_FALSE
+                return EffectLetter('!', suffix)
+            else
+                return EffectLetter(suffix, effect)
+            end 
+        else
+            if effect === ALWAYS_TRUE
+                return EffectLetter('+', suffix)
+            elseif effect === ALWAYS_FALSE
+                return EffectLetter('!', suffix)
+            else
+                return EffectLetter('?', suffix)
+            end
+        end
+    end
+end # function EffectLetter(suffix::Char, effects::Effects)::EffectLetter
 
 function Base.in(letter::EffectLetter, effects::Effects)
     name = nameof(letter)
@@ -164,43 +180,48 @@ end
 
 using .Compiler: CONSISTENT_IF_NOTRETURNED, CONSISTENT_IF_INACCESSIBLEMEMONLY
 
-effect_bits(::typeof(Compiler.is_consistent))          = +c
-effect_bits(::typeof(Compiler.is_effect_free))         =    +e
-effect_bits(::typeof(Compiler.is_nothrow))             =       +n
-effect_bits(::typeof(Compiler.is_terminates))          =          +t
-effect_bits(::typeof(Compiler.is_notaskstate))         =             +s
-effect_bits(::typeof(Compiler.is_inaccessiblememonly)) =                +m
-effect_bits(::typeof(Compiler.is_noub))                =                   +u
-effect_bits(::typeof(Compiler.is_noub_if_noinbounds))  =                      ~u # .noub === NOUB_IF_NOINBOUNDS
-effect_bits(::typeof(Compiler.is_nonoverlayed))        =                         +o
-effect_bits(::typeof(Compiler.is_nortcall))            =                            +r
 
-function effect_bits(::typeof(Compiler.is_foldable), check_rtcall::Bool=false)
+### effect_bits
+effect_bits(::typeof(Compiler.is_consistent))::AND{EffectLetter}          = AND(+c                           )
+effect_bits(::typeof(Compiler.is_effect_free))::AND{EffectLetter}         = AND(   +e                        )
+effect_bits(::typeof(Compiler.is_nothrow))::AND{EffectLetter}             = AND(      +n                     )
+effect_bits(::typeof(Compiler.is_terminates))::AND{EffectLetter}          = AND(         +t                  )
+effect_bits(::typeof(Compiler.is_notaskstate))::AND{EffectLetter}         = AND(            +s               )
+effect_bits(::typeof(Compiler.is_inaccessiblememonly))::AND{EffectLetter} = AND(               +m            )
+effect_bits(::typeof(Compiler.is_noub))::AND{EffectLetter}                = AND(                  +u         )
+effect_bits(::typeof(Compiler.is_noub_if_noinbounds))::AND{EffectLetter}  = AND(                     ~u      ) # .noub === NOUB_IF_NOINBOUNDS
+effect_bits(::typeof(Compiler.is_nonoverlayed))::AND{EffectLetter}        = AND(                        +o   )
+effect_bits(::typeof(Compiler.is_nortcall))::AND{EffectLetter}            = AND(                           +r)
+
+function effect_bits(::typeof(Compiler.is_foldable), check_rtcall::Bool=false)::AND
     AND(+c, OR(+u, ~u), +e, +t, OR(!check_rtcall, +r))
 end
-function effect_bits(::typeof(Compiler.is_foldable_nothrow), check_rtcall::Bool=false)
+function effect_bits(::typeof(Compiler.is_foldable_nothrow), check_rtcall::Bool=false)::AND
     AND(effect_bits(Compiler.is_foldable, check_rtcall)..., +n)
 end
-function effect_bits(::typeof(Compiler.is_removable_if_unused))
+function effect_bits(::typeof(Compiler.is_removable_if_unused))::AND{EffectLetter}
     AND(+e, +t, +n)
 end
-function effect_bits(::typeof(Compiler.is_finalizer_inlineable))
+function effect_bits(::typeof(Compiler.is_finalizer_inlineable))::AND{EffectLetter}
     AND(+n, +s)
 end
-function effect_bits(::typeof(Compiler.is_consistent_if_notreturned))
-    c & CONSISTENT_IF_NOTRETURNED
+function effect_bits(::typeof(Compiler.is_consistent_if_notreturned))::AND{EffectLetter}
+    AND(EffectLetter('c', CONSISTENT_IF_NOTRETURNED))
 end
-function effect_bits(::typeof(Compiler.is_consistent_if_inaccessiblememonly))
-    c & CONSISTENT_IF_INACCESSIBLEMEMONLY
+function effect_bits(::typeof(Compiler.is_consistent_if_inaccessiblememonly))::AND{EffectLetter}
+    AND(EffectLetter('c', CONSISTENT_IF_INACCESSIBLEMEMONLY))
 end
-function effect_bits(::typeof(Compiler.is_effect_free_if_inaccessiblememonly))
-    ~e # .effect_free === EFFECT_FREE_IF_INACCESSIBLEMEMONLY
+function effect_bits(::typeof(Compiler.is_effect_free_if_inaccessiblememonly))::AND{EffectLetter}
+    AND(~e) # .effect_free === EFFECT_FREE_IF_INACCESSIBLEMEMONLY
 end
-function effect_bits(::typeof(Compiler.is_inaccessiblemem_or_argmemonly))
-    ~m # .inaccessiblememonly === INACCESSIBLEMEM_OR_ARGMEMONLY
+function effect_bits(::typeof(Compiler.is_inaccessiblemem_or_argmemonly))::AND{EffectLetter}
+    AND(~m) # .inaccessiblememonly === INACCESSIBLEMEM_OR_ARGMEMONLY
 end
-function effect_bits(::typeof(Compiler.is_consistent_overlay))
-    ~o # .nonoverlayed === CONSISTENT_OVERLAY
+function effect_bits(::typeof(Compiler.is_consistent_overlay))::AND{EffectLetter}
+    AND(~o) # .nonoverlayed === CONSISTENT_OVERLAY
 end
+
+include("detect.jl")
+include("show.jl")
 
 end # module TestCompiler.EffectBits
