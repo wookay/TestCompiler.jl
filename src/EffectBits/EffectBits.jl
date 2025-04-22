@@ -4,14 +4,18 @@ export c, e, n, t, s, m, u, o, r
 export EffectLetter, EffectSuffix, EffectsArgumentError
 export effect_bits, detect
 
-using LogicalOperators: AND, OR
 using Core: Compiler
 import .Compiler: Effects
+using .Compiler: ALWAYS_TRUE, ALWAYS_FALSE,
+                 CONSISTENT_IF_NOTRETURNED, CONSISTENT_IF_INACCESSIBLEMEMONLY
+using LogicalOperators: AND, OR
 
 struct EffectLetter
-    prefix::Char
-    suffix::Char
-    bitmask::UInt8
+    prefix::Char   # + ! ? _
+    suffix::Char   # c e n t s m u o r
+    bitmask::UInt8 # 0x02 CONSISTENT_IF_NOTRETURNED
+                   # 0x04 CONSISTENT_IF_INACCESSIBLEMEMONLY
+                   # 0xFF
     EffectLetter(prefix::Char, suffix::Char) = new(prefix, suffix, 0xFF)
     EffectLetter(bitmask::UInt8, suffix::Char) = new('_', suffix, bitmask)
 end
@@ -32,15 +36,15 @@ r = EffectSuffix('r')
 
 import Base: +, !, ~, nameof
 
-function +(effect_suffix::EffectSuffix)::EffectLetter
+function +(effect_suffix::EffectSuffix)::EffectLetter # +
     EffectLetter('+', effect_suffix.char)
 end
 
-function !(effect_suffix::EffectSuffix)::EffectLetter
+function !(effect_suffix::EffectSuffix)::EffectLetter # !
     EffectLetter('!', effect_suffix.char)
 end
 
-function ~(effect_suffix::EffectSuffix)::EffectLetter
+function ~(effect_suffix::EffectSuffix)::EffectLetter # ?
     EffectLetter('?', effect_suffix.char)
 end
 
@@ -68,12 +72,10 @@ function nameof(suffix::EffectSuffix)::Symbol
     elseif suffix.char == 'r'
         :nortcall
     else
-        @info :suffix suffix.char
+        @info :nameof_EffectSuffix suffix.char
         :unknown_effectbits
     end
 end
-
-using Core.Compiler: ALWAYS_TRUE, ALWAYS_FALSE
 
 function EffectLetter(effects::Effects, suffix::Char)::EffectLetter
     name = nameof(EffectSuffix(suffix))
@@ -158,6 +160,7 @@ function Effects(letters::Vararg{EffectLetter, N})::Effects where N
                 # inaccessiblememonly = INACCESSIBLEMEM_OR_ARGMEMONLY
                 # noub = NOUB_IF_NOINBOUNDS
                 # nonoverlayed = CONSISTENT_OVERLAY
+                # EffectsArgumentError
                 setindex!(effects_dict, 0x02, name)
             else
                 setindex!(effects_dict, letter.bitmask, name)
@@ -174,11 +177,6 @@ function Effects(letters::Vararg{EffectLetter, N})::Effects where N
             getindex(effects_dict, :nonoverlayed),
             getindex(effects_dict, :nortcall))
 end
-
-# const EffectLetters = NTuple{9, EffectLetter}
-
-using .Compiler: CONSISTENT_IF_NOTRETURNED, CONSISTENT_IF_INACCESSIBLEMEMONLY
-
 
 ### effect_bits
 effect_bits(::typeof(Compiler.is_consistent))::AND{EffectLetter}          = AND(+c                           )

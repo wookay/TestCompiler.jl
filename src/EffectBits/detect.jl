@@ -1,5 +1,6 @@
 # module TestCompiler.EffectBits
 
+# get_affected
 function get_affected(letter::EffectLetter, effects::Effects)::Bool
     return letter in effects
 end
