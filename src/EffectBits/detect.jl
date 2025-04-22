@@ -35,11 +35,11 @@ function detect_cause(and::AND, effects::Effects)::EffectCause
         if b
         else
             if el isa EffectLetter
-                letter = EffectLetter(el.suffix, effects)
+                letter = EffectLetter(effects, el.suffix)
                 push!(cause, (idx, letter))
             elseif el isa OR
                 last_el = last(el.elements)
-                letter = EffectLetter(last_el.suffix, effects)
+                letter = EffectLetter(effects, last_el.suffix)
                 push!(cause, (idx, letter))
             end
         end

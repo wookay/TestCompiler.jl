@@ -4,8 +4,6 @@ function Base.show(io::IO, mime::MIME"text/plain", letter::EffectLetter)
     if letter.prefix == '_'
         print(io, "EffectLetter")
         print(io, "(")
-        print(io, repr(letter.suffix))
-        print(io, ", ")
         if letter.suffix == 'c'
             if letter.bitmask == CONSISTENT_IF_NOTRETURNED
                 printstyled(io, :CONSISTENT_IF_NOTRETURNED; color = :cyan)
@@ -13,6 +11,8 @@ function Base.show(io::IO, mime::MIME"text/plain", letter::EffectLetter)
                 printstyled(io, :CONSISTENT_IF_INACCESSIBLEMEMONLY; color = :cyan)
             end
         end
+        print(io, ", ")
+        print(io, repr(letter.suffix))
         print(io, ")")
     else
         color = if letter.prefix == '+'
@@ -60,8 +60,9 @@ function Base.show(io::IO, mime::MIME"text/plain", effect::EffectCause)
     n += write(io, "AND(")
     for (idx, el) in enumerate(effect.and)
         setindex!(pads, n, idx)
+        Base.show(io, mime, el)
         str = sprint_plain(el)
-        n += write(io, str)
+        n += length(str)
         if lastidx != idx
             n += write(io, ", ")
         end
@@ -72,8 +73,9 @@ function Base.show(io::IO, mime::MIME"text/plain", effect::EffectCause)
     for (idx, el) in effect.cause
         pad = pads[idx] - n
         n += write(io, repeat(' ', pad))
+        Base.show(io, mime, el)
         str = sprint_plain(el)
-        n += write(io, str)
+        n += length(str)
     end
 end
 

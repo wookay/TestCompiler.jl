@@ -13,7 +13,7 @@ struct EffectLetter
     suffix::Char
     bitmask::UInt8
     EffectLetter(prefix::Char, suffix::Char) = new(prefix, suffix, 0xFF)
-    EffectLetter(suffix::Char, bitmask::UInt8) = new('_', suffix, bitmask)
+    EffectLetter(bitmask::UInt8, suffix::Char) = new('_', suffix, bitmask)
 end
 
 struct EffectSuffix
@@ -75,31 +75,29 @@ end
 
 using Core.Compiler: ALWAYS_TRUE, ALWAYS_FALSE
 
-function EffectLetter(suffix::Char, effects::Effects)::EffectLetter
+function EffectLetter(effects::Effects, suffix::Char)::EffectLetter
     name = nameof(EffectSuffix(suffix))
     effect = getfield(effects, name)
     if effect isa Bool
         return EffectLetter(effect ? '+' : '!', suffix)
     elseif effect isa UInt8
-        if 'c' == suffix
-            if effect === ALWAYS_TRUE
-                return EffectLetter('+', suffix)
-            elseif effect === ALWAYS_FALSE
-                return EffectLetter('!', suffix)
-            else
-                return EffectLetter(suffix, effect)
-            end 
+        if effect == ALWAYS_TRUE # 0x00
+            return EffectLetter('+', suffix)
+        elseif effect == ALWAYS_FALSE # 0x01
+            return EffectLetter('!', suffix)
         else
-            if effect === ALWAYS_TRUE
-                return EffectLetter('+', suffix)
-            elseif effect === ALWAYS_FALSE
-                return EffectLetter('!', suffix)
+            if 'c' == suffix
+                return EffectLetter(effect, suffix)
             else
-                return EffectLetter('?', suffix)
+                if 0x02 == effect
+                    return EffectLetter('?', suffix)
+                else
+                    return EffectLetter(effect, suffix)
+                end
             end
         end
     end
-end # function EffectLetter(suffix::Char, effects::Effects)::EffectLetter
+end # function EffectLetter(effects::Effects, suffix::Char)::EffectLetter
 
 function Base.in(letter::EffectLetter, effects::Effects)
     name = nameof(letter)
@@ -119,8 +117,10 @@ function Base.in(letter::EffectLetter, effects::Effects)
         end
     elseif letter.prefix == '?'
         if typ === UInt8
-            return !(effect in (ALWAYS_TRUE, ALWAYS_FALSE))
+            return effect == 0x02
         end
+    elseif letter.prefix == '_'
+        return effect == letter.bitmask
     end
     return false
 end
@@ -145,23 +145,21 @@ function Effects(letters::Vararg{EffectLetter, N})::Effects where N
         name = nameof(letter)
         effect = getindex(effects_dict, name)
         typ = typeof(effect)
-        if letter.prefix == '+'
-            if typ === Bool
-                setindex!(effects_dict, true, name)
-            elseif typ === UInt8
+        if typ === Bool
+            setindex!(effects_dict, letter.prefix == '+', name)
+        elseif typ === UInt8
+            if letter.prefix == '+'
                 setindex!(effects_dict, ALWAYS_TRUE, name)
-            end
-        elseif letter.prefix == '!'
-            if typ === Bool
-                setindex!(effects_dict, false, name)
-            elseif typ === UInt8
+            elseif letter.prefix == '!'
                 setindex!(effects_dict, ALWAYS_FALSE, name)
-            end
-        elseif letter.prefix == '?'
-            if name in (:effect_free, :inaccessiblememonly, :noub, :nonoverlayed)
-                setindex!(effects_dict, 0x01 << 1, name)
+            elseif letter.prefix == '?'
+                # effect_free = EFFECT_FREE_IF_INACCESSIBLEMEMONLY
+                # inaccessiblememonly = INACCESSIBLEMEM_OR_ARGMEMONLY
+                # noub = NOUB_IF_NOINBOUNDS
+                # nonoverlayed = CONSISTENT_OVERLAY
+                setindex!(effects_dict, 0x02, name)
             else
-                throw(EffectsArgumentError(letter))
+                setindex!(effects_dict, letter.bitmask, name)
             end
         end
     end
@@ -206,10 +204,10 @@ function effect_bits(::typeof(Compiler.is_finalizer_inlineable))::AND{EffectLett
     AND(+n, +s)
 end
 function effect_bits(::typeof(Compiler.is_consistent_if_notreturned))::AND{EffectLetter}
-    AND(EffectLetter('c', CONSISTENT_IF_NOTRETURNED))
+    AND(EffectLetter(CONSISTENT_IF_NOTRETURNED, 'c'))
 end
 function effect_bits(::typeof(Compiler.is_consistent_if_inaccessiblememonly))::AND{EffectLetter}
-    AND(EffectLetter('c', CONSISTENT_IF_INACCESSIBLEMEMONLY))
+    AND(EffectLetter(CONSISTENT_IF_INACCESSIBLEMEMONLY, 'c'))
 end
 function effect_bits(::typeof(Compiler.is_effect_free_if_inaccessiblememonly))::AND{EffectLetter}
     AND(~e) # .effect_free === EFFECT_FREE_IF_INACCESSIBLEMEMONLY

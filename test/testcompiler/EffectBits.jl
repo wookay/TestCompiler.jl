@@ -26,12 +26,14 @@ using .Compiler: Effects, EFFECTS_TOTAL, EFFECTS_THROWS, EFFECTS_UNKNOWN
 
 EffectLetter
 
-using Core.Compiler: EFFECT_FREE_IF_INACCESSIBLEMEMONLY, INACCESSIBLEMEM_OR_ARGMEMONLY, NOUB_IF_NOINBOUNDS, CONSISTENT_OVERLAY
+using Core.Compiler: EFFECT_FREE_IF_INACCESSIBLEMEMONLY, INACCESSIBLEMEM_OR_ARGMEMONLY, NOUB_IF_NOINBOUNDS,
+                     CONSISTENT_OVERLAY,
+                     CONSISTENT_IF_NOTRETURNED # 0x02
 @test Effects(~e, ~m, ~u, ~o) == Effects(; effect_free = EFFECT_FREE_IF_INACCESSIBLEMEMONLY,
                                            inaccessiblememonly = INACCESSIBLEMEM_OR_ARGMEMONLY,
                                            noub = NOUB_IF_NOINBOUNDS,
                                            nonoverlayed = CONSISTENT_OVERLAY)
-@test_throws EffectsArgumentError Effects(~n)
+# @test_throws EffectsArgumentError Effects(~n)
 
 using LogicalOperators: AND, OR
 @test effect_bits(Compiler.is_effect_free_if_inaccessiblememonly) == AND(~e)
@@ -51,10 +53,19 @@ AND(+c, OR(+u, ?u), +e, +t, OR(true, +r))
         !u          !e  !t  !r\
 """
 
+letter = EffectLetter(CONSISTENT_IF_NOTRETURNED, 'c')
+@test sprint_plain(letter) == "EffectLetter(CONSISTENT_IF_NOTRETURNED, 'c')"
+effects = Effects(letter)
+@test sprint_plain(effects) == "(?c,!e,!n,!t,!s,!m,!u,!o,!r)"
+
 effects = Effects(+c)
 @test sprint_plain(detect(Compiler.is_consistent_if_notreturned, effects)) == """
-AND(EffectLetter('c', CONSISTENT_IF_NOTRETURNED))
+AND(EffectLetter(CONSISTENT_IF_NOTRETURNED, 'c'))
     +c\
+"""
+@test sprint_colored(detect(Compiler.is_consistent_if_notreturned, effects)) == """
+AND(EffectLetter(\e[36mCONSISTENT_IF_NOTRETURNED\e[39m, 'c'))
+    \e[32m+c\e[39m\
 """
 
 end # module test_testcompiler_EffectBits
