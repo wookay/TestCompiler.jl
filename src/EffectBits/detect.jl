@@ -15,7 +15,7 @@ function get_affected(or::OR{Union{Bool, EffectLetter}}, effects::Effects)::Bool
     for el in or.elements
         if el isa Bool
             !(el::Bool) && return false
-        else
+        elseif el isa EffectLetter
             el in effects && return true
         end
     end
@@ -39,8 +39,10 @@ function detect_cause(and::AND, effects::Effects)::EffectCause
                 push!(cause, (idx, letter))
             elseif el isa OR
                 last_el = last(el.elements)
-                letter = EffectLetter(effects, last_el.suffix)
-                push!(cause, (idx, letter))
+                if last_el isa EffectLetter
+                    letter = EffectLetter(effects, last_el.suffix)
+                    push!(cause, (idx, letter))
+                end
             end
         end
     end

@@ -5,9 +5,9 @@ function Base.show(io::IO, mime::MIME"text/plain", letter::EffectLetter)
         print(io, "EffectLetter")
         print(io, "(")
         if letter.suffix == 'c'
-            if letter.bitmask == CONSISTENT_IF_NOTRETURNED
+            if letter.bitmask === CONSISTENT_IF_NOTRETURNED
                 printstyled(io, :CONSISTENT_IF_NOTRETURNED; color = :cyan)
-            elseif letter.bitmask == CONSISTENT_IF_INACCESSIBLEMEMONLY
+            elseif letter.bitmask === CONSISTENT_IF_INACCESSIBLEMEMONLY
                 printstyled(io, :CONSISTENT_IF_INACCESSIBLEMEMONLY; color = :cyan)
             end
         end

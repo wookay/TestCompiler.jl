@@ -78,18 +78,19 @@ using Core.Compiler: ALWAYS_TRUE, ALWAYS_FALSE
 function EffectLetter(effects::Effects, suffix::Char)::EffectLetter
     name = nameof(EffectSuffix(suffix))
     effect = getfield(effects, name)
-    if effect isa Bool
+    typ = typeof(effect)
+    if typ === Bool
         return EffectLetter(effect ? '+' : '!', suffix)
-    elseif effect isa UInt8
-        if effect == ALWAYS_TRUE # 0x00
+    elseif typ === UInt8
+        if effect === ALWAYS_TRUE # 0x00
             return EffectLetter('+', suffix)
-        elseif effect == ALWAYS_FALSE # 0x01
+        elseif effect === ALWAYS_FALSE # 0x01
             return EffectLetter('!', suffix)
         else
             if 'c' == suffix
                 return EffectLetter(effect, suffix)
             else
-                if 0x02 == effect
+                if 0x02 === effect
                     return EffectLetter('?', suffix)
                 else
                     return EffectLetter(effect, suffix)
@@ -117,10 +118,10 @@ function Base.in(letter::EffectLetter, effects::Effects)
         end
     elseif letter.prefix == '?'
         if typ === UInt8
-            return effect == 0x02
+            return effect === 0x02
         end
     elseif letter.prefix == '_'
-        return effect == letter.bitmask
+        return effect === letter.bitmask
     end
     return false
 end
