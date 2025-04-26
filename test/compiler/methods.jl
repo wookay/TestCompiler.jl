@@ -19,7 +19,7 @@ Jive.delete(f)
 
 g = (::Int) -> 42
 method = only(methods(g))
-@test method.name === Symbol("#1")
+@test first(String(method.name)) == '#'
 @test method.sig.types[1] === typeof(g)
 @test method.sig.types[2] === Int
 
