@@ -23,4 +23,11 @@ method = only(methods(g))
 @test method.sig.types[1] === typeof(g)
 @test method.sig.types[2] === Int
 
+method = only(methods(Base.read, Tuple{String, Type{String}}))
+ast = Base.uncompressed_ast(method)
+@test ast isa Core.CodeInfo
+@test ast.code[1] === GlobalRef(Base, :open)
+bodyfunc = Base.bodyfunction(method)
+@test bodyfunc === Base.open
+
 end # module test_compiler_methods
