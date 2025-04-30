@@ -15,11 +15,11 @@ jobs:
       matrix:
         julia-version: [nightly]
         julia-arch: [x64]
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         include:
-          - julia-version: 1.12.0-beta2
+          - julia-version: 1.12.0-beta2 # April 25, 2025
             os: ubuntu-latest
-          - julia-version: 1.11.5
+          - julia-version: 1.11.5       # April 4, 2025
             os: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
