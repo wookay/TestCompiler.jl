@@ -1,8 +1,8 @@
 using Jive # Jive v0.3.1
-@useinside Main module test_loweredcodeutils_juliainterpreter
+@useinside Main module test_juliainterpreter_Frame
 
 using Test
-using LoweredCodeUtils.JuliaInterpreter # Frame
+using JuliaInterpreter # Frame
 
 module A
 end
@@ -28,4 +28,4 @@ Frame for Main.A
   3  0  └──      return %2\
 """)
 
-end # @useinside Main module test_loweredcodeutils_juliainterpreter
+end # @useinside Main module test_juliainterpreter_Frame
