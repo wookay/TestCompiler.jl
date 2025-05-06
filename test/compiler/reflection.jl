@@ -16,7 +16,7 @@ end
 using Jive
 Jive.delete(Core.OptimizedGenerics.CompilerPlugins.typeinf, Tuple{Nothing, Core.MethodInstance, UInt8})
 
-using Base: Compiler
+using Core: Compiler
 Compiler.activate!(; codegen = true)
 
 @test isdefined(Main, :__custom_compiler_active)
