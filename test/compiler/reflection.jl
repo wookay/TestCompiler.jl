@@ -16,11 +16,11 @@ end
 using Jive
 Jive.delete(Core.OptimizedGenerics.CompilerPlugins.typeinf, Tuple{Nothing, Core.MethodInstance, UInt8})
 
-using Core: Compiler
-Compiler.activate!(; codegen = true)
+using Core: Compiler as CC
+CC.activate!(; codegen = true)
 
 @test isdefined(Main, :__custom_compiler_active)
-@test Base.REFLECTION_COMPILER[] == Compiler
+@test Base.REFLECTION_COMPILER[] == CC
 end
 
 end # module test_compiler_reflection_REFLECTION_COMPILER

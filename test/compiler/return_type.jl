@@ -1,10 +1,10 @@
 module test_compiler_return_type
 
 using Test
-using Core.Compiler
+using Core: Compiler as CC
 
 f() = 1
-@test Compiler.return_type(f, Tuple{}) == Int64
+@test CC.return_type(f, Tuple{}) == Int64
 
 # from julia/test/worlds.jl
 # Invalidation

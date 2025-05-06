@@ -1,11 +1,11 @@
 module test_testcompiler_EffectBits
 
 using Test
-using Core: Compiler
-using .Compiler: Effects, EFFECTS_TOTAL, EFFECTS_THROWS, EFFECTS_UNKNOWN
-using .Compiler: EFFECT_FREE_IF_INACCESSIBLEMEMONLY, INACCESSIBLEMEM_OR_ARGMEMONLY, NOUB_IF_NOINBOUNDS, CONSISTENT_OVERLAY, # 0x02
-                 CONSISTENT_IF_NOTRETURNED, # 0x02
-                 CONSISTENT_IF_INACCESSIBLEMEMONLY # 0x04
+using Core: Compiler as CC
+using .CC: Effects, EFFECTS_TOTAL, EFFECTS_THROWS, EFFECTS_UNKNOWN
+using .CC: EFFECT_FREE_IF_INACCESSIBLEMEMONLY, INACCESSIBLEMEM_OR_ARGMEMONLY, NOUB_IF_NOINBOUNDS, CONSISTENT_OVERLAY, # 0x02
+           CONSISTENT_IF_NOTRETURNED, # 0x02
+           CONSISTENT_IF_INACCESSIBLEMEMONLY # 0x04
 using TestCompiler.EffectBits # c e n t s m u o r
                               # EffectLetter EffectSuffix
                               # effect_bits
@@ -36,18 +36,18 @@ using Jive # sprint_plain sprint_colored
                                            nonoverlayed = CONSISTENT_OVERLAY)
 @test_throws EffectsArgumentError Effects(~n)
 
-@test effect_bits(Compiler.is_effect_free_if_inaccessiblememonly) == AND(~e)
-@test effect_bits(Compiler.is_inaccessiblemem_or_argmemonly)      == AND(~m)
-@test effect_bits(Compiler.Compiler.is_consistent_overlay)        == AND(~o)
+@test effect_bits(CC.is_effect_free_if_inaccessiblememonly) == AND(~e)
+@test effect_bits(CC.is_inaccessiblemem_or_argmemonly)      == AND(~m)
+@test effect_bits(CC.is_consistent_overlay)        == AND(~o)
 
 effects = EFFECTS_TOTAL
-@test Compiler.is_consistent(effects)
-@test Compiler.is_foldable(effects)
+@test CC.is_consistent(effects)
+@test CC.is_foldable(effects)
 effects = EFFECTS_UNKNOWN
-@test !Compiler.is_foldable(effects)
+@test !CC.is_foldable(effects)
 
 effects = Effects(+c)
-@test sprint_plain(detect(Compiler.is_foldable, effects)) == """
+@test sprint_plain(detect(CC.is_foldable, effects)) == """
 AND(+c, OR(+u, ?u), +e, +t, OR(true, +r))
         !u          !e  !t  !r\
 """
@@ -61,17 +61,17 @@ letter = EffectLetter(CONSISTENT_IF_INACCESSIBLEMEMONLY, 'c')
 @test sprint_plain(letter) == "EffectLetter(CONSISTENT_IF_INACCESSIBLEMEMONLY, 'c')"
 effects = Effects(letter)
 @test sprint_plain(effects) == "(?c,!e,!n,!t,!s,!m,!u,!o,!r)"
-@test sprint_plain(detect(Compiler.is_consistent_if_notreturned, effects)) === """
+@test sprint_plain(detect(CC.is_consistent_if_notreturned, effects)) === """
 AND(EffectLetter(CONSISTENT_IF_NOTRETURNED, 'c'))
     EffectLetter(CONSISTENT_IF_INACCESSIBLEMEMONLY, 'c')\
 """
 
 effects = Effects(+c)
-@test sprint_plain(detect(Compiler.is_consistent_if_notreturned, effects)) == """
+@test sprint_plain(detect(CC.is_consistent_if_notreturned, effects)) == """
 AND(EffectLetter(CONSISTENT_IF_NOTRETURNED, 'c'))
     +c\
 """
-@test sprint_colored(detect(Compiler.is_consistent_if_notreturned, effects)) == """
+@test sprint_colored(detect(CC.is_consistent_if_notreturned, effects)) == """
 AND(EffectLetter(\e[36mCONSISTENT_IF_NOTRETURNED\e[39m, 'c'))
     \e[32m+c\e[39m\
 """

@@ -1,18 +1,18 @@
 module test_compiler_methods
 
 using Test
-using Core.Compiler
+using Core: Compiler as CC
 
 # from julia/Compiler/src/utilities.jl
-Compiler.is_declared_inline
+CC.is_declared_inline
 
 @inline f_inline() = 42
 method = only(methods(f_inline))
-@test Compiler.is_declared_inline(method)
+@test CC.is_declared_inline(method)
 
 f() = 42
 method = only(methods(f))
-@test !Compiler.is_declared_inline(method)
+@test !CC.is_declared_inline(method)
 
 using Jive
 Jive.delete(f)

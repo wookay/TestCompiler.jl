@@ -1,20 +1,20 @@
 module test_compiler_constprop
 
 using Test
-using Core.Compiler
+using Core: Compiler as CC
 
 # from julia/Compiler/test/inference.jl
-                            f_constprop_simple(f, x) = f(x)
-@test !Compiler.is_aggressive_constprop(only(methods(f_constprop_simple)))
+f_constprop_simple(f, x) = f(x)
+@test !CC.is_aggressive_constprop(only(methods(f_constprop_simple)))
 
 Base.@constprop :aggressive f_constprop_aggressive(f, x) = f(x)
 method = only(methods(f_constprop_aggressive))
-@test Compiler.is_aggressive_constprop(method)
+@test CC.is_aggressive_constprop(method)
 @test method.constprop == 0x01
 
-Base.@constprop :none       f_constprop_none(f, x) = f(x)
+Base.@constprop :none f_constprop_none(f, x) = f(x)
 method = only(methods(f_constprop_none))
-@test Compiler.is_no_constprop(method)
+@test CC.is_no_constprop(method)
 @test method.constprop == 0x02
 
 
