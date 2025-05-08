@@ -2,7 +2,9 @@
 
 baremodule Compiler
 
-hello() = 42
+### extension interface
+function hello_ext
+end
 
 using Base: Base
 const BaseCompiler = Base.:(>=)(Base.VERSION.minor, 12) ? Base.Compiler : Core.Compiler

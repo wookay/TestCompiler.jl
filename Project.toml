@@ -13,6 +13,9 @@ Compiler = "807dbc54-b67e-4c79-8afb-eafe4df6f2e1"
 [sources]
 LogicalOperators = {url = "https://github.com/wookay/LogicalOperators.jl", rev = "main"}
 
+[extensions]
+TestCompilerExt = ["Compiler"]
+
 [compat]
 julia = "1.11"
 Compiler = "0, 1"
