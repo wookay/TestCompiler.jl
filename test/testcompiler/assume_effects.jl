@@ -13,6 +13,8 @@ if VERSION >= v"1.13.0-DEV.544"
     # :foldable   +c,+e,   +t,      +u,   +r
     #                               ?u
     @test Effects(+c,+e,+n,+t,!s,!m,+u,+o,+r) == effects
+elseif VERSION >= v"1.12-beta"
+    @test Effects(!c,!e,!n,!t,!s,!m,!u,+o,!r) == effects
 else
     @test Effects(!c,!e,!n,!t,!s,!m,!u,!o,!r) == effects
 end
