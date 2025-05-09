@@ -29,7 +29,7 @@ effects = Base.infer_effects(f1, (Int,))
 @test effects.nonoverlayed == ALWAYS_TRUE
 @test effects.nortcall === true
 @test CC.is_consistent(effects)          # +c
-# @test CC.is_effect_free(effects)       # +e !e
+@test CC.is_effect_free(effects)         # +e
 @test CC.is_nothrow(effects)             # +n
 @test CC.is_terminates(effects)          # +t
 @test CC.is_notaskstate(effects)         # +s
@@ -67,8 +67,8 @@ CC.is_noub_if_noinbounds
 CC.is_nonoverlayed
 CC.is_nortcall # :nortcall setting asserts that the method does not call Core.Compiler.return_type
 
-CC.is_foldable # +c,+e,  ,+t,+s,+m,+u,  ,+r
-                     #                   ?u
+CC.is_foldable # +c,+e,   +t,      +u,   +r
+               #                   ?u
 CC.is_foldable_nothrow # is_foldable && is_nothrow
 CC.is_removable_if_unused # is_effect_free && is_terminates && is_nothrow
 CC.is_finalizer_inlineable # is_nothrow && is_notaskstate

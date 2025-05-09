@@ -76,4 +76,16 @@ AND(EffectLetter(\e[36mCONSISTENT_IF_NOTRETURNED\e[39m, 'c'))
     \e[32m+c\e[39m\
 """
 
+# julia/base/strings/util.jl
+# @assume_effects :removable :foldable function chomp(s::Union{String, SubString{String}})
+effects = Base.infer_effects(chomp, Tuple{Union{String, SubString{String}}})
+if VERSION >= v"1.13.0-DEV.544"
+    # :removable     +e,+n,+t
+    # :foldable   +c,+e,   +t,      +u,   +r
+    #                               ?u
+    @test Effects(+c,+e,+n,+t,!s,!m,+u,+o,+r) == effects
+else
+    @test Effects(!c,!e,!n,!t,!s,!m,!u,!o,!r) == effects
+end
+
 end # module test_testcompiler_EffectBits
