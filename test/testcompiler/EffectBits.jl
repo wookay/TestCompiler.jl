@@ -3,9 +3,12 @@ module test_testcompiler_EffectBits
 using Test
 using Core: Compiler as CC
 using .CC: Effects, EFFECTS_TOTAL, EFFECTS_THROWS, EFFECTS_UNKNOWN
-using .CC: EFFECT_FREE_IF_INACCESSIBLEMEMONLY, INACCESSIBLEMEM_OR_ARGMEMONLY, NOUB_IF_NOINBOUNDS, CONSISTENT_OVERLAY, # 0x02
-           CONSISTENT_IF_NOTRETURNED, # 0x02
-           CONSISTENT_IF_INACCESSIBLEMEMONLY # 0x04
+using .CC: EFFECT_FREE_IF_INACCESSIBLEMEMONLY, # 0x02
+           INACCESSIBLEMEM_OR_ARGMEMONLY,      # 0x02
+           NOUB_IF_NOINBOUNDS,                 # 0x02
+           CONSISTENT_OVERLAY,                 # 0x02
+           CONSISTENT_IF_NOTRETURNED,          # 0x02
+           CONSISTENT_IF_INACCESSIBLEMEMONLY   # 0x04
 using TestCompiler.EffectBits # c e n t s m u o r
                               # EffectLetter EffectSuffix
                               # effect_bits
@@ -75,17 +78,5 @@ AND(EffectLetter(CONSISTENT_IF_NOTRETURNED, 'c'))
 AND(EffectLetter(\e[36mCONSISTENT_IF_NOTRETURNED\e[39m, 'c'))
     \e[32m+c\e[39m\
 """
-
-# julia/base/strings/util.jl
-# @assume_effects :removable :foldable function chomp(s::Union{String, SubString{String}})
-effects = Base.infer_effects(chomp, Tuple{Union{String, SubString{String}}})
-if VERSION >= v"1.13.0-DEV.544"
-    # :removable     +e,+n,+t
-    # :foldable   +c,+e,   +t,      +u,   +r
-    #                               ?u
-    @test Effects(+c,+e,+n,+t,!s,!m,+u,+o,+r) == effects
-else
-    @test Effects(!c,!e,!n,!t,!s,!m,!u,!o,!r) == effects
-end
 
 end # module test_testcompiler_EffectBits

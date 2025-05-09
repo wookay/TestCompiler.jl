@@ -12,7 +12,7 @@ using Compiler
 # Compiler.activate!(; codegen = true)
 
 @test Core.isdefined(Compiler, :hello_ext)
-@test Compiler.BaseCompiler === Core.Compiler
+@test Compiler.BaseCompiler === CC
 @test Compiler.BaseCompiler !== Compiler
 
 using TestCompiler
