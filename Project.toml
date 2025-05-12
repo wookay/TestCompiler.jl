@@ -5,7 +5,6 @@ version = "0.1.0"
 
 [deps]
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
-InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 LogicalOperators = "6ac76662-4673-4d6a-8390-a82adc3670cf"
 
 [weakdeps]

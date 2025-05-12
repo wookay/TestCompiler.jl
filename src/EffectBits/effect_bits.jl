@@ -8,7 +8,7 @@ effect_bits(::typeof(CC.is_terminates))::AND{EffectLetter}          = AND(      
 effect_bits(::typeof(CC.is_notaskstate))::AND{EffectLetter}         = AND(            +s               )
 effect_bits(::typeof(CC.is_inaccessiblememonly))::AND{EffectLetter} = AND(               +m            )
 effect_bits(::typeof(CC.is_noub))::AND{EffectLetter}                = AND(                  +u         )
-effect_bits(::typeof(CC.is_noub_if_noinbounds))::AND{EffectLetter}  = AND(                     ~u      ) # u .noub === NOUB_IF_NOINBOUNDS
+effect_bits(::typeof(CC.is_noub_if_noinbounds))::AND{EffectLetter}  = AND(                     ~u      ) # ?u .noub == NOUB_IF_NOINBOUNDS
 effect_bits(::typeof(CC.is_nonoverlayed))::AND{EffectLetter}        = AND(                        +o   )
 effect_bits(::typeof(CC.is_nortcall))::AND{EffectLetter}            = AND(                           +r)
 
@@ -31,13 +31,13 @@ function effect_bits(::typeof(CC.is_consistent_if_inaccessiblememonly))::AND{Eff
     AND(EffectLetter(CONSISTENT_IF_INACCESSIBLEMEMONLY, 'c'))
 end
 function effect_bits(::typeof(CC.is_effect_free_if_inaccessiblememonly))::AND{EffectLetter}
-    AND(~e) # .effect_free == EFFECT_FREE_IF_INACCESSIBLEMEMONLY
+    AND(~e) # ?e .effect_free == EFFECT_FREE_IF_INACCESSIBLEMEMONLY
 end
 function effect_bits(::typeof(CC.is_inaccessiblemem_or_argmemonly))::AND{EffectLetter}
-    AND(~m) # .inaccessiblememonly == INACCESSIBLEMEM_OR_ARGMEMONLY
+    AND(~m) # ?m .inaccessiblememonly == INACCESSIBLEMEM_OR_ARGMEMONLY
 end
 function effect_bits(::typeof(CC.is_consistent_overlay))::AND{EffectLetter}
-    AND(~o) # .nonoverlayed == CONSISTENT_OVERLAY
+    AND(~o) # ?o .nonoverlayed == CONSISTENT_OVERLAY
 end
 
 # module TestCompiler.EffectBits

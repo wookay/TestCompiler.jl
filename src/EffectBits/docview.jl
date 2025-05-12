@@ -3,7 +3,6 @@
 using Core: Compiler as CC
 using Base.Docs: Binding
 using Base.IRShow: effectbits_letter
-using InteractiveUtils: subtypes
 import REPL: summarize
 
 # from julia/stdlib/REPL/src/docview.jl
@@ -28,14 +27,15 @@ function summarize(io::IO, effects::CC.Effects, binding::Binding)
             pad = 0
             for f in fieldnames(T)
                 effect = getfield(effects, f)
-                pad_effect = max(pad_effect, length(string(if effect isa Bool
-                    effect
-                elseif effect isa UInt8
-                    const_name = effect_bits_const_name(f, effect)
-                    const_name
-                else
-                    nothing
-                end)))
+                pad_effect = max(pad_effect, length(string(
+                    if effect isa Bool
+                        effect
+                    elseif effect isa UInt8
+                        effect_bits_const_name(f, effect)
+                    else
+                        nothing
+                    end
+                )))
                 pad = max(pad, length(string(f)))
             end
             for (f, t) in zip(fieldnames(T), fieldtypes(T))
@@ -55,30 +55,6 @@ function summarize(io::IO, effects::CC.Effects, binding::Binding)
             end
             println(io, "```")
         end
-        subt = subtypes(TT)
-        if !isempty(subt)
-            println(io, "# Subtypes")
-            println(io, "```")
-            for t in subt
-                println(io, Base.unwrap_unionall(t))
-            end
-            println(io, "```")
-        end
-        if supert != Any
-            println(io, "# Supertype Hierarchy")
-            println(io, "```")
-            Base.show_supertypes(io, T)
-            println(io)
-            println(io, "```")
-        end
-    elseif T isa Union
-        println(io, "`", binding, "` is of type `", typeof(TT), "`.\n")
-        println(io, "# Union Composed of Types")
-        for T1 in Base.uniontypes(T)
-            println(io, " - `", Base.rewrap_unionall(T1, TT), "`")
-        end
-    else # unreachable?
-        println(io, "`", binding, "` is of type `", typeof(TT), "`.\n")
     end
 end
 

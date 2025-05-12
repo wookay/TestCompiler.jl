@@ -8,15 +8,15 @@ export effect_bits
 export detect
 
 using Core: Compiler as CC
-using  .CC: ALWAYS_TRUE,
-            ALWAYS_FALSE,
-            CONSISTENT_IF_NOTRETURNED,
-            CONSISTENT_IF_INACCESSIBLEMEMONLY,
-            EFFECT_FREE_IF_INACCESSIBLEMEMONLY,
-            EFFECT_FREE_GLOBALLY,
-            INACCESSIBLEMEM_OR_ARGMEMONLY,
-            NOUB_IF_NOINBOUNDS,
-            CONSISTENT_OVERLAY
+using .CC: ALWAYS_TRUE,
+           ALWAYS_FALSE,
+           CONSISTENT_IF_NOTRETURNED,
+           CONSISTENT_IF_INACCESSIBLEMEMONLY,
+           EFFECT_FREE_IF_INACCESSIBLEMEMONLY,
+           EFFECT_FREE_GLOBALLY,
+           INACCESSIBLEMEM_OR_ARGMEMONLY,
+           NOUB_IF_NOINBOUNDS,
+           CONSISTENT_OVERLAY
 import .CC: Effects
 import Base: +, !, ~
 using LogicalOperators: AND, OR

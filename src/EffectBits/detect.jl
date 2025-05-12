@@ -32,7 +32,7 @@ function detect_cause(and::AND, effects::Effects)::EffectCause
     T = Union{EffectLetter, OR}
     cause = Vector{Tuple{Int, T}}()
     for (idx, el) in enumerate(and)
-        b = get_affected(el, effects)
+        b::Bool = get_affected(el, effects)
         if b
         else
             if el isa EffectLetter
