@@ -2,6 +2,7 @@
 
 using Core: Compiler as CC
 using Base.Docs: Binding
+using Base.IRShow: effectbits_letter
 using InteractiveUtils: subtypes
 import REPL: summarize
 
@@ -39,8 +40,8 @@ function summarize(io::IO, effects::CC.Effects, binding::Binding)
             end
             for (f, t) in zip(fieldnames(T), fieldtypes(T))
                 suffix::Char = effects_suffix(f)
-                letter = EffectLetter(effects, suffix)
-                Base.show(io, MIME("text/plain"), letter)
+                letter = effectbits_letter(effects, f, suffix)
+                print(io, letter)
                 print(io, " ")
                 effect = getfield(effects, f)
                 if t === Bool
