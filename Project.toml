@@ -18,11 +18,11 @@ TestCompilerExt = ["Compiler"]
 
 [compat]
 julia = "1.11"
-Compiler = "0, 1"
+Compiler = "0.1"
 LogicalOperators = "0.1"
 Jive = "0.3"
 JuliaInterpreter = "0.10"
-Cthulhu = "2.16"
+Cthulhu = "2.17"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
