@@ -18,7 +18,7 @@ TestCompilerExt = ["Compiler"]
 
 [compat]
 julia = "1.11"
-Compiler = "0.1"
+Compiler = "0.0, 0.1"
 LogicalOperators = "0.1"
 Jive = "0.3"
 JuliaInterpreter = "0.10"
