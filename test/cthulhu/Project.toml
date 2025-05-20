@@ -1,0 +1,10 @@
+[compat]
+julia = "1.11"
+Cthulhu = "2.17"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Cthulhu = "f68482b8-f384-11e8-15f7-abe071a5a75f"
+
+[targets]
+test = ["Test", "Cthulhu"]
