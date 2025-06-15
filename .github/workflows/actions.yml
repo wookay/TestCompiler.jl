@@ -28,7 +28,4 @@ jobs:
         version: ${{ matrix.julia-version }}
     - uses: julia-actions/cache@v1
     - uses: julia-actions/julia-buildpkg@v1
-    # - uses: julia-actions/julia-runtest@v1
-    - name: runtests
-      run: |
-           julia --project=. -e 'using Pkg; Pkg.develop("Jive"); Pkg.status("Jive"); Pkg.test()'
+    - uses: julia-actions/julia-runtest@v1
