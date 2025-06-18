@@ -1,4 +1,4 @@
-module test_compiler_core_kwcall
+module test_corecompiler_core_kwcall
 
 using Test
 
@@ -13,7 +13,7 @@ f(args...; kwargs...) = (args = args, kwargs = kwargs)
 @test g(f   ; b = 2) == (args = (),    kwargs = pairs((; b = 2)))
 @test g(f, 1; b = 2) == (args = (1, ), kwargs = pairs((; b = 2)))
 
-end # module test_compiler_core_kwcall
+end # module test_corecompiler_core_kwcall
 
 
 #=

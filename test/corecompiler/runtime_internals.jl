@@ -1,4 +1,4 @@
-module test_compiler_runtime_internals
+module test_corecompiler_runtime_internals
 
 using Test
 
@@ -9,4 +9,4 @@ using Test
 @test Base.datatype_fieldcount(Vector{Int})      == 2
 @test Base.datatype_fieldcount(NTuple{100, Int}) == 100
 
-end # module test_compiler_runtime_internals
+end # module test_corecompiler_runtime_internals

@@ -1,4 +1,4 @@
-module test_compiler_return_type
+module test_corecompiler_return_type
 
 using Test
 using Core: Compiler as CC
@@ -14,4 +14,4 @@ types = Base.default_tt(f)
 tt = Base.signature_type(f, types)
 @test tt == Tuple{typeof(f)}
 
-end # module test_compiler_return_type
+end # module test_corecompiler_return_type

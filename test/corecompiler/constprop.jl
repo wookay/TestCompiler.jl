@@ -1,4 +1,4 @@
-module test_compiler_constprop
+module test_corecompiler_constprop
 
 using Test
 using Core: Compiler as CC
@@ -49,4 +49,4 @@ help?> Base.@constprop
   end
 =#
 
-end # module test_compiler_constprop
+end # module test_corecompiler_constprop

@@ -1,4 +1,4 @@
-module test_compiler_lattice
+module test_corecompiler_lattice
 
 using Test
 using Core: Compiler as CC
@@ -215,4 +215,4 @@ Core.Compiler.LimitedAccuracy
 #           NativeInterpreter. But other interpreters may use this to detect cycles
 Core.Compiler.InferenceState
 
-end # module test_compiler_lattice
+end # module test_corecompiler_lattice

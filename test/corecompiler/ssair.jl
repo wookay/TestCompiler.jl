@@ -1,8 +1,9 @@
-module test_compiler_ssair
+module test_corecompiler_ssair
 
 using Test
-using Core.Compiler: StmtRange, BasicBlock
-using Core.Compiler: CFG, DFS, DFSTree
+using Core: Compiler as CC
+using .CC: StmtRange, BasicBlock
+using .CC: CFG, DFS, DFSTree
 
 
 #### from julia/Compiler/src/ssair/basicblock.jl
@@ -97,4 +98,4 @@ dfs = DFS(cfg.blocks)
 #   - A dominator tree is a tree where each node's children are those nodes it immediately dominates.
 #     The start node is the root of the tree.
 
-end # module test_compiler_ssair
+end # module test_corecompiler_ssair

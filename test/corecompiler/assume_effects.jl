@@ -1,4 +1,4 @@
-module test_compiler_assume_effects
+module test_corecompiler_assume_effects
 
 using Test
 
@@ -527,4 +527,4 @@ help?> ?Base.@assume_effects
   while the call is generally total, it may however throw.
 =#
 
-end # module test_compiler_assume_effects
+end # module test_corecompiler_assume_effects

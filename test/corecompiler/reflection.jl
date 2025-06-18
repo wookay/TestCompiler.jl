@@ -1,4 +1,4 @@
-module test_compiler_reflection_REFLECTION_COMPILER
+module test_corecompiler_reflection_REFLECTION_COMPILER
 
 using Test
 
@@ -23,4 +23,4 @@ CC.activate!(; codegen = true)
 @test Base.REFLECTION_COMPILER[] == CC
 end
 
-end # module test_compiler_reflection_REFLECTION_COMPILER
+end # module test_corecompiler_reflection_REFLECTION_COMPILER

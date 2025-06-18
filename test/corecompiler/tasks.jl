@@ -1,4 +1,4 @@
-module test_compiler_tasks
+module test_corecompiler_tasks
 
 using Test
 
@@ -12,4 +12,4 @@ ret = yield(t)
 @test ret === nothing
 @test istaskdone(t)
 
-end # module test_compiler_tasks
+end # module test_corecompiler_tasks

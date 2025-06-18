@@ -1,4 +1,4 @@
-module test_compiler_inference
+module test_corecompiler_inference
 
 using Test
 using Core: Compiler as CC
@@ -16,4 +16,4 @@ Base.return_types
 Base.infer_return_type
 Base.infer_return_type(f) === Int
 
-end # test_compiler_inference
+end # test_corecompiler_inference

@@ -1,5 +1,5 @@
 using Jive
-@If VERSION >= v"1.12.0-DEV.1713" module test_compiler_optimized_generics
+@If VERSION >= v"1.12.0-DEV.1713" module test_corecompiler_optimized_generics
 
 using Core.OptimizedGenerics.CompilerPlugins: typeinf, typeinf_edge
 
@@ -11,4 +11,4 @@ typeinf
 # typeinf_edge(owner, mi, parent_frame, world, abi_mode)::CodeInstance
 typeinf_edge
 
-end # module test_compiler_optimized_generics
+end # module test_corecompiler_optimized_generics

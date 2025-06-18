@@ -1,4 +1,4 @@
-module test_compiler_effects
+module test_corecompiler_effects
 
 using Test
 using Core: Compiler as CC
@@ -78,4 +78,4 @@ CC.is_foldable_nothrow # is_foldable && is_nothrow
 CC.is_removable_if_unused # is_effect_free && is_terminates && is_nothrow
 CC.is_finalizer_inlineable # is_nothrow && is_notaskstate
 
-end # module test_compiler_effects
+end # module test_corecompiler_effects

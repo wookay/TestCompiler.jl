@@ -1,4 +1,4 @@
-module test_compiler_cicache
+module test_corecompiler_cicache
 
 # julia/Compiler/src/cicache.jl
 # ci::CodeInstance
@@ -19,4 +19,4 @@ wvc = CC.code_cache(interp)
 @test wvc isa WorldView{CC.InternalCodeCache}
 @test wvc.worlds.max_world == world
 
-end # module test_compiler_cicache
+end # module test_corecompiler_cicache

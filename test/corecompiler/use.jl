@@ -1,4 +1,4 @@
-module test_compiler_use
+module test_corecompiler_use
 
 module A
 using Test
@@ -24,4 +24,4 @@ end
 using .A: f
 f()
 
-end # module test_compiler_use
+end # module test_corecompiler_use
