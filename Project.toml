@@ -6,10 +6,12 @@ version = "0.1.0"
 [deps]
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 LogicalOperators = "6ac76662-4673-4d6a-8390-a82adc3670cf"
-Compiler = "807dbc54-b67e-4c79-8afb-eafe4df6f2e1"
 
 [sources]
 LogicalOperators = {url = "https://github.com/wookay/LogicalOperators.jl", rev = "main"}
+
+[weakdeps]
+Compiler = "807dbc54-b67e-4c79-8afb-eafe4df6f2e1"
 
 [extensions]
 TestCompilerExt = ["Compiler"]

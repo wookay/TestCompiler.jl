@@ -135,7 +135,7 @@ widenreturn_noslotwrapper
 #   nargs::Int
 #   slottypes::Vector{Any}
 #   changes::VarTable
-Core.Compiler.BestguessInfo
+CC.BestguessInfo
 
 partialorder
 strictpartialorder
@@ -181,12 +181,12 @@ Core.InterConditional
 #   # into Const, if the bounds are pulled out of this TypeVar
 #   lb_certain::Bool
 #   ub_certain::Bool
-Core.Compiler.PartialTypeVar
+CC.PartialTypeVar
 
 # struct LimitedAccuracy
 #   typ
 #   causes::IdSet{InferenceState}
-Core.Compiler.LimitedAccuracy
+CC.LimitedAccuracy
 
 # from julia/Compiler/src/inferencestate.jl
 # mutable struct InferenceState
@@ -213,6 +213,6 @@ Core.Compiler.LimitedAccuracy
 #   - restrict_abstract_call_sites, cache_mode, insert_coverage
 # * interp: The interpreter that created this inference state. Not looked at by
 #           NativeInterpreter. But other interpreters may use this to detect cycles
-Core.Compiler.InferenceState
+CC.InferenceState
 
 end # module test_corecompiler_lattice
