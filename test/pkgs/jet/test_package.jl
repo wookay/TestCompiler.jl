@@ -1,8 +1,11 @@
 module test_jet_test_package
 
-using Test
-using JET
+using Jive
+using JET: JET, ReportConfig
 
-JET.test_package(Test)
+using Test
+report_config = ReportConfig(#=target_modules=#(Test,), #=ignored_modules=#(Base,))
+@time_expr report = JET.test_package(Test, report_config = report_config)
+show(report)
 
 end # module test_jet_test_package
