@@ -1,0 +1,7 @@
+# https://github.com/MichaelHatherly/TreeSitter.jl
+
+[deps]
+TreeSitter = "f42328cb-ece0-4cf2-995f-9e7abb27d006"
+
+[compat]
+TreeSitter = "0.1"
