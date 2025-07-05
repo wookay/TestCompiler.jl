@@ -1,0 +1,2 @@
+using DumpTruck
+dump(Core)
