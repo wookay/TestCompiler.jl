@@ -1,4 +1,6 @@
-module test_corecompiler_reflection_REFLECTION_COMPILER
+using Jive
+# Core.OptimizedGenerics  julia commit efa917e8775cd40fdd74b657d1e5d2db2342cd07
+@If VERSION >= v"1.12.0-DEV.1713" module test_corecompiler_reflection_REFLECTION_COMPILER
 
 using Test
 
