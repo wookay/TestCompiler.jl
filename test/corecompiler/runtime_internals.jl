@@ -9,6 +9,18 @@ using Test
 @test Base.datatype_fieldcount(Vector{Int})      == 2
 @test Base.datatype_fieldcount(NTuple{100, Int}) == 100
 
+isconcretetype
+isabstracttype
+Base.is_datatype_layoutopaque
+Base.issingletontype
+
+T = Union{Int, String}
+@test typeintersect(Int, T) === Int
+
+@test Base.uniontypes(T) == [Int, String]
+@test Base.unionlen(T) == 2
+@test Union{Base.uniontypes(T)...} === T
+
 end # module test_corecompiler_runtime_internals
 
 
