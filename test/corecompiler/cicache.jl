@@ -1,4 +1,5 @@
-module test_corecompiler_cicache
+using Jive
+@If VERSION >= v"1.14.0-DEV.60" module test_corecompiler_cicache
 
 # julia/Compiler/src/cicache.jl
 # ci::CodeInstance
@@ -6,7 +7,7 @@ module test_corecompiler_cicache
 
 using Test
 using Core: Compiler as CC
-using .CC: WorldRange, WorldView
+using .CC: WorldRange, OverlayCodeCache, InternalCodeCache, InferenceResult
 
 worlds = (; min_world, max_world) = WorldRange(1, 2)
 @test min_world == worlds.min_world == 1
@@ -16,7 +17,8 @@ interp = CC.NativeInterpreter()
 world = CC.get_inference_world(interp)
 
 wvc = CC.code_cache(interp)
-@test wvc isa WorldView{CC.InternalCodeCache}
-@test wvc.worlds.max_world == world
+@test wvc isa OverlayCodeCache{InternalCodeCache}
+@test wvc.globalcache.worlds.max_world == world
+@test wvc.localcache == InferenceResult[]
 
 end # module test_corecompiler_cicache
