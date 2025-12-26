@@ -2,6 +2,8 @@
 
 [deps]
 TreeSitter = "f42328cb-ece0-4cf2-995f-9e7abb27d006"
+tree_sitter_julia_jll = "52be201e-a5e9-5cfe-8bf2-2dc4b062171c"
 
 [compat]
 TreeSitter = "0.1"
+tree_sitter_julia_jll = "0.25"

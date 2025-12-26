@@ -3,8 +3,9 @@ using Jive
 
 using Test
 using TreeSitter
+using tree_sitter_julia_jll
 
-p = Parser(:julia)
+p = Parser(Language(tree_sitter_julia_jll))
 tree = parse(p, "1 + 2")
 @test tree isa Tree
 
@@ -13,6 +14,6 @@ traverse(tree) do node, enter
     enter && push!(out, TreeSitter.node_type(node))
 end
 
-@test out == ["source_file", "binary_expression", "number", "+", "number"]
+@test out == ["source_file", "binary_expression", "integer_literal", "operator", "integer_literal"]
 
 end # module test_treesitter_parser
