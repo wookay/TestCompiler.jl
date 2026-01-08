@@ -9,3 +9,4 @@
 ### repositories
  - TestCompiler 🚗  https://github.com/wookay/TestCompiler.jl
  - TestJuliaLowering 📉  https://github.com/wookay/TestJuliaLowering.jl
+ - TestStdlibs 🏫  https://github.com/wookay/TestStdlibs.jl
