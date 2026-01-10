@@ -1,4 +1,6 @@
-module test_corecompiler_constprop_heuristic
+using Jive
+# @useinside module test_corecompiler_constprop_heuristic
+@If VERSION >= v"1.12" module test_corecompiler_constprop_heuristic
 
 using Test
 using Core: Compiler
@@ -29,5 +31,16 @@ end # if VERSION >= v"1.12.0-DEV.949"
 # julia/Compiler/src/abstractinterpretation.jl
 Compiler.force_const_prop
 Compiler.const_prop_function_heuristic
+
+include("newinterp.jl")
+@newinterp Interp1
+
+using .Compiler: AbstractInterpreter
+@test Interp1 <: AbstractInterpreter
+interp = Interp1()
+@test interp isa AbstractInterpreter
+
+# TODO
+# test Compiler.const_prop_function_heuristic
 
 end # module test_corecompiler_constprop_heuristic
