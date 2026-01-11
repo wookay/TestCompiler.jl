@@ -3,8 +3,8 @@ using Jive
 @If VERSION >= v"1.12" module test_corecompiler_constprop_heuristic
 
 using Test
-using Core: Compiler
-using .Compiler: typename
+using Core: Compiler as CC
+using .CC: typename
 
 # julia/base/boot.jl
 # typename(_).constprop_heuristic
@@ -29,16 +29,24 @@ end # if VERSION >= v"1.12.0-DEV.949"
 
 
 # julia/Compiler/src/abstractinterpretation.jl
-Compiler.force_const_prop
-Compiler.const_prop_function_heuristic
+CC.force_const_prop
+CC.const_prop_function_heuristic
 
 include("newinterp.jl")
-@newinterp Interp1
+@newinterp ConstPropInterp
 
-using .Compiler: AbstractInterpreter
-@test Interp1 <: AbstractInterpreter
-interp = Interp1()
-@test interp isa AbstractInterpreter
+using .CC: AbstractInterpreter
+@test ConstPropInterp <: AbstractInterpreter
+interp = ConstPropInterp()
+
+using .CC: InternalCodeCache, code_cache
+if VERSION >= v"1.14.0-DEV.60"
+    using .CC: OverlayCodeCache
+    @test code_cache(interp) isa OverlayCodeCache{InternalCodeCache}
+else
+    using .CC: WorldView
+    @test code_cache(interp) isa WorldView{InternalCodeCache}
+end
 
 # TODO
 # test Compiler.const_prop_function_heuristic

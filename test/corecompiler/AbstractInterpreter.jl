@@ -2,7 +2,7 @@ using Jive
 @If VERSION >= v"1.12-beta" @useinside Main module test_corecompiler_AbstractInterpreter
 
 using Test
-using Core: Compiler
+using Core: Compiler as CC
 
 # from julia/Compiler/test/AbstractInterpreter.jl
 using Base.Experimental: @MethodTable, @overlay, @consistent_overlay
@@ -16,19 +16,19 @@ method = only(Base.MethodList(RT_METHOD_DEF))
 
 # from julia/Compiler/test/AbstractInterpreter.jl
 using Core: CodeInstance, CodeInfo
-source_mode = Compiler.SOURCE_MODE_ABI
+source_mode = CC.SOURCE_MODE_ABI
 @test source_mode == 0x01
 include(normpath(@__DIR__, "newinterp.jl"))
 @newinterp InvokeInterp
 struct InvokeOwner end
 codegen = IdDict{CodeInstance, CodeInfo}()
-Compiler.cache_owner(::InvokeInterp) = InvokeOwner()
-Compiler.codegen_cache(::InvokeInterp) = codegen
+CC.cache_owner(::InvokeInterp) = InvokeOwner()
+CC.codegen_cache(::InvokeInterp) = codegen
 let interp = InvokeInterp()
     f = error
     args = "test"
     mi = @ccall jl_method_lookup(Any[f, args...]::Ptr{Any}, (1+length(args))::Csize_t, Base.tls_world_age()::Csize_t)::Ref{Core.MethodInstance}
-    ci = Compiler.typeinf_ext_toplevel(interp, mi, source_mode)
+    ci = CC.typeinf_ext_toplevel(interp, mi, source_mode)
     result = nothing
     try
         invoke(f, ci, args...)

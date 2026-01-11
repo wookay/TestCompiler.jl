@@ -1,9 +1,10 @@
 using Jive
-@If VERSION >= v"1.12" module test_testcompiler_abstract_interpretation
+@If VERSION >= v"1.12" module test_corecompiler_abstract_interpretation
 
 using Test
 using Core: Compiler as CC
 using .CC: CallInfo, CallMeta, RTEffects, Future, Effects, EFFECTS_THROWS, NoCallInfo,
+           ArgInfo,
            isready
 
 f = Future{CallMeta}()
@@ -16,6 +17,9 @@ fu = Future(UNKNOWN)
 @test isready(fu)
 @test getindex(fu) == UNKNOWN
 
+(; fargs, argtypes) = ArgInfo(nothing, [])
+@test fargs === nothing
+@test argtypes == []
 
 
 # from julia/Compiler/src/types.jl
@@ -216,4 +220,4 @@ struct Future{T}
 end
 =#
 
-end # module test_testcompiler_abstract_interpretation
+end # module test_corecompiler_abstract_interpretation
