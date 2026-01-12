@@ -35,9 +35,13 @@ CC.const_prop_function_heuristic
 include("newinterp.jl")
 @newinterp ConstPropInterp
 
-using .CC: AbstractInterpreter
+using .CC: AbstractInterpreter, typeinf_lattice
 @test ConstPropInterp <: AbstractInterpreter
 interp = ConstPropInterp()
+
+using .CC: InferenceLattice, ConditionalsLattice, typeinf_lattice
+𝕃ᵢ = typeinf_lattice(interp)
+@test 𝕃ᵢ isa InferenceLattice{<:ConditionalsLattice}
 
 using .CC: InternalCodeCache, code_cache
 if VERSION >= v"1.14.0-DEV.60"
@@ -48,7 +52,18 @@ else
     @test code_cache(interp) isa WorldView{InternalCodeCache}
 end
 
-# TODO
-# test Compiler.const_prop_function_heuristic
+f = +
+@test typename(typeof(f)).constprop_heuristic == Core.SAMETYPE_HEURISTIC
+mi = first(only(methods(f, Tuple{Int, Int})).specializations)::Core.MethodInstance
+
+using .CC: InferenceResult, InferenceState
+inf_result = InferenceResult(mi, 𝕃ᵢ)
+sv = InferenceState(inf_result, #=cache_mode=# :no, interp)
+
+using .CC: ArgInfo, is_all_overridden
+arginfo = ArgInfo([1, 2], Any[Int, Int])
+all_overridden = is_all_overridden(interp, arginfo, sv)
+@test !all_overridden
+@test !Compiler.const_prop_function_heuristic(interp, f, arginfo, all_overridden, sv)
 
 end # module test_corecompiler_constprop_heuristic
