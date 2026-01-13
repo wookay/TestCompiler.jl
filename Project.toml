@@ -5,11 +5,12 @@ version = "0.1.0"
 
 [deps]
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
-LogicalOperators = "6ac76662-4673-4d6a-8390-a82adc3670cf"
 Compiler = "807dbc54-b67e-4c79-8afb-eafe4df6f2e1"
+LogicalOperators = "6ac76662-4673-4d6a-8390-a82adc3670cf"
 
 [sources]
 LogicalOperators = {url = "https://github.com/wookay/LogicalOperators.jl", rev = "main"}
+FemtoCompiler = {url = "https://github.com/wookay/FemtoCompiler.jl", rev = "main"}
 DumpTruck = {url = "https://github.com/wookay/DumpTruck.jl", rev = "main"}
 
 [extensions]
@@ -19,8 +20,9 @@ TestCompilerExt = ["Compiler"]
 julia = "1.11"
 Compiler = "0.1"
 LogicalOperators = "0.1"
-DumpTruck = "0.1"
 Jive = "0.3"
+FemtoCompiler = "0.1"
+DumpTruck = "0.1"
 JuliaInterpreter = "0.10"
 
 [extras]
@@ -30,8 +32,9 @@ Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 Jive = "ba5e3d4b-8524-549f-bc71-e76ad9e9deed"
+FemtoCompiler = "92d42091-2d14-46a9-a897-febf9702e17e"
 DumpTruck = "1c7707eb-034e-4b2b-a9eb-f5ae3e79caea"
 JuliaInterpreter = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 
 [targets]
-test = ["Test", "UUIDs", "Pkg", "Markdown", "InteractiveUtils", "Jive", "DumpTruck", "JuliaInterpreter"]
+test = ["Test", "UUIDs", "Pkg", "Markdown", "InteractiveUtils", "Jive", "FemtoCompiler", "DumpTruck", "JuliaInterpreter"]

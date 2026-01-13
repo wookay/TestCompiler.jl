@@ -8,5 +8,6 @@
 
 ### repositories
  - TestCompiler 🚗  https://github.com/wookay/TestCompiler.jl
+ - FemtoCompiler 🛣️   https://github.com/wookay/FemtoCompiler.jl
  - TestJuliaLowering 📉  https://github.com/wookay/TestJuliaLowering.jl
  - TestStdlibs 🏫  https://github.com/wookay/TestStdlibs.jl
