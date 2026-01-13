@@ -1,13 +1,13 @@
 using Jive
 targets = split("""
-testcompiler
 corecompiler
-pkgs/juliainterpreter
+testcompiler
 """)
 on_ci = haskey(ENV, "CI")
 if false # takes 18.83 seconds
     !on_ci && VERSION >= v"1.12-beta" && push!(targets, "pkgs/cthulhu")
     !on_ci && push!(targets, "pkgs/revise")
+    !on_ci && push!(targets, "pkgs/juliainterpreter")
 end
 
 # corecompiler/takes_long_time/typeinf_ext_toplevel.jl  takes 14.70 seconds
