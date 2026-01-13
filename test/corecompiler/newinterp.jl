@@ -54,11 +54,19 @@ macro newinterp(InterpName, ephemeral_cache::Bool=false)
         $Compiler.get_inference_cache(interp::$InterpName) = interp.inf_cache
         $Compiler.cache_owner(::$InterpName) = $InterpName
         $(ephemeral_cache && quote
-        $Compiler.code_cache(interp::$InterpName) = $Compiler.OverlayCodeCache(interp.global_cache, interp.inf_cache)
-        $Compiler.get(cache::$InterpCacheName, mi::$C.MethodInstance, default) = get(cache.dict, mi, default)
-        $Compiler.getindex(cache::$InterpCacheName, mi::$C.MethodInstance) = getindex(cache.dict, mi)
-        $Compiler.haskey(cache::$InterpCacheName, mi::$C.MethodInstance) = haskey(cache.dict, mi)
-        $Compiler.setindex!(cache::$InterpCacheName, ci::$C.CodeInstance, mi::$C.MethodInstance) = setindex!(cache.dict, ci, mi)
+        if VERSION >= v"1.14.0-DEV.60"
+            $Compiler.code_cache(interp::$InterpName) = $Compiler.OverlayCodeCache(interp.global_cache, interp.inf_cache)
+            $Compiler.get(cache::$InterpCacheName, mi::$C.MethodInstance, default) = get(cache.dict, mi, default)
+            $Compiler.getindex(cache::$InterpCacheName, mi::$C.MethodInstance) = getindex(cache.dict, mi)
+            $Compiler.haskey(cache::$InterpCacheName, mi::$C.MethodInstance) = haskey(cache.dict, mi)
+            $Compiler.setindex!(cache::$InterpCacheName, ci::$C.CodeInstance, mi::$C.MethodInstance) = setindex!(cache.dict, ci, mi)
+        else
+            $Compiler.code_cache(interp::$InterpName) = $Compiler.WorldView(interp.global_cache, $Compiler.WorldRange(interp.world))
+            $Compiler.get(wvc::$Compiler.WorldView{$InterpCacheName}, mi::$C.MethodInstance, default) = get(wvc.cache.dict, mi, default)
+            $Compiler.getindex(wvc::$Compiler.WorldView{$InterpCacheName}, mi::$C.MethodInstance) = getindex(wvc.cache.dict, mi)
+            $Compiler.haskey(wvc::$Compiler.WorldView{$InterpCacheName}, mi::$C.MethodInstance) = haskey(wvc.cache.dict, mi)
+            $Compiler.setindex!(wvc::$Compiler.WorldView{$InterpCacheName}, ci::$C.CodeInstance, mi::$C.MethodInstance) = setindex!(wvc.cache.dict, ci, mi)
+        end
         end)
     end
 end

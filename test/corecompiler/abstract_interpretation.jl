@@ -22,6 +22,46 @@ fu = Future(UNKNOWN)
 @test argtypes == []
 
 
+using Core: CodeInstance, CodeInfo, ReturnNode
+using Base.Experimental: @MethodTable, @overlay
+
+# from julia/Compiler/test/AbstractInterpreter.jl
+@MethodTable OVERLAY_PLUS_MT
+function overlay_plus end
+overlay_plus(x, y) = :overlay
+@overlay OVERLAY_PLUS_MT Base.:+(x::Int, y::Int) = overlay_plus(x, y)
+
+# from julia/Compiler/test/irutils.jl
+code_typed1(args...; kwargs...) = first(only(code_typed(args...; kwargs...)))::CodeInfo
+
+using .CC: NativeInterpreter
+OverlayPlusInterp = NativeInterpreter
+# @newinterp OverlayPlusInterp
+
+CC.method_table(interp::OverlayPlusInterp) = CC.OverlayMethodTable(CC.get_inference_world(interp), OVERLAY_PLUS_MT)
+
+f = +
+
+interp = OverlayPlusInterp()
+let src = code_typed1(f, (Int, Int); interp)
+    line = src.code[end]
+    @test line == ReturnNode(:(:overlay))
+end
+
+let src = code_typed1(f, (Int, Int))
+    line = src.code[end-1]
+    @test line.args[1].name === :add_int
+end
+
+# from julia/Compiler/src/types.jl
+# Quickly and easily satisfy the AbstractInterpreter API contract
+@test CC.InferenceParams(interp) == CC.InferenceParams(3, 4, 8, 32, 3, true, false, false, false, false)
+@test CC.OptimizationParams(interp) == CC.OptimizationParams(true, 100, 1000, 250, 32, true, false, false)
+@test CC.get_inference_world(interp) == Base.get_world_counter()
+@test CC.get_inference_cache(interp) == CC.InferenceResult[]
+@test CC.cache_owner(interp) === nothing
+
+
 # from julia/Compiler/src/types.jl
 #=
 struct ArgInfo

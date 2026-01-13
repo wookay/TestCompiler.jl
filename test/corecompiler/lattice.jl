@@ -45,13 +45,19 @@ InterMustAliasesLattice{𝕃 where 𝕃<:AbstractLattice} <: AbstractLattice
 
 @test (AnyConditionalsLattice{𝕃} where 𝕃<:AbstractLattice) === Union{ConditionalsLattice{𝕃}, InterConditionalsLattice{𝕃}} where 𝕃<:AbstractLattice
 @test (AnyMustAliasesLattice{𝕃} where 𝕃<:AbstractLattice)  === Union{MustAliasesLattice{𝕃}, InterMustAliasesLattice{𝕃}} where 𝕃<:AbstractLattice
+
 @test SimpleInferenceLattice === PartialsLattice{ConstsLattice}
-@test BaseInferenceLattice   === ConditionalsLattice{PartialsLattice{ConstsLattice}}
-@test IPOResultLattice       === InterConditionalsLattice{PartialsLattice{ConstsLattice}}
+@test PartialsLattice(ConstsLattice()) isa SimpleInferenceLattice
+
+@test BaseInferenceLattice === ConditionalsLattice{SimpleInferenceLattice}
+@test ConditionalsLattice(SimpleInferenceLattice.instance) isa BaseInferenceLattice
+
+@test IPOResultLattice === InterConditionalsLattice{SimpleInferenceLattice}
 
 # The full lattice used for abstract interpretation during inference.
 # Extends a base lattice `𝕃` and adjoins `LimitedAccuracy`.
 InferenceLattice{𝕃 where 𝕃<:AbstractLattice} <: AbstractLattice
+@test CC.fallback_lattice == InferenceLattice(BaseInferenceLattice.instance)
 
 widenlattice
 is_valid_lattice_norec
