@@ -22,7 +22,7 @@ jobs:
         julia-arch: [x64]
         os: [ubuntu-latest]
         include:
-          - julia-version: 1.12.3       # 2025-12-15
+          - julia-version: 1.12.4       # 2026-01-06
             os: ubuntu-latest
           - julia-version: 1.11.8       # 2025-12-15
             os: ubuntu-latest
