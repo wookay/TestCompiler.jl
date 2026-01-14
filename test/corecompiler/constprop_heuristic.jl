@@ -32,14 +32,10 @@ end # if VERSION >= v"1.12.0-DEV.949"
 CC.force_const_prop
 CC.const_prop_function_heuristic
 
-include("newinterp.jl")
-@newinterp ConstPropInterp
-
-using .CC: AbstractInterpreter, typeinf_lattice
-@test ConstPropInterp <: AbstractInterpreter
-interp = ConstPropInterp()
-
+using FemtoCompiler: FemtoInterpreter
 using .CC: InferenceLattice, ConditionalsLattice, typeinf_lattice
+
+interp = FemtoInterpreter()
 𝕃ᵢ = typeinf_lattice(interp)
 @test 𝕃ᵢ isa InferenceLattice{<:ConditionalsLattice}
 
