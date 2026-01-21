@@ -1,4 +1,4 @@
-module test_corecompiler_runtime_internals
+module test_base_runtime_internals
 
 using Test
 
@@ -21,12 +21,12 @@ T = Union{Int, String}
 @test Base.unionlen(T) == 2
 @test Union{Base.uniontypes(T)...} === T
 
-end # module test_corecompiler_runtime_internals
+end # module test_base_runtime_internals
 
 
 using Jive
 # @__FUNCTION__  julia commit bea90a2f503018115b30559b9d6838c05a86b9b4
-@If VERSION >= v"1.13.0-DEV.878" module test_corecompiler_runtime_internals_function_macro
+@If VERSION >= v"1.13.0-DEV.878" module test_base_runtime_internals_function_macro
 
 using Test
 
@@ -40,4 +40,4 @@ end
 λ() = eval(Expr(:thisfunction))
 @test λ isa Function
 
-end # module test_corecompiler_runtime_internals_function_macro
+end # module test_base_runtime_internals_function_macro

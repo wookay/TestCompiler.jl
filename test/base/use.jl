@@ -1,4 +1,4 @@
-module test_corecompiler_use
+module test_base_use
 
 module A
 using Test
@@ -9,19 +9,15 @@ function f()
 topmod = Base.moduleroot(@__MODULE__)
 old_uuid = ccall(:jl_module_uuid, NTuple{2, UInt64}, (Any,), Jive)
 @test old_uuid == (0xba5e3d4b8524549f, 0xbc71e76ad9e9deed)
-end
+end # function f
 
 using UUIDs
 m = Base.maybe_loaded_precompile(Base.PkgId(UUID(0xba5e3d4b8524549f_bc71e76ad9e9deed), "Jive"), build_id)
 @test Jive == m
 
-function Using(path::String, uuid::UUID)::Module
-    Module()
-end
-
-end
+end # module A
 
 using .A: f
 f()
 
-end # module test_corecompiler_use
+end # module test_base_use

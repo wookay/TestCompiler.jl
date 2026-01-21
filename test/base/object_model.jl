@@ -1,4 +1,4 @@
-module test_corecompiler_object_model_functions
+module test_base_object_model_functions
 
 using Test
 
@@ -17,4 +17,4 @@ end
 𝐑 = MathematicalBoldCapitalR()
 @test 𝐑.den == "𝐑.den"
 
-end # module test_corecompiler_object_model_functions
+end # module test_base_object_model_functions

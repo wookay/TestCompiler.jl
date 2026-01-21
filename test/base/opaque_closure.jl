@@ -1,4 +1,4 @@
-module test_corecompiler_opaque_closure
+module test_base_opaque_closure
 
 using Test
 using Base.Experimental: @opaque
@@ -33,4 +33,4 @@ the argument type may be fixed length even if the function is variadic.
 macro opaque(ex)
 =#
 
-end # module test_corecompiler_opaque_closure
+end # module test_base_opaque_closure

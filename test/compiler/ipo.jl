@@ -1,4 +1,4 @@
-module test_corecompiler_ipo
+module test_compiler_ipo
 
 using Test
 
@@ -22,4 +22,4 @@ using Test
 # from julia/Compiler/src/optimize.jl
 # function run_passes_ipo_safe(ci::CodeInfo, sv::OptimizationState, optimize_until::Union{Nothing, Int, String} = nothing)
 
-end # module test_corecompiler_ipo
+end # module test_compiler_ipo

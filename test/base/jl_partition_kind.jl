@@ -1,5 +1,5 @@
 using Jive
-@If VERSION >= v"1.13.0-DEV.151" module test_corecompiler_jl_partition_kind
+@If VERSION >= v"1.13.0-DEV.151" module test_base_jl_partition_kind
 
 using Test
 
@@ -60,4 +60,4 @@ end
 import .M: imported_var
 @test Base.binding_kind(@__MODULE__, :imported_var) == Base.PARTITION_KIND_IMPORTED
 
-end # module test_corecompiler_jl_partition_kind
+end # module test_base_jl_partition_kind

@@ -1,5 +1,5 @@
 using Jive
-@If VERSION >= v"1.13" module test_corecompiler_misc_semaphore
+@If VERSION >= v"1.13" module test_base_misc_semaphore
 
 using Test
 
@@ -12,4 +12,4 @@ Base.release(s)
 
 Base.@acquire s 1+2
 
-end # module test_corecompiler_misc_semaphore
+end # module test_base_misc_semaphore

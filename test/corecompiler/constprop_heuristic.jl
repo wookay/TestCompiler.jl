@@ -4,7 +4,7 @@ using Jive
 
 using Test
 using Core: Compiler as CC
-using .CC: typename
+using Core: typename
 
 # julia/base/boot.jl
 # typename(_).constprop_heuristic

@@ -1,7 +1,7 @@
 # see also  opaque_closure.jl
 
 using Jive
-@If VERSION >= v"1.14.0-DEV.16" module test_corecompiler_experimental_reexport
+@If VERSION >= v"1.14.0-DEV.16" module test_base_experimental_reexport
 
 using Test
 
@@ -18,4 +18,4 @@ end
 using .M2
 @test f1 isa Function
 
-end # module test_corecompiler_experimental_reexport
+end # module test_base_experimental_reexport

@@ -1,5 +1,5 @@
 using Jive
-@If VERSION >= v"1.12-beta" module test_corecompiler_lock
+@If VERSION >= v"1.12-beta" module test_base_lock
 
 using Test
 
@@ -36,4 +36,4 @@ taskvec = task_state()
 @test taskvec !== fetch(@async task_state())
 @test taskvec !== fetch(@async task_state())
 
-end # module test_corecompiler_lock
+end # module test_base_lock

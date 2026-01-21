@@ -1,4 +1,4 @@
-module test_corecompiler_expr
+module test_base_expr
 
 using Test
 
@@ -10,4 +10,4 @@ using Base: is_short_function_def, is_function_def
 
 @test :( (:a,) ) == Expr(:tuple, QuoteNode(:a))
 
-end # module test_corecompiler_expr
+end # module test_base_expr

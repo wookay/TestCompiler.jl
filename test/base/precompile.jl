@@ -1,4 +1,4 @@
-module test_corecompiler_precompile
+module test_base_precompile
 
 using Test
 
@@ -73,4 +73,4 @@ MA = invokelatest(getglobal, @__MODULE__, StaleA)
 
 @test MA.fib() == 1
 
-end # module test_corecompiler_precompile
+end # module test_base_precompile

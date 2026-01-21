@@ -1,4 +1,4 @@
-module test_corecompiler_callable
+module test_base_callable
 
 using Test
 
@@ -23,4 +23,4 @@ p = Polynomial([1,10,100])
 @test p(3) == 931
 @test p() == 2551
 
-end # module test_corecompiler_callable
+end # module test_base_callable

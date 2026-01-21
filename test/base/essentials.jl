@@ -1,4 +1,4 @@
-module test_corecompiler_essentials
+module test_base_essentials
 
 using Test
 using Jive
@@ -29,4 +29,4 @@ function f()
 end
 @test f() === false
 
-end # module test_corecompiler_essentials
+end # module test_base_essentials

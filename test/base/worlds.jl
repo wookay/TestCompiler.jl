@@ -1,4 +1,4 @@
-module test_corecompiler_worlds
+module test_base_worlds
 
 using Test
 
@@ -15,4 +15,4 @@ wc2::UInt64 = Base.get_world_counter()
 @test Base.invoke_in_world(wc1, f) == 1
 @test Base.invoke_in_world(wc2, f) == 2
 
-end # module test_corecompiler_worlds
+end # module test_base_worlds

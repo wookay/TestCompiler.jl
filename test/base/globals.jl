@@ -1,4 +1,4 @@
-module test_corecompiler_access_to_globals
+module test_base_access_to_globals
 
 using Test
 
@@ -27,4 +27,4 @@ if VERSION >= v"1.12"
 @test isdefinedglobal(M, :a)
 end # if VERSION >= v"1.12"
 
-end # module test_corecompiler_access_to_globals
+end # module test_base_access_to_globals

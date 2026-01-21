@@ -1,5 +1,8 @@
 using Jive
 targets = split("""
+base
+core
+compiler
 corecompiler
 testcompiler
 """)
@@ -10,10 +13,9 @@ if false # takes 18.83 seconds
     !on_ci && push!(targets, "pkgs/juliainterpreter")
 end
 
-# corecompiler/takes_long_time/typeinf_ext_toplevel.jl  takes 14.70 seconds
+# j  runtests.jl compiler/takes_long_time/typeinf_ext_toplevel.jl  takes 17.94 seconds
+# jc runtests.jl compiler/takes_long_time/typeinf_ext_toplevel.jl  takes  3.16 seconds
 skip = split("""
-corecompiler/setup_Compiler.jl
-corecompiler/newinterp.jl
-corecompiler/takes_long_time/
+compiler/takes_long_time/
 """)
 runtests(@__DIR__, targets=targets, skip=skip)
