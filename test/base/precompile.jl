@@ -73,4 +73,8 @@ MA = invokelatest(getglobal, @__MODULE__, StaleA)
 
 @test MA.fib() == 1
 
+# clean up
+rm(temp, recursive = true)
+@test !isfile(joinpath(temp, string(StaleA, ".jl")))
+
 end # module test_base_precompile
