@@ -1,5 +1,5 @@
 using Jive
-@If VERSION >= v"1.12-beta" @useinside Main module test_compiler_takes_long_time_typeinf_ext_toplevel
+@If VERSION >= v"1.14-DEV" @useinside Main module test_compiler_takes_long_time_typeinf_ext_toplevel
 
 using Test
 using Compiler: Compiler as C
