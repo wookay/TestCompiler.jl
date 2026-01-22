@@ -1,10 +1,12 @@
 using Jive
 targets = split("""
-testcompiler
-base
+compiler/precompile.jl
+testcompiler/ext.jl
 core
-compiler
 corecompiler
+base
+compiler
+testcompiler
 """)
 on_ci = haskey(ENV, "CI")
 if false # takes 18.83 seconds
@@ -15,7 +17,11 @@ end
 
 # j  runtests.jl compiler/takes_long_time/typeinf_ext_toplevel.jl  takes 17.94 seconds
 # jc runtests.jl compiler/takes_long_time/typeinf_ext_toplevel.jl  takes  3.16 seconds
+if on_ci
+skip = []
+else
 skip = split("""
 compiler/takes_long_time/
 """)
+end
 runtests(@__DIR__, targets=targets, skip=skip)
