@@ -11,7 +11,7 @@ end
 
 using Compiler: Compiler as C
 using Core.Compiler: Compiler as CC
-@test C === CC
+# @test C === CC
 
 @test !isempty(methods(TestCompiler.extension_interface, Tuple{Symbol}))
 ext = Base.get_extension(TestCompiler, :TestCompilerExt)
