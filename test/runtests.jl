@@ -1,10 +1,10 @@
 using Jive
 targets = split("""
+testcompiler
 base
 core
 compiler
 corecompiler
-testcompiler
 """)
 on_ci = haskey(ENV, "CI")
 if false # takes 18.83 seconds
