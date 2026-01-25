@@ -12,6 +12,7 @@ LogicalOperators = "6ac76662-4673-4d6a-8390-a82adc3670cf"
 LogicalOperators = {url = "https://github.com/wookay/LogicalOperators.jl", rev = "main"}
 FemtoCompiler = {url = "https://github.com/wookay/FemtoCompiler.jl", rev = "main"}
 DumpTruck = {url = "https://github.com/wookay/DumpTruck.jl", rev = "main"}
+Doors = {url = "https://github.com/wookay/Doors.jl", rev = "main"}
 
 [extensions]
 TestCompilerExt = ["Compiler"]
@@ -23,6 +24,7 @@ LogicalOperators = "0.1"
 Jive = "0.3"
 FemtoCompiler = "0.1"
 DumpTruck = "0.1"
+Doors = "0.1"
 JuliaInterpreter = "0.10"
 
 [extras]
@@ -35,8 +37,9 @@ Profile = "9abbd945-dff8-562f-b5e8-e1ebf5ef1b79"
 Jive = "ba5e3d4b-8524-549f-bc71-e76ad9e9deed"
 FemtoCompiler = "92d42091-2d14-46a9-a897-febf9702e17e"
 DumpTruck = "1c7707eb-034e-4b2b-a9eb-f5ae3e79caea"
+Doors = "562d782d-cdb6-40a5-8f18-d6f69b5e6b90"
 JuliaInterpreter = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 
 [targets]
 test = ["Test", "UUIDs", "Pkg", "Markdown", "InteractiveUtils", "Profile",
-        "Jive", "FemtoCompiler", "DumpTruck", "JuliaInterpreter"]
+        "Jive", "FemtoCompiler", "DumpTruck", "Doors", "JuliaInterpreter"]
