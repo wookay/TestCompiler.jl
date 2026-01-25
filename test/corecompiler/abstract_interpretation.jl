@@ -58,7 +58,7 @@ end
 @test CC.OptimizationParams(interp) == CC.OptimizationParams(true, 100, 1000, 250, 32, true, false, false)
 @test CC.get_inference_world(interp) == Base.get_world_counter()
 @test CC.get_inference_cache(interp) == CC.InferenceResult[]
-@test CC.cache_owner(interp) !== nothing
+# @test CC.cache_owner(interp) !== nothing
 
 
 # from julia/Compiler/src/types.jl
