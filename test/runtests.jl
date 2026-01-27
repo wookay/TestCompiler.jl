@@ -5,6 +5,7 @@ testcompiler/ext.jl
 core
 corecompiler
 base
+src
 compiler
 testcompiler
 """)
