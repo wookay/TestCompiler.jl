@@ -5,8 +5,10 @@ version = "0.1.0"
 
 [deps]
 REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Compiler = "807dbc54-b67e-4c79-8afb-eafe4df6f2e1"
 LogicalOperators = "6ac76662-4673-4d6a-8390-a82adc3670cf"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
 
 [sources]
 LogicalOperators = {url = "https://github.com/wookay/LogicalOperators.jl", rev = "main"}
@@ -22,6 +24,7 @@ TestCompilerExt = ["Compiler"]
 julia = "1.11"
 Compiler = "0.1"
 LogicalOperators = "0.1"
+JSON3 = "1.14"
 Jive = "0.3"
 FemtoCompiler = "0.1"
 JuliaCore = "0.1"
