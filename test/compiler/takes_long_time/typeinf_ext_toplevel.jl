@@ -9,10 +9,12 @@ using FemtoCompiler: FemtoInterpreter
 InvokeInterp = FemtoInterpreter
 
 # from julia/Compiler/test/AbstractInterpreter.jl
+#=
 struct InvokeOwner end
 global codegen::IdDict{CodeInstance, CodeInfo} = IdDict{CodeInstance, CodeInfo}()
 C.cache_owner(::InvokeInterp) = InvokeOwner()
 C.codegen_cache(::InvokeInterp) = codegen
+=#
 let interp = InvokeInterp()
     source_mode = C.SOURCE_MODE_ABI
     f = (+)

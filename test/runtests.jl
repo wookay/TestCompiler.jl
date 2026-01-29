@@ -16,13 +16,15 @@ if false # takes 18.83 seconds
     !on_ci && push!(targets, "pkgs/juliainterpreter")
 end
 
-# j  runtests.jl compiler/takes_long_time/typeinf_ext_toplevel.jl  takes 17.94 seconds
-# jc runtests.jl compiler/takes_long_time/typeinf_ext_toplevel.jl  takes  3.16 seconds
+# j  runtests.jl compiler/takes_long_time/typeinf_ext_toplevel.jl  takes  9.06 seconds
+# jc runtests.jl compiler/takes_long_time/typeinf_ext_toplevel.jl  takes  0.05 seconds
 if on_ci
 skip = []
 else
 skip = split("""
-compiler/takes_long_time/
 """)
+#=
+compiler/takes_long_time/
+=#
 end
 runtests(@__DIR__, targets=targets, skip=skip)
