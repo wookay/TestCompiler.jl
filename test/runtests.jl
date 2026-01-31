@@ -24,7 +24,7 @@ else
 skip = split("""
 """)
 #=
-compiler/takes_long_time/
+corecompiler/takes_long_time/
 =#
 end
 runtests(@__DIR__, targets=targets, skip=skip)
