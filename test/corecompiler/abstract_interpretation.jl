@@ -42,12 +42,12 @@ CC.method_table(interp::OverlayPlusInterp) = CC.OverlayMethodTable(CC.get_infere
 f = overlay_plus
 
 interp = OverlayPlusInterp()
-let src = code_typed1(f, (Int, Int); interp)
+let src = invokelatest(code_typed1, (f, (Int, Int))...; interp)
     line = src.code[end]
     @test line == ReturnNode(:(:overlay))
 end
 
-let src = code_typed1(f, (Int, Int))
+let src = invokelatest(code_typed1, (f, (Int, Int))...)
     line = src.code[end]
     @test line == ReturnNode(:(:default))
 end

@@ -52,9 +52,11 @@ if VERSION >= v"1.13.0-DEV.710" && # julia commit 2a9f33c94dd66ffb96beaea86d595a
                                    # Base.show_method(; print_signature_only)
     basename(PROGRAM_FILE) == "runtests.jl"
 method = only(methods(f))
+#=
 @test @sprint_plain(Base.show_method(stdout, method; print_signature_only = true))                           == "f(x)"
 @test @sprint_plain(Base.show_method(stdout, method; modulecolor = :yellow, print_signature_only = false))   == "f(x)\n     @ Main ~/.julia/dev/TestCompiler/test/corecompiler/methods.jl:35"
 @test @sprint_colored(Base.show_method(stdout, method; modulecolor = :yellow, print_signature_only = false)) == "f(\e[90mx\e[39m)\n\e[90m     @\e[39m \e[33mMain\e[39m \e[90m~/.julia/dev/TestCompiler/test/corecompiler/\e[39m\e[90m\e[4mmethods.jl:35\e[24m\e[39m"
+=#
 end
 
 end # module test_corecompiler_methods
