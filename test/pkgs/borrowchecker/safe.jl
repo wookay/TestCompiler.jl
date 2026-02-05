@@ -1,4 +1,5 @@
-module test_pkgs_borrowchecker_safe
+using Jive
+@If VERSION >= v"1.12" module test_pkgs_borrowchecker_safe
 
 using Test
 using BorrowChecker: BorrowChecker

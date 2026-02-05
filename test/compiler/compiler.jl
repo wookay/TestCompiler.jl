@@ -1,4 +1,5 @@
-module test_compiler_compiler
+using Jive
+@If VERSION >= v"1.14-DEV" module test_compiler_compiler
 
 using Test
 using Compiler: Compiler as C
