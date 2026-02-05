@@ -27,4 +27,4 @@ skip = split("""
 corecompiler/takes_long_time/
 =#
 end
-runtests(@__DIR__, targets=targets, skip=skip)
+runtests(@__DIR__, targets=targets, skip=skip, into=Main)

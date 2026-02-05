@@ -6,6 +6,7 @@ using Core: Compiler as CC
 using .CC: CallInfo, CallMeta, RTEffects, Future, Effects, EFFECTS_THROWS, NoCallInfo,
            ArgInfo,
            isready
+using FemtoCompiler: FemtoInterpreter, code_typed1
 
 f = Future{CallMeta}()
 @test !isready(f)
@@ -31,10 +32,6 @@ function overlay_plus end
 overlay_plus(x, y) = :default
 @overlay OVERLAY_PLUS_MT overlay_plus(x::Int, y::Int) = :overlay
 
-# from julia/Compiler/test/irutils.jl
-code_typed1(args...; kwargs...) = first(only(code_typed(args...; kwargs...)))::CodeInfo
-
-using FemtoCompiler: FemtoInterpreter
 OverlayPlusInterp = FemtoInterpreter
 
 CC.method_table(interp::OverlayPlusInterp) = CC.OverlayMethodTable(CC.get_inference_world(interp), OVERLAY_PLUS_MT)

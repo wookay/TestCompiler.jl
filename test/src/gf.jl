@@ -10,12 +10,12 @@ module test_src_gf
   . method specialization and caching, invoking type inference
 =#
 
-# record_precompile_statement
-# static void record_precompile_statement(jl_method_instance_t *mi, double compilation_time, int is_recompile)
-# if (def->is_for_opaque_closure)
-#     return; // OpaqueClosure methods cannot be looked up by their types, so are incompatible with `precompile(...)`
 
-# jl_compile_method_internal
+### function jl_compile_method_internal
+#    ...
+#    record_precompile_statement(mi, 0, 0);
+#    ...
+#
 # jl_code_instance_t *jl_compile_method_internal(jl_method_instance_t *mi, size_t world)
 # // Is a recompile if there is cached code, and it was compiled (not only inferred) before
 # int is_recompile = 0;
@@ -42,5 +42,22 @@ module test_src_gf
 #     else if (did_compile && codeinst->owner == jl_nothing) {
 #         record_precompile_statement(mi, compile_time, is_recompile);
 #     }
+
+
+### function record_precompile_statement
+# static void record_precompile_statement(jl_method_instance_t *mi, double compilation_time, int is_recompile)
+# if (def->is_for_opaque_closure)
+#     return; // OpaqueClosure methods cannot be looked up by their types, so are incompatible with `precompile(...)`
+#
+# if (!jl_has_free_typevars(mi->specTypes)) {
+#    if (is_recompile && s_precompile == JL_STDERR && jl_options.color != JL_OPTIONS_COLOR_OFF)
+#        jl_printf(s_precompile, "\e[33m");
+#    if (force_trace_compile || jl_options.trace_compile_timing)
+#        jl_printf(s_precompile, "#= %6.1f ms =# ", compilation_time / 1e6);
+#    jl_printf(s_precompile, "precompile(");
+#    jl_static_show(s_precompile, mi->specTypes);
+#    jl_printf(s_precompile, ")");
+#    if (is_recompile) {
+#        jl_printf(s_precompile, " # recompile");
 
 end # module test_src_gf

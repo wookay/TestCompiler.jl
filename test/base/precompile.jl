@@ -9,7 +9,7 @@ function _write_module_to(modul::Module, dir::Union{Nothing, String}, name::Unio
         throw(ArgumentError(string("need a module: ", m.head)))
     end
     if name !== nothing
-        m.args[2] = name
+        m.args[end-1] = name
     end
     Base.remove_linenums!(m)
     jl_file_path = joinpath(dir, string(name, ".jl"))
