@@ -6,7 +6,8 @@ using Core: Compiler as CC
 using .CC: CallInfo, CallMeta, RTEffects, Future, Effects, EFFECTS_THROWS, NoCallInfo,
            ArgInfo,
            isready
-using FemtoCompiler: FemtoInterpreter, code_typed1
+using TestCompiler # TestCompilerExt
+using FemtoCompiler: FemtoInterpreter, OverlayPlus, code_typed1
 
 f = Future{CallMeta}()
 @test !isready(f)
@@ -23,31 +24,35 @@ fu = Future(UNKNOWN)
 @test argtypes == []
 
 
-using Core: CodeInstance, CodeInfo, ReturnNode
-using Base.Experimental: @MethodTable, @overlay
+using Core: ReturnNode
 
-# from julia/Compiler/test/AbstractInterpreter.jl
-@MethodTable OVERLAY_PLUS_MT
-function overlay_plus end
-overlay_plus(x, y) = :default
-@overlay OVERLAY_PLUS_MT overlay_plus(x::Int, y::Int) = :overlay
+f = OverlayPlus.overlay_plus
 
-OverlayPlusInterp = FemtoInterpreter
-
-CC.method_table(interp::OverlayPlusInterp) = CC.OverlayMethodTable(CC.get_inference_world(interp), OVERLAY_PLUS_MT)
-
-f = overlay_plus
-
-interp = OverlayPlusInterp()
-let src = invokelatest(code_typed1, (f, (Int, Int))...; interp)
-    line = src.code[end]
-    @test line == ReturnNode(:(:overlay))
-end
-
-let src = invokelatest(code_typed1, (f, (Int, Int))...)
+let src = code_typed1(f, (Int, Int))
     line = src.code[end]
     @test line == ReturnNode(:(:default))
 end
+
+interp = FemtoInterpreter()
+let src = code_typed1(f, (Int, Int); interp)
+    line = src.code[end]
+    if VERSION >= v"1.12"
+        @test line == ReturnNode(:(:overlay))
+    end
+end
+
+let src = invokelatest(code_typed1, f, (Int, Int))
+    line = src.code[end]
+    @test line == ReturnNode(:(:default))
+end
+
+let src = invokelatest(code_typed1, f, (Int, Int); interp)
+    line = src.code[end]
+    if VERSION >= v"1.12"
+        @test line == ReturnNode(:(:overlay))
+    end
+end
+
 
 # from julia/Compiler/src/types.jl
 # Quickly and easily satisfy the AbstractInterpreter API contract
