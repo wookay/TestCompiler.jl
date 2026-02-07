@@ -1,5 +1,9 @@
 module test_base_loading
 
+# from julia/base/loading.jl
+#
+# see also TestStdlibs/test/pkg/loading.jl
+
 using Test
 
 if VERSION >= v"1.11"
@@ -29,12 +33,40 @@ Base.loaded_precompiles # ::Dict{PkgId,Vector{Module}}
 Base.loaded_modules_order # ::Vector{Module}()
 
 
-@test Base.precompilation_stack == Base.PkgId[]
+pkgid = Base.identify_package(Test, "Test")
+if isempty(Base.precompilation_stack)
+    pkgs = [pkgid]
+    Base.track_nested_precomp(pkgs)
+    @test Base.precompilation_stack == pkgs
+end
+@test endswith(Base.compilecache_dir(pkgid), string(VERSION.major, ".", VERSION.minor, "/Test"))
+@test Base.isprecompiled(pkgid; ignore_loaded = true)
+
+### Base.isrelocatable
+@test Base.isrelocatable(pkgid) # Return whether a given PkgId within the active project is precompiled
+                                # and the associated cache is relocatable.
+freshest_path = Base.compilecache_freshest_path(pkgid)
+open(freshest_path, "r") do io
+    @test !iszero(Base.isvalid_cache_header(io))
+    # mutable struct Base.CacheHeaderIncludes
+    # id       :: Base.PkgId
+    # filename :: String
+    # fsize    :: UInt64
+    # hash     :: UInt32
+    # mtime    :: Float64
+    # modpath  :: Vector{String}
+    _, (includes, includes_srcfiles, _), _... = Base._parse_cache_header(io, freshest_path)
+    @test Set(map(x -> x.filename, includes)) == includes_srcfiles
+end
+
 @test Base.loading_extension === false
 @test Base.loadable_extensions === nothing
 @test Base.precompiling_extension === false
 if VERSION >= v"1.14.0-DEV.1303" # julia commit 3484331cb1
-    @test names(Base.__toplevel__, all = true) == [Symbol("#_internal_julia_parse"), :__toplevel__, :_internal_julia_lower, :_internal_syntax_version]
+    @test names(Base.__toplevel__, all = true) == [Symbol("#_internal_julia_parse"),
+                                                   :__toplevel__,
+                                                   :_internal_julia_lower,
+                                                   :_internal_syntax_version]
 else
     @test names(Base.__toplevel__, all = true) == [:__toplevel__]
 end
@@ -50,8 +82,6 @@ end
 @test Module[Core, Base, Main] == Base.loaded_modules_order[1:3]
 end # if
 
-
-# from julia/base/loading.jl
 
 #=
 const PRECOMPILE_TRACE_COMPILE = Ref{String}()
