@@ -59,7 +59,11 @@ end
 @test CC.InferenceParams(interp) == CC.InferenceParams(3, 4, 8, 32, 3, true, false, false, false, false)
 @test CC.OptimizationParams(interp) == CC.OptimizationParams(true, 100, 1000, 250, 32, true, false, false)
 @test CC.get_inference_world(interp) == Base.get_world_counter()
-@test CC.get_inference_cache(interp) == CC.InferenceResult[]
+if VERSION >= v"1.14.0-DEV.1691"
+    @test CC.get_inference_cache(interp) isa CC.InferenceCache
+else
+    @test CC.get_inference_cache(interp) == CC.InferenceResult[]
+end
 # @test CC.cache_owner(interp) !== nothing
 
 

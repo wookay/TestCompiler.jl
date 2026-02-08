@@ -7,7 +7,7 @@ using Jive
 
 using Test
 using Core: Compiler as CC
-using .CC: WorldRange, OverlayCodeCache, InternalCodeCache, InferenceResult
+using .CC: WorldRange, OverlayCodeCache, InternalCodeCache
 
 worlds = (; min_world, max_world) = WorldRange(1, 2)
 @test min_world == worlds.min_world == 1
@@ -19,6 +19,10 @@ world = CC.get_inference_world(interp)
 wvc = CC.code_cache(interp)
 @test wvc isa OverlayCodeCache{InternalCodeCache}
 @test wvc.globalcache.worlds.max_world == world
-@test wvc.localcache == InferenceResult[]
+if VERSION >= v"1.14.0-DEV.1691"
+    @test wvc.localcache isa CC.InferenceCache
+else
+    @test wvc.localcache == CC.InferenceResult[]
+end
 
 end # module test_corecompiler_cicache
