@@ -32,6 +32,9 @@ Base.loaded_modules # ::Dict{PkgId,Module}
 Base.loaded_precompiles # ::Dict{PkgId,Vector{Module}}
 Base.loaded_modules_order # ::Vector{Module}()
 
+### Cache
+Base.find_all_in_cache_path
+
 
 pkgid = Base.identify_package(Test, "Test")
 if isempty(Base.precompilation_stack)
@@ -45,7 +48,11 @@ end
 ### Base.isrelocatable
 @test Base.isrelocatable(pkgid) # Return whether a given PkgId within the active project is precompiled
                                 # and the associated cache is relocatable.
+if VERSION >= v"1.13.0-DEV.1253"
 freshest_path = Base.compilecache_freshest_path(pkgid)
+else
+freshest_path = Base.compilecache_path(pkgid)
+end
 open(freshest_path, "r") do io
     @test !iszero(Base.isvalid_cache_header(io))
     # mutable struct Base.CacheHeaderIncludes
@@ -76,25 +83,23 @@ end
 @test Base.EXT_PRIMED isa Dict
 @test Base.EXT_DORMITORY isa Dict
 @test Base.EXT_DORMITORY_FAILED == Base.ExtensionId[]
-@test Base.pkgorigins isa Dict
+@test Base.pkgorigins isa Dict{Base.PkgId, Base.PkgOrigin}
+# mutable struct PkgOrigin
+#     path::Union{String,Nothing}
+#     cachepath::Union{String,Nothing}
+#     version::Union{VersionNumber,Nothing}
+# end
 @test Base.loaded_modules isa Dict
 @test Base.loaded_precompiles isa Dict
 @test Module[Core, Base, Main] == Base.loaded_modules_order[1:3]
 end # if
 
-
-#=
-const PRECOMPILE_TRACE_COMPILE = Ref{String}()
-function create_expr_cache(pkg::PkgId, input::PkgLoadSpec, output::String, output_o::Union{Nothing, String},
-                           concrete_deps::typeof(_concrete_dependencies), flags::Cmd=``, cacheflags::CacheFlags=CacheFlags(),
-                           internal_stderr::IO = stderr, internal_stdout::IO = stdout, loadable_exts::Union{Vector{PkgId},Nothing}=nothing)
-
-        empty!(Base.EXT_DORMITORY) # If we have a custom sysimage with `EXT_DORMITORY` prepopulated
-        Base.track_nested_precomp($(_pkg_str(vcat(Base.precompilation_stack, pkg))))
-        Base.loadable_extensions = $(_pkg_str(loadable_exts))
-        Base.precompiling_extension = $(loading_extension)
-        Base.include_package_for_output($(_pkg_str(pkg)), $(repr(abspath(input.path))), $(repr(input.julia_syntax_version)), $(repr(depot_path)), $(repr(dl_load_path)),
-            $(repr(load_path)), $(_pkg_str(concrete_deps)), $(repr(source_path(nothing))))
-=#
+@lock Base.require_lock begin
+    specenv = Base.locate_package_env(pkgid, #=env=# nothing)
+    spec = specenv[1]
+    reasons = Dict{String,Int}()
+    loaded = Base._require_search_from_serialized(pkgid, spec, UInt128(0), true; reasons)
+    @test loaded === Test
+end
 
 end # module test_base_loading
