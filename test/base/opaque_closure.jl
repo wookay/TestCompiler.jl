@@ -36,7 +36,11 @@ Body::Int64
 │   %2 = (%1)(a)
 └──      return %2
 =#
-    @test opt != unopt
+    if VERSION >= v"1.14.0-DEV.1690" # julia commit 8f42a22425
+        @test opt != unopt
+    else
+        @test opt == unopt
+    end
 end
 
 # from julia/base/opaque_closure.jl
