@@ -1,0 +1,7 @@
+module test_pkgs_pkgcacheinspector_info
+
+using PkgCacheInspector
+
+PkgCacheInspector.info_cachefile
+
+end # module test_pkgs_pkgcacheinspector_info

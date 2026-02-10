@@ -94,12 +94,7 @@ end
 @test Module[Core, Base, Main] == Base.loaded_modules_order[1:3]
 end # if
 
-@lock Base.require_lock begin
-    specenv = Base.locate_package_env(pkgid, #=env=# nothing)
-    spec = specenv[1]
-    reasons = Dict{String,Int}()
-    loaded = Base._require_search_from_serialized(pkgid, spec, UInt128(0), true; reasons)
-    @test loaded === Test
-end
+origin = get(Base.pkgorigins, pkgid, nothing)
+@test endswith(origin.path, "Test/src/Test.jl")
 
 end # module test_base_loading

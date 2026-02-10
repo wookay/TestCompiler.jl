@@ -1,0 +1,7 @@
+# https://github.com/JuliaLang/PackageCompiler.jl
+
+[deps]
+PackageCompiler = "9b87118b-4619-50d2-8e1e-99f35a4d4d9d"
+
+[compat]
+PackageCompiler = "2.2"

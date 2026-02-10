@@ -1,0 +1,7 @@
+# https://github.com/timholy/PkgCacheInspector.jl
+
+[deps]
+PkgCacheInspector= "a408fb95-4068-4cfa-a7f1-12fd503bd86c"
+
+[compat]
+PkgCacheInspector = "1.2"
