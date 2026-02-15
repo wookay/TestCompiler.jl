@@ -1,0 +1,272 @@
+julia $ make julia-sysimg-release
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/install_name_tool: warning: changes being made to the file will invalidate the code signature in: julia/usr/libexec/julia/zstd
+/bin/sh: line 1: 72287 Abort trap: 6           julia/usr/tools/libwhich -p libcrypto.dylib 2> /dev/null
+/bin/sh: line 1: 72289 Abort trap: 6           julia/usr/tools/libwhich -p libssl.dylib 2> /dev/null
+    PERL base/version_git.jl.phony
+    JULIA usr/lib/julia/basecompiler-o.a
+coreio.jl
+exports.jl
+docs/core.jl
+public.jl
+essentials.jl
+ctypes.jl
+gcutils.jl
+generator.jl
+runtime_internals.jl
+options.jl
+promotion.jl
+tuple.jl
+expr.jl
+pair.jl
+traits.jl
+range.jl
+error.jl
+bool.jl
+number.jl
+int.jl
+operators.jl
+pointer.jl
+refvalue.jl
+cmem.jl
+rounding.jl
+float.jl
+strings/lazy.jl
+checked.jl
+indices.jl
+genericmemory.jl
+array.jl
+abstractarray.jl
+baseext.jl
+c.jl
+abstractset.jl
+bitarray.jl
+bitset.jl
+abstractdict.jl
+iddict.jl
+idset.jl
+ntuple.jl
+iterators.jl
+namedtuple.jl
+anyall.jl
+ordering.jl
+coreir.jl
+module.jl
+../usr/share/julia/Compiler/src/Compiler.jl
+../usr/share/julia/Compiler/src/timing.jl
+../usr/share/julia/Compiler/src/sort.jl
+../usr/share/julia/Compiler/src/cicache.jl
+../usr/share/julia/Compiler/src/methodtable.jl
+../usr/share/julia/Compiler/src/effects.jl
+../usr/share/julia/Compiler/src/types.jl
+../usr/share/julia/Compiler/src/utilities.jl
+../usr/share/julia/Compiler/src/validation.jl
+../usr/share/julia/Compiler/src/ssair/basicblock.jl
+../usr/share/julia/Compiler/src/ssair/domtree.jl
+../usr/share/julia/Compiler/src/ssair/ir.jl
+../usr/share/julia/Compiler/src/ssair/tarjan.jl
+../usr/share/julia/Compiler/src/abstractlattice.jl
+../usr/share/julia/Compiler/src/stmtinfo.jl
+../usr/share/julia/Compiler/src/inferenceresult.jl
+../usr/share/julia/Compiler/src/inferencestate.jl
+../usr/share/julia/Compiler/src/typeutils.jl
+../usr/share/julia/Compiler/src/typelimits.jl
+../usr/share/julia/Compiler/src/typelattice.jl
+../usr/share/julia/Compiler/src/tfuncs.jl
+../usr/share/julia/Compiler/src/abstractinterpretation.jl
+../usr/share/julia/Compiler/src/typeinfer.jl
+../usr/share/julia/Compiler/src/optimize.jl
+../usr/share/julia/Compiler/src/ssair/heap.jl
+../usr/share/julia/Compiler/src/ssair/slot2ssa.jl
+../usr/share/julia/Compiler/src/ssair/inlining.jl
+../usr/share/julia/Compiler/src/ssair/verify.jl
+../usr/share/julia/Compiler/src/ssair/legacy.jl
+../usr/share/julia/Compiler/src/ssair/EscapeAnalysis.jl
+../usr/share/julia/Compiler/src/ssair/disjoint_set.jl
+../usr/share/julia/Compiler/src/ssair/passes.jl
+../usr/share/julia/Compiler/src/ssair/irinterp.jl
+../usr/share/julia/Compiler/src/bootstrap.jl
+../usr/share/julia/Compiler/src/precompile.jl
+../usr/share/julia/Compiler/src/reflection_interface.jl
+../usr/share/julia/Compiler/src/opaque_closure.jl
+../usr/share/julia/Compiler/src/reinfer.jl
+../usr/share/julia/Compiler/src/bindinginvalidations.jl
+Compiling the compiler. This may take several minutes ...
+Base.Compiler ──── 371.76126003265381 seconds
+flfrontend.jl
+    LINK usr/lib/julia/basecompiler.dylib
+ld: warning: reexported library with install name '@rpath/libunwind.1.dylib' found at 'julia/usr/lib/libunwind.dylib' couldn't be matched with any parent library and will be linked directly
+warning: no debug symbols in executable (-arch x86_64)
+    JULIA usr/lib/julia/sysbase-o.a
+Base.jl
+reflection.jl
+refpointer.jl
+./build_h.jl
+./version_git.jl
+meta.jl
+multimedia.jl
+char.jl
+strings/basic.jl
+strings/string.jl
+strings/substring.jl
+strings/cstring.jl
+cartesian.jl
+hashing.jl
+osutils.jl
+subarray.jl
+views.jl
+div.jl
+twiceprecision.jl
+complex.jl
+rational.jl
+multinverses.jl
+abstractarraymath.jl
+arraymath.jl
+slicearray.jl
+simdloop.jl
+reduce.jl
+reshapedarray.jl
+reinterpretarray.jl
+some.jl
+dict.jl
+hamt.jl
+set.jl
+io.jl
+iobuffer.jl
+linked_list.jl
+condition.jl
+threads.jl
+threadingconstructs.jl
+locks-mt.jl
+lock.jl
+intfuncs.jl
+strings/strings.jl
+strings/annotated.jl
+strings/search.jl
+strings/unicode.jl
+strings/util.jl
+strings/io.jl
+strings/annotated_io.jl
+regex.jl
+pcre.jl
+./pcre_h.jl
+parse.jl
+shell.jl
+stacktraces.jl
+show.jl
+../usr/share/julia/Compiler/src/ssair/show.jl
+../usr/share/julia/Compiler/src/verifytrim.jl
+arrayshow.jl
+methodshow.jl
+multidimensional.jl
+broadcast.jl
+missing.jl
+version.jl
+sysinfo.jl
+libc.jl
+./errno_h.jl
+libdl.jl
+atomics.jl
+channels.jl
+partr.jl
+task.jl
+threads_overloads.jl
+weakkeydict.jl
+scopedvalues.jl
+logging/logging.jl
+logging/ConsoleLogger.jl
+env.jl
+libuv.jl
+./uv_constants.jl
+asyncevent.jl
+iostream.jl
+stream.jl
+filesystem.jl
+path.jl
+stat.jl
+file.jl
+./file_constants.jl
+cmd.jl
+process.jl
+terminfo.jl
+terminfo_data.jl
+Terminals.jl
+secretbuffer.jl
+floatfuncs.jl
+math.jl
+special/cbrt.jl
+special/exp.jl
+special/hyperbolic.jl
+special/trig.jl
+special/rem_pio2.jl
+special/rem2pi.jl
+special/log.jl
+special/pow.jl
+reducedim.jl
+accumulate.jl
+permuteddimsarray.jl
+sort.jl
+fastmath.jl
+Enums.jl
+gmp.jl
+ryu/Ryu.jl
+ryu/utils.jl
+ryu/shortest.jl
+ryu/fixed.jl
+ryu/exp.jl
+mpfr.jl
+rawbigfloats.jl
+combinatorics.jl
+irrationals.jl
+mathconstants.jl
+experimental.jl
+opaque_closure.jl
+deepcopy.jl
+download.jl
+summarysize.jl
+errorshow.jl
+util.jl
+initdefs.jl
+threadcall.jl
+uuid.jl
+pkgid.jl
+toml_parser.jl
+linking.jl
+loading.jl
+binaryplatforms.jl
+cpuid.jl
+features_h.jl
+timing.jl
+client.jl
+asyncmap.jl
+deprecated.jl
+docs/basedocs.jl
+docs/intrinsicsdocs.jl
+docs/Docs.jl
+docs/bindings.jl
+docs/utils.jl
+precompilation.jl
+JuliaSyntax/src/JuliaSyntax.jl
+Base  ────────── 35.659184 seconds
+FileWatching  ──  4.312062 seconds
+Libdl  ─────────  0.003432 seconds
+Artifacts  ─────  0.265387 seconds
+SHA  ───────────  0.259913 seconds
+Sockets  ───────  0.862172 seconds
+LinearAlgebra  ─  7.240200 seconds
+Random  ────────  1.496041 seconds
+Stdlibs total  ─ 14.443418 seconds
+Sysimage built. Summary:
+Base ────────  35.659184 seconds 71.1723%
+Stdlibs ─────  14.443418 seconds 28.8277%
+Total ───────  50.102636 seconds
+    LINK usr/lib/julia/sysbase.dylib
+ld: warning: reexported library with install name '@rpath/libunwind.1.dylib' found at 'julia/usr/lib/libunwind.dylib' couldn't be matched with any parent library and will be linked directly
+    JULIA usr/lib/julia/sys-o.a
+Collecting and executing precompile statements
+└ Collect (Basic: ✓ 230) => Execute ✓ 324
+Precompilation complete. Summary:
+Total ───────   7.763746 seconds
+Outputting sysimage file...
+Output ──────  92.056650 seconds
+    LINK usr/lib/julia/sys.dylib
+ld: warning: reexported library with install name '@rpath/libunwind.1.dylib' found at 'julia/usr/lib/libunwind.dylib' couldn't be matched with any parent library and will be linked directly
