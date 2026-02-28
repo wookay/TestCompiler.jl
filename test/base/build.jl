@@ -6,7 +6,7 @@ using Test
 sysimg = Base.unsafe_string(Base.JLOptions().image_file)
 if Sys.isapple()
 @test endswith(sysimg, #= usr =# "/lib/julia/sys.dylib")
-else
+elseif Sys.islinux()
 @test endswith(sysimg, #= /opt/hostedtoolcache/julia/1.11.8/x64 =# "/lib/julia/sys.so")
 end
 
