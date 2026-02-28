@@ -18,13 +18,10 @@ end
 end # if !isdefined(Main, :__custom_compiler_active)
 
 
-# julia/Compiler/src/bootstrap.jl
-# WARNING: Method definition typeinf(Nothing, Core.MethodInstance, UInt8) in module Compiler at ../usr/share/julia/Compiler/src/bootstrap.jl:12 overwritten on the same line (check for duplicate calls to `include`).
-using Jive
-Jive.delete(Core.OptimizedGenerics.CompilerPlugins.typeinf, Tuple{Nothing, Core.MethodInstance, UInt8})
-
 using Core: Compiler as CC
 CC.activate!(; codegen = true)
+# Compiling the compiler. This may take several minutes ...
+# Base.Compiler ──── 3.9779188632965088 seconds
 
 @test isdefined(Main, :__custom_compiler_active)
 @test Base.REFLECTION_COMPILER[] == CC

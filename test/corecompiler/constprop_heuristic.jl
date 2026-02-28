@@ -8,13 +8,14 @@ using Core: typename
 
 # julia/base/boot.jl
 # typename(_).constprop_heuristic
-# const FORCE_CONST_PROP      = 0x1
-# const ARRAY_INDEX_HEURISTIC = 0x2
-# const ITERATE_HEURISTIC     = 0x3
-# const SAMETYPE_HEURISTIC    = 0x4
+# const FORCE_CONST_PROP           = 0x01
+# const ARRAY_INDEX_HEURISTIC      = 0x02
+# const ITERATE_HEURISTIC          = 0x04
+# const SAMETYPE_HEURISTIC         = 0x08
+# const DISABLE_SEMI_CONCRETE_EVAL = 0x10
 
-if VERSION >= v"1.12.0-DEV.949"
-@test typename(typeof(getproperty)).constprop_heuristic == Core.FORCE_CONST_PROP
+if VERSION >= v"1.14.0-DEV.1809" # julia commit 5308f13b01
+@test typename(typeof(getproperty)).constprop_heuristic == Base.or_int(Core.FORCE_CONST_PROP, Core.DISABLE_SEMI_CONCRETE_EVAL)
 @test typename(typeof(setproperty!)).constprop_heuristic == Core.FORCE_CONST_PROP
 
 @test typename(typeof(getindex)).constprop_heuristic == Core.ARRAY_INDEX_HEURISTIC
@@ -49,8 +50,10 @@ else
 end
 
 f = +
+types = Tuple{Int, Int}
+
 @test typename(typeof(f)).constprop_heuristic == Core.SAMETYPE_HEURISTIC
-mi = first(only(methods(f, Tuple{Int, Int})).specializations)::Core.MethodInstance
+mi::Core.MethodInstance = Base.method_instance(f, types)
 
 using .CC: InferenceResult, InferenceState
 inf_result = InferenceResult(mi, 𝕃ᵢ)
