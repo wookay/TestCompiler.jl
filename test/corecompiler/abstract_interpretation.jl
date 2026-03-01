@@ -1,5 +1,5 @@
 using Jive
-@If VERSION >= v"1.12" module test_corecompiler_abstract_interpretation
+@If VERSION >= v"1.14.0-DEV.1826" module test_corecompiler_abstract_interpretation
 
 using Test
 using Core: Compiler as CC
