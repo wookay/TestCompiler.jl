@@ -1,5 +1,8 @@
 module test_corecompiler_ssair
 
+# Static Single Assignment (SSA)
+# Intermediate Representation (IR)
+
 using Test
 using Core: Compiler as CC
 
@@ -53,5 +56,64 @@ enter_node = EnterNode(11)
 
 argument = Argument(1)
 @test argument.n == 1
+
+
+# from julia/Compiler/test/ssair.jl
+using .CC: IRCode, CFG, DFS, BasicBlock, StmtRange
+
+ir = IRCode()
+
+blocks = [BasicBlock(1:1, Int[], Int[])]
+index = [1]
+cfg = CFG(blocks, index)
+# CFG with 1 blocks:
+#   bb 1 (stmt 1)
+@test only(ir.cfg.blocks).stmts == only(cfg.blocks).stmts == StmtRange(1, 1)
+@test only(ir.cfg.blocks).preds == only(cfg.blocks).preds == Int[]
+@test only(ir.cfg.blocks).succs == only(cfg.blocks).succs == Int[]
+
+dfs = DFS(blocks, false)
+# Compiler.DFSTree([1], [1], [1], [1], [0], Tuple{Int64, Int64, Bool}[])
+@test dfs.to_pre == [1]
+@test dfs.from_pre == [1]
+@test dfs.to_post == [1]
+@test dfs.from_post == [1]
+@test dfs.to_parent_pre == [0]
+
+
+#=
+# from julia/Compiler/src/ssair/basicblock.jl
+struct BasicBlock
+    stmts::StmtRange
+    preds::Vector{Int}
+    succs::Vector{Int}
+end
+
+
+# from julia/Compiler/src/ssair/ir.jl
+IRCode()
+
+struct CFG
+    blocks::Vector{BasicBlock}
+    index::Vector{Int} # map from instruction => basic-block number
+end
+
+
+# from julia/Compiler/src/ssair/domtree.jl
+struct DFSTree
+    # These map between BB number and pre- or postorder numbers
+    to_pre::Vector{PreNumber}
+    from_pre::Vector{BBNumber}
+    to_post::Vector{PostNumber}
+    from_post::Vector{BBNumber}
+
+    # Records parent relationships in the DFS tree
+    # (preorder number -> preorder number)
+    # Storing it this way saves a few lookups in the snca_compress! algorithm
+    to_parent_pre::Vector{PreNumber}
+
+    _worklist::Vector{Tuple{BBNumber, PreNumber, Bool}}
+end
+=#
 
 end # module test_corecompiler_ssair
