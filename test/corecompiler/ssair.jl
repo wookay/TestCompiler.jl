@@ -1,4 +1,5 @@
-module test_corecompiler_ssair
+using Jive
+@If VERSION >= v"1.12" module test_corecompiler_ssair
 
 # Static Single Assignment (SSA)
 # Intermediate Representation (IR)
