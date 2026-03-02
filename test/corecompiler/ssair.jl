@@ -81,6 +81,18 @@ dfs = DFS(blocks, false)
 @test dfs.from_post == [1]
 @test dfs.to_parent_pre == [0]
 
+@test length(ir.stmts) == 1
+
+using .CC: BBNumber
+for (bb::BBNumber, idx::Int) in CC.bbidxiter(ir)
+    @test bb == 1
+    @test idx == 1
+end
+
+for (idx::Int, block::BasicBlock) in pairs(ir.cfg.blocks)
+    @test idx == 1
+    @test block == first(ir.cfg.blocks)
+end
 
 #=
 # from julia/Compiler/src/ssair/basicblock.jl
