@@ -22,9 +22,9 @@ jobs:
         julia-arch: [x64]
         os: [ubuntu-latest]
         include:
-          - julia-version: 1.12.4       # 2026-01-06
+          - julia-version: 1.12.5       # 2026-02-09
             os: ubuntu-latest
-          - julia-version: 1.11.8       # 2025-12-15
+          - julia-version: 1.11.9       # 2026-02-08
             os: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
