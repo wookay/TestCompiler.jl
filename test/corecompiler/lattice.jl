@@ -49,10 +49,10 @@ InterMustAliasesLattice{𝕃 where 𝕃<:AbstractLattice} <: AbstractLattice
 @test SimpleInferenceLattice === PartialsLattice{ConstsLattice}
 @test PartialsLattice(ConstsLattice()) isa SimpleInferenceLattice
 
-@test BaseInferenceLattice === ConditionalsLattice{SimpleInferenceLattice}
-@test ConditionalsLattice(SimpleInferenceLattice.instance) isa BaseInferenceLattice
-
-@test IPOResultLattice === InterConditionalsLattice{SimpleInferenceLattice}
+if VERSION >= v"1.14.0-DEV.1809" # julia commit 5308f13b01
+@test BaseInferenceLattice === MustAliasesLattice{ConditionalsLattice{PartialsLattice{ConstsLattice}}}
+@test IPOResultLattice === InterMustAliasesLattice{InterConditionalsLattice{PartialsLattice{ConstsLattice}}}
+end
 
 # The full lattice used for abstract interpretation during inference.
 # Extends a base lattice `𝕃` and adjoins `LimitedAccuracy`.

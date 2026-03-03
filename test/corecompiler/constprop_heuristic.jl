@@ -34,11 +34,13 @@ CC.force_const_prop
 CC.const_prop_function_heuristic
 
 using FemtoCompiler: FemtoInterpreter
-using .CC: InferenceLattice, ConditionalsLattice, typeinf_lattice
+using .CC: InferenceLattice, MustAliasesLattice, typeinf_lattice
 
 interp = FemtoInterpreter()
 𝕃ᵢ = typeinf_lattice(interp)
-@test 𝕃ᵢ isa InferenceLattice{<:ConditionalsLattice}
+if VERSION >= v"1.14.0-DEV.1809" # julia commit 5308f13b01
+@test 𝕃ᵢ isa InferenceLattice{<:MustAliasesLattice}
+end
 
 using .CC: InternalCodeCache, code_cache
 if VERSION >= v"1.14.0-DEV.60"
