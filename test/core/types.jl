@@ -1,4 +1,62 @@
+module test_core_types
+
+using Core: Const, InterConditional, PartialStruct, InterMustAlias
+using Core: CodeInfo, CodeInstance, MethodInstance
+
+
 #=
+help?> Core.Const
+
+  struct Const
+      val
+  end
+
+  The type representing a constant value.
+
+
+help?> Core.InterConditional
+
+  struct InterConditional
+      slot::Int
+      thentype
+      elsetype
+  end
+
+  Similar to Conditional, but conveys inter-procedural constraints imposed on
+  call arguments. This is separate from Conditional to catch logic errors: the
+  lattice element name is InterConditional while processing a call, then
+  Conditional everywhere else.
+
+
+help?> Core.PartialStruct
+
+  struct PartialStruct
+      typ
+      undefs::Vector{Union{Nothing,Bool}} # represents whether a given field may be undefined
+      fields::Vector{Any} # i-th element describes the lattice element for the i-th defined field
+  end
+
+  This extended lattice element is introduced when we have information about
+  an object's fields beyond what can be obtained from the object type. E.g. it
+  represents a tuple where some elements are known to be constants or a struct
+  whose Any-typed field is initialized with value whose type is concrete.
+
+  • typ indicates the type of the object
+
+  • undefs records defined-ness of each field
+
+  • fields holds the lattice elements corresponding to each field of the object
+
+  ...
+
+
+help?> Core.InterMustAlias
+
+  alias::InterMustAlias
+
+  This lattice element used in a very similar way as InterConditional, but corresponds to MustAlias.
+
+
 help?> Core.CodeInfo
   mutable struct Core.CodeInfo
   ≡≡≡≡≡≡
@@ -25,6 +83,7 @@ help?> Core.CodeInfo
   purity                                :: UInt16
   inlining_cost                         :: UInt16
 
+
 help?> Core.CodeInstance
   mutable struct Core.CodeInstance
   ≡≡≡≡≡≡
@@ -46,6 +105,7 @@ help?> Core.CodeInstance
   invoke           :: Ptr{Nothing}
   specptr          :: Ptr{Nothing}
 
+
 help?> Core.MethodInstance
   mutable struct Core.MethodInstance
   ≡≡≡≡≡≡
@@ -58,4 +118,7 @@ help?> Core.MethodInstance
   inInference     :: Bool
   cache_with_orig :: Bool
   precompiled     :: Bool
+
 =#
+
+end # module test_core_types
