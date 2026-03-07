@@ -4,6 +4,7 @@ using LogicalOperators: LogicalOperators
 using JSON3: JSON3
 using Dates: Dates
 
+if VERSION >= v"1.12"
 # TestCompiler.CompilerDevTools
 #=    8.7 ms =# precompile(Tuple{typeof(TestCompiler.CompilerDevTools.lookup_method_instance), Function, Int64, Vararg{Int64}})
 
@@ -84,5 +85,6 @@ using Dates: Dates
 
 # Base.Compiler
 #=    5.0 ms =# precompile(Tuple{typeof(Base.:(var"==")), Base.Compiler.Effects, Base.Compiler.Effects})
+end # if
 
 # module TestCompiler
