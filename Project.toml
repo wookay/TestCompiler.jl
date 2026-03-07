@@ -11,7 +11,6 @@ LogicalOperators = "6ac76662-4673-4d6a-8390-a82adc3670cf"
 JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
 
 [sources]
-Compiler = {path = "sources/Compiler"}
 LogicalOperators = {url = "https://github.com/wookay/LogicalOperators.jl", rev = "main"}
 FemtoCompiler = {url = "https://github.com/wookay/FemtoCompiler.jl", rev = "main"}
 JuliaCore = {subdir = "JuliaCore", url = "https://github.com/wookay/FemtoCompiler.jl", rev = "main"}
