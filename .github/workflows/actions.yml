@@ -32,5 +32,11 @@ jobs:
       with:
         version: ${{ matrix.julia-version }}
     - uses: julia-actions/cache@v1
+    - name: sources
+      run: |
+        git clone --depth=1 --filter=blob:none --sparse https://github.com/JuliaLang/julia sources
+        cd sources
+        git sparse-checkout set Compiler
+        cd ../
     - uses: julia-actions/julia-buildpkg@v1
     - uses: julia-actions/julia-runtest@v1
