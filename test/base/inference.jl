@@ -1,6 +1,6 @@
 using Jive
 # julia commit 44c835795b
-@If VERSION >= v"1.14.0-DEV.1826" module test_compiler_inference
+@If VERSION >= v"1.14.0-DEV.1826" module test_base_inference
 
 using Test
 
@@ -16,4 +16,4 @@ end
 @test Base.infer_return_type(f, (Int,)) == Float64
 @test Base.infer_return_type(f, (String,)) == Union{}
 
-end # module test_compiler_inference
+end # module test_base_inference
