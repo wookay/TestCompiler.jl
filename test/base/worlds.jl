@@ -8,7 +8,7 @@ using Test
 f() = 1
 wc1::UInt64 = Base.get_world_counter()
 
-# WARNING: Method definition f() in module test_compiler_worlds at worlds.jl:8 overwritten at worlds.jl:12
+# WARNING: Method definition f() in module test_base_worlds at worlds.jl:8 overwritten at worlds.jl:12
 f() = 2
 wc2::UInt64 = Base.get_world_counter()
 
