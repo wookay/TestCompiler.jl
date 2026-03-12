@@ -23,19 +23,40 @@ Base.@nospecializeinfer g4(@nospecialize(A::AbstractArray)) = A[1]
 (c4, t4) = @code_typed g4([1.0])
 
 @test c1.code == c2.code == c3.code
+
+code_coverage = Base.JLOptions().code_coverage != 0
 if VERSION >= v"1.12"
+if code_coverage
+@test sprint(show, c4) == """
+    CodeInfo(
+    1 ─      $(Expr(:code_coverage_effect))::Nothing
+    │   %2 =   dynamic Base.getindex(A, 1)::Any
+    └──      return %2
+    )"""
+else
 @test sprint(show, c4) == """
     CodeInfo(
     1 ─ %1 =   dynamic Base.getindex(A, 1)::Any
     └──      return %1
     )"""
+end # if code_coverage
 elseif VERSION >= v"1.11"
+if code_coverage
+@test sprint(show, c4) == """
+    CodeInfo(
+    1 ─      $(Expr(:code_coverage_effect))::Nothing
+    │   %2 = Base.getindex(A, 1)::Any
+    └──      return %2
+    )"""
+else
 @test sprint(show, c4) == """
     CodeInfo(
     1 ─ %1 = Base.getindex(A, 1)::Any
     └──      return %1
     )"""
+end # if code_coverage
 end
+
 @test t1 === t2 === t3 === Float64
 @test t4 === Any
 
