@@ -2,8 +2,9 @@
 
 [![CI](https://github.com/wookay/TestCompiler.jl/actions/workflows/actions.yml/badge.svg)](https://github.com/wookay/TestCompiler.jl/actions/workflows/actions.yml)
 
-* Compiler 0.1 (BaseCompiler.jl)
+* Compiler (uuid = "807dbc54-b67e-4c79-8afb-eafe4df6f2e1")
   - https://github.com/JuliaLang/BaseCompiler.jl
+  - https://github.com/JuliaLang/julia/tree/master/Compiler
 
 
 ### repositories

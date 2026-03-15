@@ -4,6 +4,9 @@ using Jive
 # Static Single Assignment (SSA)
 # Intermediate Representation (IR)
 
+# 🔖
+# julia/doc/src/devdocs/ssair.md
+
 using Test
 using Core: Compiler as CC
 
