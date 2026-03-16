@@ -1,5 +1,4 @@
 using Test
-using FemtoCompiler, Jive, EmojiSymbols
 
 function check_for_updates(modules...)
     julia_cmd = Base.julia_cmd()
@@ -14,4 +13,10 @@ function check_for_updates(modules...)
     end
 end
 
+if false
+using             TestCompiler
+check_for_updates(TestCompiler)
+end
+
+using             FemtoCompiler, Jive, EmojiSymbols
 check_for_updates(FemtoCompiler, Jive, EmojiSymbols)
