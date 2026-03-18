@@ -1,5 +1,14 @@
 using Test
 
+const emojis = Dict(
+    :FemtoCompiler => "🛣️ ",
+    :Jive => "👣",
+    :TestJiveRunMoreTests => "👟",
+    :EmojiSymbols => "🤔",
+    :DumpTruck => "🚚",
+    :TestCompiler => "🚗",
+)
+
 function check_for_updates(modules...)
     if isempty(ARGS)
         target_modules = modules
@@ -11,7 +20,7 @@ function check_for_updates(modules...)
 
     julia_cmd = Base.julia_cmd()
     for mod in target_modules
-        printstyled(stdout, "### ", mod, "\n"; color = :yellow)
+        printstyled(stdout, "### ", emojis[nameof(mod)], " ", mod, "\n"; color = :yellow)
         pkg_filepath = pathof(mod)
         script_path = normpath(pkg_filepath, "../../gen/check_for_updates_using_sugar_cubes.jl")
         @test isfile(script_path)
@@ -26,5 +35,5 @@ using             TestCompiler
 check_for_updates(TestCompiler)
 end
 
-using             FemtoCompiler, Jive, EmojiSymbols, DumpTruck
-check_for_updates(FemtoCompiler, Jive, EmojiSymbols, DumpTruck)
+using             FemtoCompiler, Jive, TestJiveRunMoreTests, EmojiSymbols, DumpTruck
+check_for_updates(FemtoCompiler, Jive, TestJiveRunMoreTests, EmojiSymbols, DumpTruck)
