@@ -78,4 +78,48 @@ CC.is_foldable_nothrow # is_foldable && is_nothrow
 CC.is_removable_if_unused # is_effect_free && is_terminates && is_nothrow
 CC.is_finalizer_inlineable # is_nothrow && is_notaskstate
 
+
+# from julia/base/essentials.jl
+Base._is_internal
+# can be used in place of `@assume_effects :terminates_locally` (supposed to be used for bootstrapping)
+Base.@_terminates_locally_meta
+
+# from julia/base/expr.jl
+# macro assume_effects(args...)
+
+Base._is_internal(::typeof(@__MODULE__)) = true
+@test Base._is_internal(@__MODULE__)
+
+function f1()
+    Base.@_terminates_locally_meta
+    while true
+    end
+end
+
+function f2()
+    Base.@assume_effects :terminates_locally
+    while true
+    end
+end
+
+function f3()
+    while true
+    end
+end
+
+effects_f1 = Base.infer_effects(f1, Tuple{})
+effects_f2 = Base.infer_effects(f2, Tuple{})
+effects_f3 = Base.infer_effects(f3, Tuple{})
+
+using .CC: Effects
+using TestCompiler.EffectBits
+code_coverage = Base.JLOptions().code_coverage != 0
+if code_coverage
+@test effects_f1 == effects_f2 == Effects(+c,!e,+n,+t,+s,+m,+u,+o,+r)
+@test effects_f3 ==               Effects(+c,!e,+n,!t,+s,+m,+u,+o,+r)
+else
+@test effects_f1 == effects_f2 == Effects(+c,+e,+n,+t,+s,+m,+u,+o,+r)
+@test effects_f3 ==               Effects(+c,+e,+n,!t,+s,+m,+u,+o,+r)
+end # if
+
 end # module test_corecompiler_effects
