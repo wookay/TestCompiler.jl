@@ -18,7 +18,8 @@ wc2::UInt64 = Base.get_world_counter()
 
 # from julia/test/worlds.jl
 rettype_with_side_effect() = eval(:(rettype_side_effect = "blah"; Cint))
-if VERSION >= v"1.14.0-DEV.1921" # julia commit d79443c60e
+if VERSION >= v"1.14.0-DEV.1921" || # julia commit d79443c60e
+   VERSION < v"1.13"
     @test rettype_side_effect == "blah"
     ccall(:strlen, rettype_with_side_effect(), (Cstring,), "xx")
 end
