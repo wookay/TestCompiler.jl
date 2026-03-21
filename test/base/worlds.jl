@@ -8,8 +8,12 @@ using Test
 f() = 1
 wc1::UInt64 = Base.get_world_counter()
 
-# WARNING: Method definition f() in module test_base_worlds at worlds.jl:8 overwritten at worlds.jl:12
-f() = 2
+warn_overwrite = Base.JLOptions().warn_overwrite == 1
+if warn_overwrite
+    @test_warn   r" overwritten at "  @eval( f() = 2 )
+else
+    @test_nowarn                      @eval( f() = 2 )
+end
 wc2::UInt64 = Base.get_world_counter()
 
 @test Base.invoke_in_world(wc1, f) == 1
