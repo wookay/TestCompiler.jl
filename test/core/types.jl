@@ -1,7 +1,32 @@
 module test_core_types
 
-using Core: Const, InterConditional, PartialStruct, InterMustAlias
+using Core: Const, InterConditional, PartialStruct
 using Core: CodeInfo, CodeInstance, MethodInstance
+if VERSION >= v"1.14-DEV"
+    using Core: InterMustAlias
+end
+
+end # module test_core_types
+
+
+using Jive
+@If VERSION >= v"1.12" module test_core_types_PartialStruct
+
+using Test
+using Core: Const, PartialStruct
+using Core.Compiler: Compiler as CC
+
+PartialStruct
+# from julia/Compiler/test/inference.jl
+PT = PartialStruct(CC.fallback_lattice, Tuple{Int64,UInt64}, Any[Const(10), UInt64])
+if VERSION >= v"1.14-DEV"
+    @test PT.undefs == [false, false]
+else
+end
+@test PT.typ === Tuple{Int64,UInt64}
+@test PT.fields == [Const(10), UInt64]
+
+end # module test_core_types_PartialStruct
 
 
 #=
@@ -118,7 +143,4 @@ help?> Core.MethodInstance
   inInference     :: Bool
   cache_with_orig :: Bool
   precompiled     :: Bool
-
 =#
-
-end # module test_core_types
