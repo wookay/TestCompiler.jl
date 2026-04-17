@@ -15,7 +15,13 @@ function check_for_updates(modules...)
     else
         target_pkgs = Symbol.(ARGS)
         module_syms = collect(nameof.(modules))
-        target_modules = getindex(modules, indexin(target_pkgs, module_syms))
+        inds = indexin(target_pkgs, module_syms)
+        if all(isnothing, inds)
+            throw(ArgumentError(repr(ARGS)))
+            return
+        else
+            target_modules = getindex(modules, inds)
+        end
     end
 
     julia_cmd = Base.julia_cmd()
