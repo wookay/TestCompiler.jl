@@ -26,7 +26,7 @@ function get_target_modules(modules::Vector{Any})
 end
 
 function check_for_updates(mod::Module)
-    printstyled(stdout, "### ", emojis[nameof(mod)], " ", mod, "\n"; color = :yellow)
+    printstyled(stdout, "### ", emojis[nameof(mod)], " ", mod, "\n"; color = :yellow, bold = true)
     pkg_filepath = pathof(mod)
     script_path = normpath(pkg_filepath, "../../gen/check_for_updates_using_sugar_cubes.jl")
     @test isfile(script_path)
