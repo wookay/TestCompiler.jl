@@ -12,22 +12,26 @@ function ntmap2(f::F, a::Vector, b::Vector) where {F}
     map(f, vcat(a, b))
 end
 
-function bench(f, a, b, N)
+function bench21(f, a, b, N)
     s = 0
     for _ in 1:N; s += length(f(sum, a, b)); end; s
 end
 
-a = collect(1:1000)
+a = rand(1000)
 b = map(copy, a)
 
 fs = (ntmap2, ntmap1)
-table = Dict()
+elapsed = Dict()
 for f in fs
-    bench(f, a, b, 1)
-    t = @timed bench(f, a, b, 10_000)
-    table[f] = t
+    bench21(f, a, b, 1)
+    t = @timed bench21(f, a, b, 10_000)
+    elapsed[f] = t
 end
 
-@test !(table[ntmap2].time  <  table[ntmap1].time)
+if VERSION >= v"1.12"
+    @test elapsed[ntmap2].bytes < elapsed[ntmap1].bytes
+else
+    @test elapsed[ntmap2].bytes == elapsed[ntmap1].bytes
+end
 
 end # module test_base_specialize
