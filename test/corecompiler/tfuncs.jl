@@ -22,8 +22,27 @@ mgi = mg.specializations
 @test mgi isa Core.MethodInstance
 @test mgi.specTypes === Tuple{typeof(g), Any}
 
+
 Base.issingletontype
+# from julia/base/runtime_internals.jl
+#=
+"""
+    Base.issingletontype(T)
+
+Determine whether type `T` has exactly one possible instance; for example, a
+struct type with no fields except other singleton values.
+If `T` is not a concrete type, then return `false`.
+"""
+issingletontype(@nospecialize(t)) = (@_total_meta; isa(t, DataType) && isdefined(t, :instance) && datatype_layoutsize(t) == 0 && datatype_pointerfree(t))
+=#
 @test Base.issingletontype(Nothing)
+@test !(Base.issingletontype(Int64))
+
+struct S
+end
+@test Base.isconcretetype(S)
+@test Base.issingletontype(S)
+
 
 CC.egal_tfunc
 
@@ -35,7 +54,9 @@ end
 
 @test egal_tfunc(CC.Const(3), CC.Const(1+2)) == CC.Const(true)
 @test egal_tfunc(CC.Const(1), CC.Const(2)) == CC.Const(false)
-@test egal_tfunc(Int, Int) == Bool
 @test egal_tfunc(String, Int) == CC.Const(false)
+@test egal_tfunc(Nothing, Nothing) == Bool
+@test egal_tfunc(Int64, Int64) == Bool
+@test egal_tfunc(S, S) == Bool
 
 end # module test_corecompiler_tfuncs
