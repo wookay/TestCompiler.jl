@@ -14,8 +14,10 @@ if VERSION >= v"1.13.0-DEV.544"
     #                               ?u
     @test Effects(+c,+e,+n,+t,!s,!m,+u,+o,+r) == effects
 elseif VERSION >= v"1.12-beta"
+    #             !c,!e,!n,!t,      !u,  ,!r
     @test Effects(!c,!e,!n,!t,!s,!m,!u,+o,!r) == effects
 else
+    #                                  !o
     @test Effects(!c,!e,!n,!t,!s,!m,!u,!o,!r) == effects
 end
 

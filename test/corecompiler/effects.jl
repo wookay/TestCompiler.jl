@@ -122,4 +122,12 @@ else
 @test effects_f3 ==               Effects(+c,+e,+n,!t,+s,+m,+u,+o,+r)
 end # if
 
+# from julia/Compiler/test/effects.jl
+𝕃 = CC.fallback_lattice
+rt = String
+@test CC.getfield_effects(𝕃, [], rt).nothrow === false                          # !n
+@test CC.getfield_effects(𝕃, Any[Some{String}], rt).nothrow === false           # !n
+@test CC.getfield_effects(𝕃, Any[Core.Const(:value)], rt).nothrow === false     # !n
+@test CC.getfield_effects(𝕃, Any[Some{String}, Core.Const(:value)], rt).nothrow # +n
+
 end # module test_corecompiler_effects

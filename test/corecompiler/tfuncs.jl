@@ -2,7 +2,7 @@ module test_corecompiler_tfuncs
 
 using Test
 using Core: Compiler as CC
-using .CC: @nospecs
+using .CC: @nospecs, Const
 
 f(x) = nothing
 f(1)
@@ -52,9 +52,9 @@ function egal_tfunc(a, b)
     return CC.egal_tfunc(𝕃, a, b)
 end
 
-@test egal_tfunc(CC.Const(3), CC.Const(1+2)) == CC.Const(true)
-@test egal_tfunc(CC.Const(1), CC.Const(2)) == CC.Const(false)
-@test egal_tfunc(String, Int) == CC.Const(false)
+@test egal_tfunc(Const(3), Const(1+2)) == Const(true)
+@test egal_tfunc(Const(1), Const(2)) == Const(false)
+@test egal_tfunc(String, Int) == Const(false)
 @test egal_tfunc(Nothing, Nothing) == Bool
 @test egal_tfunc(Int64, Int64) == Bool
 @test egal_tfunc(S, S) == Bool
