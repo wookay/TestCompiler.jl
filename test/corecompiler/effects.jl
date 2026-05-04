@@ -120,14 +120,15 @@ if code_coverage
 else
 @test effects_f1 == effects_f2 == Effects(+c,+e,+n,+t,+s,+m,+u,+o,+r)
 @test effects_f3 ==               Effects(+c,+e,+n,!t,+s,+m,+u,+o,+r)
-end # if
+end # if code_coverage
+
 
 # from julia/Compiler/test/effects.jl
+
+# `getfield_effects` handles access to union object nicely
 𝕃 = CC.fallback_lattice
-rt = String
-@test CC.getfield_effects(𝕃, [], rt).nothrow === false                          # !n
-@test CC.getfield_effects(𝕃, Any[Some{String}], rt).nothrow === false           # !n
-@test CC.getfield_effects(𝕃, Any[Core.Const(:value)], rt).nothrow === false     # !n
-@test CC.getfield_effects(𝕃, Any[Some{String}, Core.Const(:value)], rt).nothrow # +n
+@test CC.is_consistent(CC.getfield_effects(𝕃, Any[Some{Symbol}, Core.Const(:value)], Symbol))
+@test CC.is_consistent(CC.getfield_effects(𝕃, Any[Some{String}, Core.Const(:value)], String))
+@test CC.is_consistent(CC.getfield_effects(𝕃, Any[Union{Some{Symbol},Some{String}}, Core.Const(:value)], Union{Symbol,String}))
 
 end # module test_corecompiler_effects

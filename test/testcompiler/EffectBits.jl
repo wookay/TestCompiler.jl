@@ -32,6 +32,8 @@ using Jive # sprint_plain sprint_colored
                          Effects(                     +o   )
 
 @test  n == EffectSuffix('n')
+@test +n == EffectLetter('+', 'n')
+@test !n == EffectLetter('!', 'n')
 @test ~n == EffectLetter('?', 'n')
 @test effects_field_name( n) === :nothrow
 @test effects_field_name(~n) === :nothrow
@@ -45,7 +47,7 @@ using Jive # sprint_plain sprint_colored
 
 @test effect_bits(CC.is_effect_free_if_inaccessiblememonly) == AND(~e)
 @test effect_bits(CC.is_inaccessiblemem_or_argmemonly)      == AND(~m)
-@test effect_bits(CC.is_consistent_overlay)        == AND(~o)
+@test effect_bits(CC.is_consistent_overlay)                 == AND(~o)
 
 effects = EFFECTS_TOTAL
 @test CC.is_consistent(effects)
