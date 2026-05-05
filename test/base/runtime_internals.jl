@@ -1,5 +1,7 @@
 module test_base_runtime_internals
 
+# see also corecompiler/tfuncs.jl
+
 using Test
 
 @test Base.datatype_fieldcount(Tuple)            == nothing
@@ -30,11 +32,23 @@ Base.is_datatype_layoutopaque
 Base.issingletontype
 # issingletontype(@nospecialize(t)) = (@_total_meta; isa(t, DataType) && isdefined(t, :instance) && datatype_layoutsize(t) == 0 && datatype_pointerfree(t))
 
-@test isconcretetype(Int)
+@test isconcretetype(DataType)
 @test isabstracttype(Number)
 @test Base.iskindtype(Union)
 @test Base.isconcretedispatch(Int)
 @test Base.isdispatchtuple(Tuple{Int})
+@test Base.issingletontype(Nothing)
+
+struct S
+end
+@test Base.isconcretetype(S)
+@test Base.issingletontype(S)
+
+struct S2
+    field
+end
+@test Base.isconcretetype(S2)
+@test !(Base.issingletontype(S2))
 
 T = Union{Int, String}
 @test typeintersect(Int, T) === Int
