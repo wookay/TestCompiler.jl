@@ -4,11 +4,7 @@ using Test
 
 # from julia/contrib/generate_precompile.jl
 sysimg = Base.unsafe_string(Base.JLOptions().image_file)
-if Sys.isapple()
-@test endswith(sysimg, #= usr =# "/lib/julia/sys.dylib")
-elseif Sys.islinux()
-@test endswith(sysimg, #= /opt/hostedtoolcache/julia/1.11.8/x64 =# "/lib/julia/sys.so")
-end
+@test endswith(sysimg, r"/lib/julia/sys[-debug]?.+(so|dylib)+")
 
 if VERSION >= v"1.12"
 @test Base.__precompile_script.debug_output === devnull
