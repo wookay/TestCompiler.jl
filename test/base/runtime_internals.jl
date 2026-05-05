@@ -9,10 +9,32 @@ using Test
 @test Base.datatype_fieldcount(Vector{Int})      == 2
 @test Base.datatype_fieldcount(NTuple{100, Int}) == 100
 
+# from julia/base/runtime_internals.jl
 isconcretetype
+# isconcretetype(@nospecialize(t)) = (@_total_meta; isa(t, DataType) && (t.flags & 0x0002) == 0x0002)
 isabstracttype
+# function isabstracttype(@nospecialize(t))
+#   @_total_meta
+#   t = unwrap_unionall(t)
+#   # TODO: what to do for `Union`?
+#   return isa(t, DataType) && (t.name.flags & 0x1) == 0x1
+Base.iskindtype # DataType, UnionAll, Union, Core.TypeofBottom
+# iskindtype(@nospecialize t) = (t === DataType || t === UnionAll || t === Union || t === typeof(Bottom))
+Base.isconcretedispatch  # isconcretetype ∘ !iskindtype
+# isconcretedispatch(@nospecialize t) = isconcretetype(t) && !iskindtype(t)
+Base.isdispatchtuple
+# isdispatchtuple(@nospecialize(t)) = (@_total_meta; isa(t, DataType) && (t.flags & 0x0004) == 0x0004)
 Base.is_datatype_layoutopaque
+# function is_datatype_layoutopaque(dt::DataType)
+#   datatype_nfields(dt) == 0 && !datatype_pointerfree(dt)
 Base.issingletontype
+# issingletontype(@nospecialize(t)) = (@_total_meta; isa(t, DataType) && isdefined(t, :instance) && datatype_layoutsize(t) == 0 && datatype_pointerfree(t))
+
+@test isconcretetype(Int)
+@test isabstracttype(Number)
+@test Base.iskindtype(Union)
+@test Base.isconcretedispatch(Int)
+@test Base.isdispatchtuple(Tuple{Int})
 
 T = Union{Int, String}
 @test typeintersect(Int, T) === Int
