@@ -27,4 +27,9 @@ CC.NotFound
 # lattice order
 @test CC.:⊑ isa Function
 
+
+using .CC: Const
+@test CC.widenconst(Const(1)) === Int64
+@test CC.widenconst(Const(:value)) === Symbol
+
 end # module test_corecompiler_typelattice
