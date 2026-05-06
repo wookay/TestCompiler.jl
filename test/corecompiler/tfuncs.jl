@@ -33,11 +33,11 @@ function egal_tfunc(a, b)
     return CC.egal_tfunc(𝕃, a, b)
 end
 
-@test egal_tfunc(Const(3), Const(1+2)) == Const(true)
-@test egal_tfunc(Const(1), Const(2)) == Const(false)
-@test egal_tfunc(String, Int) == Const(false)
-@test egal_tfunc(Nothing, Nothing) == Bool
-@test egal_tfunc(Int64, Int64) == Bool
+@test egal_tfunc(Const(3), Const(1+2)) === Const(true)
+@test egal_tfunc(Const(1), Const(2)) === Const(false)
+@test egal_tfunc(String, Int) === Const(false)
+@test egal_tfunc(Nothing, Nothing) === Bool
+@test egal_tfunc(Int64, Int64) === Bool
 
 struct S
 end

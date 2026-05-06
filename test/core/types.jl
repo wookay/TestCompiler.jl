@@ -25,6 +25,28 @@ end
 end # module test_core_types_PartialStruct
 
 
+@If VERSION >= v"1.14-DEV" module test_core_types_Conditional
+
+using Test
+using Core: Const
+using Core.Compiler: Compiler as CC
+using .CC: Conditional
+
+CC.widenconditional
+
+cnd = Conditional(#= slot =# 0, #= ssadef =# 0, Const(Union{}), Const(Union{}))
+@test cnd.slot == 0
+@test cnd.ssadef == 0
+@test cnd.thentype === Const(Union{})
+@test cnd.elsetype === Const(Union{})
+@test cnd.isdefined === false
+𝕃 = CC.fallback_lattice
+@test CC.egal_tfunc(𝕃, cnd, Const(Bool)) === Const(false)
+@test CC.subtype_tfunc(𝕃, cnd, Const(Bool)) === Const(true)
+
+end # module test_core_types_Conditional
+
+
 module test_core_types_InterConditional
 
 using Test
@@ -43,15 +65,9 @@ end # module test_core_types_InterConditional
 using Test
 using Core: Const, InterMustAlias
 using Core.Compiler: Compiler as CC
-using .CC: Conditional, MustAlias, ⊑
+using .CC: MustAlias, ⊑
 
 # from julia/Compiler/test/inference.jl
-cnd = Conditional(#= slot =# 0, #= ssadef =# 0, Const(Union{}), Const(Union{}))
-@test cnd.slot == 0
-@test cnd.ssadef == 0
-@test cnd.thentype == Const(Union{})
-@test cnd.elsetype == Const(Union{})
-@test cnd.isdefined === false
 
 struct AliasableField{T}
     f::T
