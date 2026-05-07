@@ -2,7 +2,8 @@ module test_base_boot
 
 using Test
 
-using Base: Const, PartialStruct, InterConditional, InterMustAlias
+using Base: Const, PartialStruct, InterConditional
+# using Base: InterMustAlias
 using Core: PartialOpaque
 
 # from julia/base/boot.jl
