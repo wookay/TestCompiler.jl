@@ -1,6 +1,8 @@
 using Jive
 @If VERSION >= v"1.14.0-DEV.1826" module test_corecompiler_abstract_interpretation
 
+# see also base/essentials.jl
+
 using Test
 using Core: Compiler as CC
 using .CC: CallInfo, CallMeta, RTEffects, Future, Effects, EFFECTS_THROWS, NoCallInfo,
@@ -65,6 +67,13 @@ else
     @test CC.get_inference_cache(interp) == CC.InferenceResult[]
 end
 # @test CC.cache_owner(interp) !== nothing
+
+
+# from julia/Compiler/src/abstractinterpretation.jl
+CC.argtype_by_index
+# function argtype_by_index(argtypes::Vector{Any}, i::Int)
+CC.argtype_tail
+# function argtype_tail(argtypes::Vector{Any}, i::Int)
 
 
 # from julia/Compiler/src/types.jl

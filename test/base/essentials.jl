@@ -1,9 +1,12 @@
 module test_base_essentials
 
+# see also corecompiler/abstract_interpretation.jl
+
 using Test
 
-Base.unwrap_unionall
 # from julia/base/essentials.jl
+
+Base.unwrap_unionall
 # function unwrap_unionall(@nospecialize(a))
 #     @_foldable_meta
 #     while isa(a,UnionAll)
@@ -47,5 +50,34 @@ widet = Base.unwrap_unionall(PT.typ)
 future = Future(AbstractIterationResult(PT.fields, nothing))
 @test future isa Future
 end # if
+
+
+Base.isvarargtype
+# function isvarargtype(@nospecialize(t))
+#     return isa(t, Core.TypeofVararg)
+# end
+@test Base.isvarargtype(Vararg{Any})
+f(args...) = nothing
+m = only(methods(f))
+@test m.sig.parameters[2] === Vararg{Any}
+@test Base.isvarargtype(m.sig.parameters[2])
+
+
+Base.unwrapva
+# function unwrapva(@nospecialize(t))
+#     isa(t, Core.TypeofVararg) || return t
+#     return isdefined(t, :T) ? t.T : Any
+# end
+
+
+#=
+  struct Core.TypeofVararg
+
+  Fields
+  ≡≡≡≡≡≡
+
+  T :: Any
+  N :: Any
+=#
 
 end # module test_base_essentials

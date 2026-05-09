@@ -56,4 +56,20 @@ else
     end == Val
 end # if
 
+
+# from julia/Compiler/test/inference.jl
+# issue #11480
+@noinline f11480(x,y) = x
+let A = Ref
+function h11480(x::A{A{A{A{A{A{A{A{A{Int}}}}}}}}}) # enough for type_too_complex
+    y :: Tuple{Vararg{typeof(x)}} = (x,) # apply_type(Vararg, too_complex) => TypeVar(_,Vararg)
+    f11480(y[1], # fool getfield logic : Tuple{_<:Vararg}[1] => Vararg
+      1) # make it crash by construction of the signature Tuple{Vararg,Int}
+end # function h11480
+@test !Base.isvarargtype(Base.return_types(h11480, (Any,))[1])
+@test Base.return_types(h11480, (Any,))[1] === Any
+x = A{A{A{A{A{A{A{A{A{Int}}}}}}}}}(11480)
+@test h11480(x) === x
+end # let
+
 end # module test_corecompiler_concrete_evaluate

@@ -28,8 +28,20 @@ CC.NotFound
 @test CC.:⊑ isa Function
 
 
+"""
+    widenconst(x) -> t::Type
+
+Widens extended lattice element `x` to native `Type` representation.
+"""
+CC.widenconst
+
 using .CC: Const
 @test CC.widenconst(Const(1)) === Int64
 @test CC.widenconst(Const(:value)) === Symbol
+
+CC.widenslotwrapper
+CC.widenconditional
+CC.widenwrappedconditional
+CC.widenmustalias
 
 end # module test_corecompiler_typelattice
