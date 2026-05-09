@@ -1,6 +1,15 @@
 module test_core_types
 
+using Test
 using Core: Const, InterConditional, PartialStruct, CodeInfo, CodeInstance, MethodInstance
+
+@test Array{1} isa UnionAll
+@test (Array{T, 1} where T) isa UnionAll
+@test Vector isa UnionAll
+@test !(Vector isa DataType)
+
+@test Vector{Int} isa DataType
+@test (T where T) isa DataType
 
 end # module test_core_types
 
