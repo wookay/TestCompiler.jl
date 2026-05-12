@@ -77,3 +77,42 @@ end
 @test λ isa Function
 
 end # module test_base_runtime_internals_function_macro
+
+
+# julia commit f1477a9009
+@If VERSION >= v"1.14.0-DEV.2173" module test_base_runtime_internals_DataTypeLayout
+
+using Test
+
+# from julia/base/runtime_internals.jl
+# struct DataTypeLayout
+#     size::UInt32
+#     nfields::UInt32
+#     npointers::UInt32
+#     firstptr::Int32
+#     alignment::UInt16
+#     flags::UInt16
+# end
+
+dtl = Base.DataTypeLayout(Int64::DataType)
+@test dtl.size      == 0x00000008
+@test dtl.nfields   == 0x00000000
+@test dtl.npointers == 0x00000000
+@test dtl.firstptr  == -1
+@test dtl.alignment == 0x008
+@test dtl.flags     == 0x0080
+@test dtl == Base.DataTypeLayout(dtl.size, dtl.nfields, dtl.npointers, dtl.firstptr, dtl.alignment, dtl.flags)
+@test Base.datatype_layoutsize(dtl) == dtl.size % Int
+@test Base.datatype_nfields(dtl) == dtl.nfields
+@test Base.datatype_npointers(dtl) == dtl.npointers
+@test Base.datatype_alignment(dtl) == Int(dtl.alignment)
+
+@test Base.datatype_haspadding(dtl) === false
+@test Base.datatype_isbitsegal(dtl) === true
+@test Base.datatype_fielddesc_type(dtl) == (dtl.flags >> 1) & 3
+@test Base.datatype_arrayelem(dtl) == (dtl.flags >> 3) & 3
+
+dtl_str = Base.DataTypeLayout(String::DataType)
+@test dtl_str.size == 0x00000000
+
+end # module test_base_runtime_internals_DataTypeLayout
