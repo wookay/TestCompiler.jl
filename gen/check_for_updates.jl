@@ -1,4 +1,5 @@
 using Test
+using Pkg
 
 const emojis = Dict(
     :FemtoCompiler => "🛣️ ",
@@ -7,6 +8,7 @@ const emojis = Dict(
     :EmojiSymbols => "🤔",
     :DumpTruck => "🚚",
     :TestCompiler => "🚗",
+    :TestJETLS => "✈️ ",
 )
 
 function get_target_modules(modules::Vector{Any})
@@ -25,10 +27,11 @@ function get_target_modules(modules::Vector{Any})
     return target_modules
 end
 
-function check_for_updates(mod::Module)
-    printstyled(stdout, "### ", emojis[nameof(mod)], " ", mod, "\n"; color = :yellow, bold = true)
-    pkg_filepath = pathof(mod)
-    script_path = normpath(pkg_filepath, "../../gen/check_for_updates_using_sugar_cubes.jl")
+function check_for_updates(mod::Symbol)
+    pkg = string(mod)
+    printstyled(stdout, "### ", emojis[mod], " ", pkg, "\n"; color = :yellow, bold = true)
+    pkg_dir = normpath(Pkg.devdir(), pkg)
+    script_path = normpath(pkg_dir, "gen/check_for_updates_using_sugar_cubes.jl")
     @test isfile(script_path)
     julia_cmd = Base.julia_cmd()
     args = ["--color=yes", script_path]
@@ -36,20 +39,23 @@ function check_for_updates(mod::Module)
     @test success(run(cmd))
 end
 
+macro check_for_updates(sym::Symbol)
+    node = QuoteNode(sym)
+    quote
+        check_for_updates($node)
+    end
+end
+
 macro check_for_updates(expr::Expr)
     modules = expr.args
     target_modules = get_target_modules(modules)
     for mod in target_modules
-        @eval begin
-            using $mod
-            check_for_updates($mod)
-        end
+        check_for_updates(mod)
     end
 end
 
 if false
-using             TestCompiler
-check_for_updates(TestCompiler)
+@check_for_updates TestCompiler
 end
 
-@check_for_updates FemtoCompiler, Jive, TestJiveRunMoreTests, EmojiSymbols, DumpTruck
+@check_for_updates FemtoCompiler, Jive, TestJiveRunMoreTests, EmojiSymbols, DumpTruck, TestJETLS
