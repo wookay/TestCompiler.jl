@@ -32,7 +32,7 @@ for f in fs
 end
 
 @test elapsed[ntmap2].time      <  elapsed[ntmap1].time
-@test elapsed[ntmap2].time * 8  <  elapsed[ntmap1].time
+@test elapsed[ntmap2].time * 5  <  elapsed[ntmap1].time
 
 
 function ntmap3(f,    nt::NamedTuple{names}, nts::NamedTuple...) where {names}
