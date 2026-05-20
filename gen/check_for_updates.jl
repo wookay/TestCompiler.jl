@@ -7,8 +7,8 @@ const emojis = Dict(
     :TestJiveRunMoreTests => "👟",
     :EmojiSymbols => "🤔",
     :DumpTruck => "🚚",
-    :TestCompiler => "🚗",
     :TestJETLS => "✈️ ",
+    :TestCompiler => "🚗",
 )
 
 function get_target_modules(modules::Vector{Any})
