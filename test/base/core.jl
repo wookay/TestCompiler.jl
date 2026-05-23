@@ -1,5 +1,7 @@
 module test_base_core_redefining_structs
 
+# see also base/essentials.jl
+
 using Test
 
 # from julia/test/core.jl
@@ -23,25 +25,23 @@ struct R61789
     next::R61789
 end
 const orig_R61789 = R61789
-
 world1 = Base.get_world_counter()
 
 struct R61789
     x
     next::R61789
 end
-
 world2 = Base.get_world_counter()
 
 # from julia/base/essentials.jl
 @test orig_R61789 === Base.invoke_in_world(world1, Core.getglobal, @__MODULE__, :R61789)
 
-if VERSION >= v"1.14-DEV"
-@test orig_R61789 === Base.invoke_in_world(world2, Core.getglobal, @__MODULE__, :R61789)
-@test orig_R61789 === R61789
-elseif VERSION >= v"1.12"
+if v"1.13" > VERSION >= v"1.12"
 @test orig_R61789 !== Base.invoke_in_world(world2, Core.getglobal, @__MODULE__, :R61789)
 @test orig_R61789 !== R61789
+else
+@test orig_R61789 === Base.invoke_in_world(world2, Core.getglobal, @__MODULE__, :R61789)
+@test orig_R61789 === R61789
 end
 
 

@@ -1,6 +1,7 @@
 module test_base_essentials
 
 # see also corecompiler/abstract_interpretation.jl
+#          base/core.jl
 
 using Test
 
