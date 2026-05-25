@@ -1,7 +1,22 @@
 using Jive
 @If VERSION >= v"1.13.0-DEV.151" module test_base_partition_kind
 
+# see also base/runtime_internals.jl
+
 using Test
+
+Base.PARTITION_KIND_CONST           # 0x00
+Base.PARTITION_KIND_CONST_IMPORT    # 0x01
+Base.PARTITION_KIND_GLOBAL          # 0x02
+Base.PARTITION_KIND_IMPLICIT_GLOBAL # 0x03
+Base.PARTITION_KIND_IMPLICIT_CONST  # 0x04
+Base.PARTITION_KIND_EXPLICIT        # 0x05
+Base.PARTITION_KIND_IMPORTED        # 0x06
+Base.PARTITION_KIND_FAILED          # 0x07
+Base.PARTITION_KIND_DECLARED        # 0x08
+Base.PARTITION_KIND_GUARD           # 0x09
+Base.PARTITION_KIND_UNDEF_CONST     # 0x0a
+Base.PARTITION_KIND_BACKDATED_CONST # 0x0b
 
 # from julia/test/rebinding.jl
 

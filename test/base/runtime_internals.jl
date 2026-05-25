@@ -1,6 +1,7 @@
 module test_base_runtime_internals
 
-# see also corecompiler/tfuncs.jl
+# see also base/partition_kind.jl
+#          corecompiler/tfuncs.jl
 
 using Test
 
@@ -116,3 +117,22 @@ dtl_str = Base.DataTypeLayout(String::DataType)
 @test dtl_str.size == 0x00000000
 
 end # module test_base_runtime_internals_DataTypeLayout
+
+
+module test_base_runtime_internals_binding
+
+using Test
+
+module K
+f() = nothing
+end
+
+using .K: f
+
+@test Base.binding_module(@__MODULE__, :f) === K
+if VERSION >= v"1.12"
+@test Base.binding_kind(K, :f)           == Base.PARTITION_KIND_CONST
+@test Base.binding_kind(@__MODULE__, :f) == Base.PARTITION_KIND_EXPLICIT
+end # if
+
+end # module test_base_runtime_internals_binding
