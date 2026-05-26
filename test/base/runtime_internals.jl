@@ -135,4 +135,10 @@ if VERSION >= v"1.12"
 @test Base.binding_kind(@__MODULE__, :f) == Base.PARTITION_KIND_EXPLICIT
 end # if
 
+gr::Core.GlobalRef = Core.GlobalRef(K, :f)
+b::Core.Binding = convert(Core.Binding, gr)
+world::UInt = Base.get_world_counter()
+partition::Core.BindingPartition = Base.lookup_binding_partition(world, b)
+@test Base.binding_kind(partition) == Base.PARTITION_KIND_CONST
+
 end # module test_base_runtime_internals_binding
