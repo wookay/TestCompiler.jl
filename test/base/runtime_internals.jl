@@ -119,7 +119,8 @@ dtl_str = Base.DataTypeLayout(String::DataType)
 end # module test_base_runtime_internals_DataTypeLayout
 
 
-module test_base_runtime_internals_binding
+using Jive
+@If VERSION >= v"1.12" module test_base_runtime_internals_binding
 
 using Test
 
@@ -130,15 +131,17 @@ end
 using .K: f
 
 @test Base.binding_module(@__MODULE__, :f) === K
-if VERSION >= v"1.12"
 @test Base.binding_kind(K, :f)           == Base.PARTITION_KIND_CONST
 @test Base.binding_kind(@__MODULE__, :f) == Base.PARTITION_KIND_EXPLICIT
-end # if
 
 gr::Core.GlobalRef = Core.GlobalRef(K, :f)
-b::Core.Binding = convert(Core.Binding, gr)
 world::UInt = Base.get_world_counter()
-partition::Core.BindingPartition = Base.lookup_binding_partition(world, b)
-@test Base.binding_kind(partition) == Base.PARTITION_KIND_CONST
+bpart::Core.BindingPartition = Base.lookup_binding_partition(world, gr)
+@test Base.binding_kind(bpart) == Base.PARTITION_KIND_CONST
+
+b::Core.Binding = convert(Core.Binding, gr)
+(; restriction, min_world, max_world) = b.partitions
+@test restriction === f
+@test world in min_world:max_world
 
 end # module test_base_runtime_internals_binding
