@@ -1,5 +1,7 @@
 module PartitionKinds # TestCompiler
 
+using LogicalOperators: OR
+
 export PartitionKind, kinds
 export CONST, CONST_IMPORT, GLOBAL, IMPLICIT_GLOBAL, IMPLICIT_CONST,
        EXPLICIT, IMPORTED, FAILED, DECLARED, GUARD, UNDEF_CONST, BACKDATED_CONST
@@ -251,13 +253,13 @@ end
 # julia/base/runtime_internals.jl
 function kinds end
 if VERSION >= v"1.13.0-DEV.280"
-kinds(::typeof(Base.is_defined_const_binding))  = (CONST, CONST_IMPORT, IMPLICIT_CONST, BACKDATED_CONST)
-kinds(::typeof(Base.is_some_const_binding))     = (kinds(Base.is_defined_const_binding)..., UNDEF_CONST)
-kinds(::typeof(Base.is_some_imported))          = (IMPLICIT_GLOBAL, IMPLICIT_CONST, EXPLICIT, IMPORTED)
-kinds(::typeof(Base.is_some_implicit))          = (IMPLICIT_GLOBAL, IMPLICIT_CONST, GUARD, FAILED)
-kinds(::typeof(Base.is_some_explicit_imported)) = (EXPLICIT, IMPORTED)
-kinds(::typeof(Base.is_some_binding_imported))  = (kinds(Base.is_some_explicit_imported)..., IMPLICIT_GLOBAL)
-kinds(::typeof(Base.is_some_guard))             = (GUARD, FAILED, UNDEF_CONST)
+kinds(::typeof(Base.is_defined_const_binding))  = OR(CONST, CONST_IMPORT, IMPLICIT_CONST, BACKDATED_CONST)
+kinds(::typeof(Base.is_some_const_binding))     = OR(kinds(Base.is_defined_const_binding)..., UNDEF_CONST)
+kinds(::typeof(Base.is_some_imported))          = OR(IMPLICIT_GLOBAL, IMPLICIT_CONST, EXPLICIT, IMPORTED)
+kinds(::typeof(Base.is_some_implicit))          = OR(IMPLICIT_GLOBAL, IMPLICIT_CONST, GUARD, FAILED)
+kinds(::typeof(Base.is_some_explicit_imported)) = OR(EXPLICIT, IMPORTED)
+kinds(::typeof(Base.is_some_binding_imported))  = OR(kinds(Base.is_some_explicit_imported)..., IMPLICIT_GLOBAL)
+kinds(::typeof(Base.is_some_guard))             = OR(GUARD, FAILED, UNDEF_CONST)
 end
 
 end # module TestCompiler.PartitionKinds

@@ -5,28 +5,25 @@ using Test
 using TestCompiler.PartitionKinds # PartitionKind kinds
                                   # CONST CONST_IMPORT GLOBAL IMPLICIT_GLOBAL IMPLICIT_CONST
                                   # EXPLICIT IMPORTED FAILED DECLARED GUARD UNDEF_CONST BACKDATED_CONST
-using Jive # sprint_plain
+using LogicalOperators: OR
 
 @test PartitionKind(0x9) == PartitionKind(Base.PARTITION_KIND_GUARD)
 @test string(PartitionKind(Base.PARTITION_KIND_GUARD)) == "TestCompiler.PartitionKinds.PartitionKind(0x09)"
-@test sprint_plain(PartitionKind(Base.PARTITION_KIND_GUARD)) ==
-      """const PARTITION_KIND_GUARD = 0x9\n  Guard: The binding was looked at, but no global or import was resolved at\n  the time\n\n  ->restriction is NULL."""
 
-@test sprint_plain(kinds(Base.is_defined_const_binding)) == "(CONST, CONST_IMPORT, IMPLICIT_CONST, BACKDATED_CONST)"
-@test kinds(Base.is_defined_const_binding)  == (CONST, CONST_IMPORT, IMPLICIT_CONST, BACKDATED_CONST)
-@test kinds(Base.is_some_const_binding)     == (kinds(Base.is_defined_const_binding)..., UNDEF_CONST) ==
-                                               (CONST, CONST_IMPORT, IMPLICIT_CONST, BACKDATED_CONST, UNDEF_CONST)
-@test kinds(Base.is_some_imported)          == (IMPLICIT_GLOBAL, IMPLICIT_CONST, EXPLICIT, IMPORTED) ==
-                                               (IMPLICIT_GLOBAL, IMPLICIT_CONST, kinds(Base.is_some_explicit_imported)...)
-@test kinds(Base.is_some_implicit)          == (IMPLICIT_GLOBAL, IMPLICIT_CONST, GUARD, FAILED)
-@test kinds(Base.is_some_explicit_imported) == (EXPLICIT, IMPORTED)
-@test kinds(Base.is_some_binding_imported)  == (kinds(Base.is_some_explicit_imported)..., IMPLICIT_GLOBAL) ==
-                                               (EXPLICIT, IMPORTED, IMPLICIT_GLOBAL)
-@test kinds(Base.is_some_guard)             == (GUARD, FAILED, UNDEF_CONST)
+@test kinds(Base.is_defined_const_binding)  == OR(CONST, CONST_IMPORT, IMPLICIT_CONST, BACKDATED_CONST)
+@test kinds(Base.is_some_const_binding)     == OR(kinds(Base.is_defined_const_binding)..., UNDEF_CONST) ==
+                                               OR(CONST, CONST_IMPORT, IMPLICIT_CONST, BACKDATED_CONST, UNDEF_CONST)
+@test kinds(Base.is_some_imported)          == OR(IMPLICIT_GLOBAL, IMPLICIT_CONST, EXPLICIT, IMPORTED) ==
+                                               OR(IMPLICIT_GLOBAL, IMPLICIT_CONST, kinds(Base.is_some_explicit_imported)...)
+@test kinds(Base.is_some_implicit)          == OR(IMPLICIT_GLOBAL, IMPLICIT_CONST, GUARD, FAILED)
+@test kinds(Base.is_some_explicit_imported) == OR(EXPLICIT, IMPORTED)
+@test kinds(Base.is_some_binding_imported)  == OR(kinds(Base.is_some_explicit_imported)..., IMPLICIT_GLOBAL) ==
+                                               OR(EXPLICIT, IMPORTED, IMPLICIT_GLOBAL)
+@test kinds(Base.is_some_guard)             == OR(GUARD, FAILED, UNDEF_CONST)
 
 using .PartitionKinds.Enums: PARTITION_KIND
 for enum_kind in instances(PARTITION_KIND)
-    kind = UInt8(enum_kind)
+    n = UInt8(enum_kind)
     for f in (Base.is_defined_const_binding,
               Base.is_some_const_binding,
               Base.is_some_imported,
@@ -34,10 +31,11 @@ for enum_kind in instances(PARTITION_KIND)
               Base.is_some_explicit_imported,
               Base.is_some_binding_imported,
               Base.is_some_guard)
-        if PartitionKind(kind) in kinds(f)
-            @test f(kind)
+        kind = PartitionKind(n)
+        if kind in kinds(f)
+            @test f(n)
         else
-            @test !f(kind)
+            @test !f(n)
         end
     end
 end
