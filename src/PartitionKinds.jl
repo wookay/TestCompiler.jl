@@ -126,59 +126,51 @@ measure. The following kinds may be replaced by PARTITION_KIND_BACKDATED_CONST:
 jl_partition_kind
 
     """
-    Constant: This binding partition is a constant declared using `const _ = ...`
-
-     ->restriction holds the constant value
+    Constant: This binding partition is a constant declared using `const _ = ...`.
+    `restriction` holds the constant value
     """
     PARTITION_KIND_CONST
 
     """
-    Import Constant: This binding partition is a constant declared using `import A`
-
-     ->restriction holds the constant value
+    Import Constant: This binding partition is a constant declared using `import A`.
+    `restriction` holds the constant value
     """
     PARTITION_KIND_CONST_IMPORT
 
     """
     Global: This binding partition is a global variable. It was declared either using
     `global x::T` to implicitly through a syntactic global assignment.
-
-     -> restriction holds the type restriction
+    `restriction` holds the type restriction
     """
     PARTITION_KIND_GLOBAL
 
     """
     Implicit: The binding was a global, implicitly imported from a `using`'d module.
-
-     ->restriction holds the ultimately imported global binding
+    `restriction` holds the ultimately imported global binding
     """
     PARTITION_KIND_IMPLICIT_GLOBAL
 
     """
     Implicit: The binding was a constant, implicitly imported from a `using`'d module.
-
-     ->restriction holds the ultimately imported constant value
+    `restriction` holds the ultimately imported constant value
     """
     PARTITION_KIND_IMPLICIT_CONST
 
     """
-    Explicit: The binding was explicitly `using`'d by name
-
-     ->restriction holds the imported binding
+    Explicit: The binding was explicitly `using`'d by name.
+    `restriction` holds the imported binding
     """
     PARTITION_KIND_EXPLICIT
 
     """
-    Imported: The binding was explicitly `import`'d by name
-
-     ->restriction holds the imported binding
+    Imported: The binding was explicitly `import`'d by name.
+    `restriction` holds the imported binding
     """
     PARTITION_KIND_IMPORTED
 
     """
-    Failed: We attempted to import the binding, but the import was ambiguous
-
-     ->restriction is `NULL`.
+    Failed: We attempted to import the binding, but the import was ambiguous.
+    `restriction` is `NULL`.
     """
     PARTITION_KIND_FAILED
 
@@ -186,39 +178,35 @@ jl_partition_kind
     Declared: The binding was declared using `global` or similar. This acts in most ways like
     `PARTITION_KIND_GLOBAL` with an `Any` restriction, except that it may be redefined to a stronger
     binding like `const` or an explicit import.
-
-     ->restriction is `NULL`.
+    `restriction` is `NULL`.
     """
     PARTITION_KIND_DECLARED
 
     """
-    Guard: The binding was looked at, but no global or import was resolved at the time
-
-     ->restriction is `NULL`.
+    Guard: The binding was looked at, but no global or import was resolved at the time.
+    `restriction` is `NULL`.
     """
     PARTITION_KIND_GUARD
 
     """
     Undef Constant: This binding partition is a constant declared using `const`, but
     without a value.
-
-     ->restriction is `NULL`
+    `restriction` is `NULL`.
     """
     PARTITION_KIND_UNDEF_CONST
 
     """
     Backated constant. A constant that was backdated for compatibility. In all other
-    ways equivalent to `PARTITION_KIND_CONST`, but prints a warning on access
+    ways equivalent to `PARTITION_KIND_CONST`, but prints a warning on access.
     """
     PARTITION_KIND_BACKDATED_CONST
 
     """
     This is not a real binding kind, but can be used to ask for a re-resolution
-    of the implicit binding kind
+    of the implicit binding kind.
     """
     PARTITION_FAKE_KIND_IMPLICIT_RECOMPUTE,
     PARTITION_FAKE_KIND_CYCLE
-
 
 using REPL
 
@@ -242,12 +230,23 @@ end
 function Base.show(io::IO, mime::MIME"text/plain", partition::PartitionKind)
     sym = Symbol(Enums.PARTITION_KIND(partition.kind))
     printstyled(io, "const ", color = :light_green, )
-    printstyled(io, sym, color = :cyan)
+    printstyled(io, sym, color = :light_yellow)
     printstyled(io, " = ", color = :light_green)
-    printstyled(io, "0x", string(partition.kind, base=16, pad = 1), color = :light_red)
+    printstyled(io, "0x", string(partition.kind, base=16, pad = 1), color = :yellow)
     println(io)
     doc = REPL.doc(Base.Docs.Binding(@__MODULE__, sym))
     Base.show(io, mime, doc)
+    println(io)
+    if VERSION >= v"1.13.0-DEV.280"
+         funcs = (Base.is_defined_const_binding, Base.is_some_const_binding, Base.is_some_imported, Base.is_some_implicit, Base.is_some_explicit_imported, Base.is_some_binding_imported, Base.is_some_guard)
+         for f in funcs
+             if partition in kinds(f)
+                 print(io, "  ")
+                 printstyled(io, f, color = :light_cyan)
+                 println(io)
+             end
+         end
+    end
 end
 
 # julia/base/runtime_internals.jl

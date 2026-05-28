@@ -36,4 +36,4 @@ jobs:
   # - uses: julia-actions/julia-runtest@v1
     - name: runtests
       run: |
-           julia --project=. -e 'import Pkg; Pkg.test(; coverage=false, julia_args=["--check-bounds=yes", "--compiled-modules=yes", "--depwarn=yes"], force_latest_compatible_version=false, allow_reresolve=true)'
+           julia --color=yes --project=. -e 'import Pkg; Pkg.test(; coverage=false, julia_args=["--check-bounds=yes", "--compiled-modules=yes", "--depwarn=yes"], force_latest_compatible_version=false, allow_reresolve=true)'

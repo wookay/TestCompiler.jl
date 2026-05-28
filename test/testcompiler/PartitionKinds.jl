@@ -21,9 +21,12 @@ using LogicalOperators: OR
                                                OR(EXPLICIT, IMPORTED, IMPLICIT_GLOBAL)
 @test kinds(Base.is_some_guard)             == OR(GUARD, FAILED, UNDEF_CONST)
 
+on_ci = haskey(ENV, "CI")
+
 using .PartitionKinds.Enums: PARTITION_KIND
 for enum_kind in instances(PARTITION_KIND)
     n = UInt8(enum_kind)
+    partition = PartitionKind(n)
     for f in (Base.is_defined_const_binding,
               Base.is_some_const_binding,
               Base.is_some_imported,
@@ -31,12 +34,14 @@ for enum_kind in instances(PARTITION_KIND)
               Base.is_some_explicit_imported,
               Base.is_some_binding_imported,
               Base.is_some_guard)
-        kind = PartitionKind(n)
-        if kind in kinds(f)
+        if partition in kinds(f)
             @test f(n)
         else
             @test !f(n)
         end
+    end
+    if on_ci
+        Base.show(stdout, MIME"text/plain"(), partition)
     end
 end
 
