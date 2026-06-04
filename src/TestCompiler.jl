@@ -1,5 +1,6 @@
 module TestCompiler
 
+include("RuntimeInternals.jl")
 include("CompilerDevTools.jl")
 include("PartitionKinds.jl")
 include("EffectBits/EffectBits.jl")

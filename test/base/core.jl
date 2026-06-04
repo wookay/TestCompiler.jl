@@ -66,15 +66,32 @@ module test_base_core_typeeq
 
 using Test
 
+@test   Vector isa UnionAll
+@test !(Vector{Int} isa UnionAll)
+@test !isconcretetype(Vector)
+@test  isconcretetype(Vector{Int})
+@test  isconcretetype(Union)
+@test  isconcretetype(Union{Int})
+@test  isconcretetype(UnionAll)
+@test !isabstracttype(Vector)
+@test !isabstracttype(Union)
+@test !isabstracttype(Union{Int})
+@test !isabstracttype(UnionAll)
+
 if VERSION >= v"1.14.0-DEV.2291" # julia commit 26145852c4
 Core.TypeEq
 Base.isType
 Base.type_parameter
+@test hasmethod(Base.type_parameter, (Core.TypeEq,))
 
+@test isabstracttype(Core.AnyType)
 @test Union isa Core.AnyType
-@test Union isa supertype(Union)
 @test UnionAll isa Core.AnyType
+@test Union isa supertype(Union)
 @test UnionAll isa supertype(UnionAll)
+else
+@test (Union isa supertype(Union)) === false
+@test (UnionAll isa supertype(UnionAll)) === false
 end
 
 end # module test_base_core_typeeq
