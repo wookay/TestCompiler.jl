@@ -81,4 +81,23 @@ Base.unwrapva
   N :: Any
 =#
 
+
+@test Base._is_internal(Base) === true
+@test Base._is_internal(Core.Compiler) === true
+@test Base._is_internal(Core) === false
+
+# supposed to be used for bootstrapping
+# macro _total_meta()
+# macro _foldable_meta()
+# macro _terminates_locally_meta()
+# macro _terminates_globally_meta()
+# macro _terminates_globally_notaskstate_meta()
+# macro _terminates_globally_noub_meta()
+# macro _effect_free_terminates_locally_meta()
+# macro _nothrow_noub_meta()
+# macro _nothrow_meta()
+# macro _noub_meta()
+# macro _notaskstate_meta()
+# macro _noub_if_noinbounds_meta()
+
 end # module test_base_essentials

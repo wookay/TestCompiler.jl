@@ -88,8 +88,20 @@ e::UInt16 = Base.encode_effects_override(override)
 @test Base.decode_effects_override(e) == override
 end
 
+override = Base.EffectsOverride(false, false, false, false, false, false, false, false, false, false, false)
 ex = Base.form_purity_expr(override)
-@test ex == Expr(:purity, false, false, false, false, false, false, false, false, false, false, false)
+@test ex == Expr(:purity,
+               #=:consistent=#false,
+               #=:effect_free=#false,
+               #=:nothrow=#false,
+               #=:terminates_globally=#false,
+               #=:terminates_locally=#false,
+               #=:notaskstate=#false,
+               #=:inaccessiblememonly=#false,
+               #=:noub=#false,
+               #=:noub_if_noinbounds=#false,
+               #=:consistent_overlay=#false,
+               #=:nortcall=#false)
 
 
 # julia/src/method.c
