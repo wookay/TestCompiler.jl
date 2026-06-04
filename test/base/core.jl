@@ -60,3 +60,21 @@ end
 end # if
 
 end # module test_base_core_redefining_structs
+
+
+module test_base_core_typeeq
+
+using Test
+
+if VERSION >= v"1.14.0-DEV.2291" # julia commit 26145852c4
+Core.TypeEq
+Base.isType
+Base.type_parameter
+
+@test Union isa Core.AnyType
+@test Union isa supertype(Union)
+@test UnionAll isa Core.AnyType
+@test UnionAll isa supertype(UnionAll)
+end
+
+end # module test_base_core_typeeq
