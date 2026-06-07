@@ -40,10 +40,10 @@ Base.issingletontype
 @test Base.isdispatchtuple(Tuple{Int})
 @test Base.issingletontype(Nothing)
 
-struct S
+struct S1
 end
-@test Base.isconcretetype(S)
-@test Base.issingletontype(S)
+@test Base.isconcretetype(S1)
+@test Base.issingletontype(S1)
 
 struct S2
     field
@@ -51,12 +51,19 @@ end
 @test Base.isconcretetype(S2)
 @test !(Base.issingletontype(S2))
 
-T = Union{Int, String}
-@test typeintersect(Int, T) === Int
+UT = Union{Int, String}
+@test typeintersect(Int, UT) === Int
 
-@test Base.uniontypes(T) == [Int, String]
-@test Base.unionlen(T) == 2
-@test Union{Base.uniontypes(T)...} === T
+@test Base.uniontypes(UT) == Any[Int, String]
+@test Base.unionlen(UT) == 2
+@test Union{Base.uniontypes(UT)...} === UT
+
+@enum E a b
+@test instances(E) === (a, b)
+
+@test Base.to_tuple_type((Int,)) === Tuple{Int}
+
+@test Base.signature_type(+, (Int,)) === Tuple{typeof(+), Int64}
 
 end # module test_base_runtime_internals
 
