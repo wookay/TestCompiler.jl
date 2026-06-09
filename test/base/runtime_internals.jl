@@ -63,7 +63,7 @@ UT = Union{Int, String}
 
 @test Base.to_tuple_type((Int,)) === Tuple{Int}
 
-@test Base.signature_type(+, (Int,)) === Tuple{typeof(+), Int64}
+@test Base.signature_type(+, (Int,)) === Tuple{typeof(+), Int}
 
 end # module test_base_runtime_internals
 

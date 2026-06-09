@@ -101,3 +101,16 @@ Base.unwrapva
 # macro _noub_if_noinbounds_meta()
 
 end # module test_base_essentials
+
+
+module test_base_essentials_convert
+
+using Test
+
+@test convert(Bool, 1)
+@test Base.cconvert(Bool, 1)
+@test_throws InexactError convert(Bool, 2)
+
+@test convert(Int, true) == 1
+
+end # module test_base_essentials_convert
