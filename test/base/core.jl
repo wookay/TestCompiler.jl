@@ -84,15 +84,15 @@ using Test
 if VERSION >= v"1.14.0-DEV.2291" # julia commit 26145852c4
 @test Union isa supertype(Union)
 @test UnionAll isa supertype(UnionAll)
+@test Union isa Core.AnyType
+@test UnionAll isa Core.AnyType
+@test isabstracttype(Core.AnyType)
+@test Core.AnyType <: Any
 
 Core.TypeEq
 Base.isType
 Base.type_parameter
 @test hasmethod(Base.type_parameter, (Core.TypeEq,))
-
-@test isabstracttype(Core.AnyType)
-@test Union isa Core.AnyType
-@test UnionAll isa Core.AnyType
 else
 @test (Union isa supertype(Union)) === false
 @test (UnionAll isa supertype(UnionAll)) === false
