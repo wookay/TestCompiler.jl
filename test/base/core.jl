@@ -84,6 +84,8 @@ using Test
 if VERSION >= v"1.14.0-DEV.2291" # julia commit 26145852c4
 @test Union isa supertype(Union)
 @test UnionAll isa supertype(UnionAll)
+@test_throws MethodError supertype(Type) <: Any
+
 @test Union isa Core.AnyType
 @test UnionAll isa Core.AnyType
 @test isabstracttype(Core.AnyType)
@@ -96,6 +98,7 @@ Base.type_parameter
 else
 @test (Union isa supertype(Union)) === false
 @test (UnionAll isa supertype(UnionAll)) === false
+@test supertype(Type) <: Any
 end # if
 
 end # module test_base_core_typeeq
