@@ -43,6 +43,7 @@ end
         Base.noncallable_number_hint_handler,
         Base.nonsetable_type_hint_handler,
         Base.string_concatenation_hint_handler,
+        Base.string_replace_hint_handler,
         Base.methods_on_iterable
     ]
 
