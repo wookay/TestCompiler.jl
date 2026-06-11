@@ -66,37 +66,45 @@ module test_base_core_typeeq
 
 using Test
 
-@test   Vector isa UnionAll
-@test !(Vector{Int} isa UnionAll)
 @test !isconcretetype(Vector)
 @test  isconcretetype(Vector{Int})
 @test  isconcretetype(Union)
 @test  isconcretetype(Union{Int})
 @test  isconcretetype(UnionAll)
 @test !isconcretetype(Any)
+@test !isconcretetype(Type)
 
 @test !isabstracttype(Vector)
+@test !isabstracttype(Vector{Int})
 @test !isabstracttype(Union)
 @test !isabstracttype(Union{Int})
 @test !isabstracttype(UnionAll)
 @test  isabstracttype(Any)
+@test  isabstracttype(Type)
+
+@test Union    <: Any
+@test UnionAll <: Any
+
+@test   Vector      isa UnionAll
+@test !(Vector{Int} isa UnionAll)
 
 if VERSION >= v"1.14.0-DEV.2291" # julia commit 26145852c4
-@test Union isa supertype(Union)
+@test Union    isa supertype(Union)
 @test UnionAll isa supertype(UnionAll)
 @test_throws MethodError supertype(Type) <: Any
 
-@test Union isa Core.AnyType
-@test UnionAll isa Core.AnyType
-@test isabstracttype(Core.AnyType)
-@test Core.AnyType <: Any
+@test Union    <: Core.AnyType <: Any
+@test UnionAll <: Core.AnyType <: Any
+
+@test !isconcretetype(Core.AnyType)
+@test  isabstracttype(Core.AnyType)
 
 Core.TypeEq
 Base.isType
 Base.type_parameter
 @test hasmethod(Base.type_parameter, (Core.TypeEq,))
 else
-@test (Union isa supertype(Union)) === false
+@test (Union    isa supertype(Union))    === false
 @test (UnionAll isa supertype(UnionAll)) === false
 @test supertype(Type) <: Any
 end # if
