@@ -39,13 +39,15 @@ end
         REPL.UndefVarError_REPL_hint
     ]
 
+if VERSION >= v"1.14.0-DEV.2327"
 @test get_hint_handlers(MethodError) == [
         Base.noncallable_number_hint_handler,
         Base.nonsetable_type_hint_handler,
         Base.string_concatenation_hint_handler,
-        Base.string_replace_hint_handler,
+        Base.string_replace_hint_handler, # julia commit 74d979ad2f
         Base.methods_on_iterable
     ]
+end
 
 @test get_hint_handlers(FieldError) == [
         Base.fielderror_dict_hint_handler,
