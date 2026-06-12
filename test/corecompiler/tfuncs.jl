@@ -20,9 +20,16 @@ g("")
 g(3.14)
 
 mg = only(methods(g))
-mgi = mg.specializations
-@test mgi isa Core.MethodInstance
-@test mgi.specTypes === Tuple{typeof(g), Any}
+specs = mg.specializations
+if specs isa Core.SimpleVector
+    mgi = first(specs)
+    @test mgi isa Core.MethodInstance
+    @test mgi.specTypes === Tuple{typeof(g), Int}
+else
+    mgi = specs
+    @test mgi isa Core.MethodInstance
+    @test mgi.specTypes === Tuple{typeof(g), Any}
+end
 
 
 CC.egal_tfunc
