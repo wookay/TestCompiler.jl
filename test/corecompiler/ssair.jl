@@ -97,6 +97,19 @@ for (idx::Int, block::BasicBlock) in pairs(ir.cfg.blocks)
     @test block == first(ir.cfg.blocks)
 end
 
+if VERSION >= v"1.14.0-DEV.2347" # julia commit cb6f0fb506
+using .CC: DomTreeNode, DomTreeCache
+function Base.:(==)(a::T, b::T)::Bool where T <: DomTreeNode
+    a.level == b.level &&
+    a.children == b.children
+end
+@test DomTreeNode() == DomTreeNode(1, BBNumber[])
+
+cache = DomTreeCache()
+@test cache.worklist isa Vector{Tuple{BBNumber, Int}}
+end # if
+
+
 #=
 # from julia/Compiler/src/ssair/basicblock.jl
 struct BasicBlock
@@ -129,6 +142,21 @@ struct DFSTree
     to_parent_pre::Vector{PreNumber}
 
     _worklist::Vector{Tuple{BBNumber, PreNumber, Bool}}
+end
+
+"Represents a Basic Block, in the DomTree"
+struct DomTreeNode
+    # How deep we are in the DomTree
+    level::Int
+    # The BB indices in the CFG for all Basic Blocks we immediately dominate
+    children::Vector{BBNumber}
+end
+
+# v"1.14.0-DEV.2347"  julia commit cb6f0fb506
+struct DomTreeCache
+    ancestors::Vector{PreNumber}
+    idoms_pre::Vector{PreNumber}
+    worklist::Vector{Tuple{Int, Int}}
 end
 =#
 
