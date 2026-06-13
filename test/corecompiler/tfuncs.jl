@@ -22,10 +22,12 @@ g(3.14)
 mg = only(methods(g))
 specs = mg.specializations
 if specs isa Core.SimpleVector
+    @test VERSION >= v"1.14.0-DEV.2337" # julia commit 76a2a8fd25  gf: redesign specialization strategy
     mgi = first(specs)
     @test mgi isa Core.MethodInstance
     @test mgi.specTypes === Tuple{typeof(g), Int}
 else
+    @test VERSION < v"1.14.0-DEV.2337"
     mgi = specs
     @test mgi isa Core.MethodInstance
     @test mgi.specTypes === Tuple{typeof(g), Any}
