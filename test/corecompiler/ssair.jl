@@ -11,9 +11,37 @@ using Test
 using Core: Compiler as CC
 
 # isa_ast_node from julia/base/expr.jl
-using .CC: CodeInfo, SSAValue, SlotNumber, Argument, GlobalRef, GotoIfNot,
-           NewvarNode, LineNumberNode, GotoNode, EnterNode, ReturnNode,
-           QuoteNode, PiNode, PhiNode, PhiCNode, UpsilonNode
+using .CC: NewvarNode,
+           CodeInfo,
+           LineNumberNode,
+           GotoNode,
+           GotoIfNot,
+           EnterNode,
+           ReturnNode,
+           SSAValue,
+           SlotNumber,
+           Argument,
+           QuoteNode,
+           GlobalRef,
+           Symbol,
+           PiNode,
+           PhiNode,
+           PhiCNode,
+           UpsilonNode,
+           Expr
+# from julia/base/expr.jl
+if VERSION >= v"1.13.0-DEV.763"
+"""
+    isa_ast_node(x)
+
+Return false if `x` is not interpreted specially by any of inference, lowering,
+or codegen as either an AST or IR special form.
+"""
+Base.isa_ast_node
+
+# unused function since julia commit 098a4f8dd2  refine IR model queries
+Base.is_self_quoting
+end # if
 
 # from julia/test/show.jl
 # Tests for printing Core.Compiler internal objects
@@ -27,12 +55,6 @@ using .CC: CodeInfo, SSAValue, SlotNumber, Argument, GlobalRef, GotoIfNot,
 @test repr(UpsilonNode(SlotNumber(3))) == ":(ϒ (_3))"
 @test sprint(Base.show_unquoted, Argument(23)) == "_23"
 @test sprint(Base.show_unquoted, Argument(-2)) == "_-2"
-
-# from julia/base/expr.jl
-if VERSION >= v"1.13.0-DEV.763"
-Base.isa_ast_node
-Base.is_self_quoting
-end
 
 φ = PhiNode()
 @test φ.edges == Int32[]
@@ -86,7 +108,17 @@ dfs = DFS(blocks, false)
 
 @test length(ir.stmts) == 1
 
-using .CC: BBNumber
+using .CC: BBNumber, PreNumber, PostNumber
+@test BBNumber === PreNumber === PostNumber === Int
+# from julia/Compiler/src/ssair/domtree.jl
+#=
+# We could make these real structs, but probably not worth the extra
+# overhead. Still, give them names for documentary purposes.
+const BBNumber = Int
+const PreNumber = Int
+const PostNumber = Int
+=#
+
 for (bb::BBNumber, idx::Int) in CC.bbidxiter(ir)
     @test bb == 1
     @test idx == 1
@@ -106,7 +138,17 @@ end
 @test DomTreeNode() == DomTreeNode(1, BBNumber[])
 
 cache = DomTreeCache()
-@test cache.worklist isa Vector{Tuple{BBNumber, Int}}
+@test cache.worklist isa Vector{Tuple{Int, Int}}
+#=
+function update_level!(nodes::Vector{DomTreeNode}, node::BBNumber, level::Int,
+                       worklist::Vector{Tuple{BBNumber, Int}})
+
+function snca_compress_worklist!(
+        state::Vector{SNCAData}, ancestors::Vector{PreNumber},
+        v::PreNumber, last_linked::PreNumber,
+        worklist::Vector{Tuple{PreNumber, PreNumber}})
+=#
+
 end # if
 
 
@@ -142,6 +184,12 @@ struct DFSTree
     to_parent_pre::Vector{PreNumber}
 
     _worklist::Vector{Tuple{BBNumber, PreNumber, Bool}}
+end
+
+"Iterable data structure that walks though all dominated blocks"
+struct DominatedBlocks
+    domtree::DomTree
+    worklist::Vector{BBNumber}
 end
 
 "Represents a Basic Block, in the DomTree"

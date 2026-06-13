@@ -91,7 +91,8 @@ using Test
 if VERSION >= v"1.14.0-DEV.2291" # julia commit 26145852c4
 @test Union    isa supertype(Union)
 @test UnionAll isa supertype(UnionAll)
-@test_throws MethodError supertype(Type) <: Any
+@test_throws MethodError supertype(Type)         <: Any
+@test_throws MethodError supertype(Type{Vector}) <: Any
 
 @test Union    <: Core.AnyType <: Any
 @test UnionAll <: Core.AnyType <: Any
@@ -100,13 +101,32 @@ if VERSION >= v"1.14.0-DEV.2291" # julia commit 26145852c4
 @test  isabstracttype(Core.AnyType)
 
 Core.TypeEq
+@test supertype(TypeEq) === Core.AnyType
+@test  TypeEq             <: Core.AnyType
+@test (TypeEq{T} where T) <: Core.AnyType
+@test Type         !== TypeEq
+@test Type{Vector} === TypeEq{Vector}
+
+# from julia/base/runtime_internals.jl
 Base.isType
+# isType(@nospecialize t) = isa(t, TypeEq)
+
 Base.type_parameter
+# type_parameter(t::TypeEq) = getfield(t, :T)
+
 @test hasmethod(Base.type_parameter, (Core.TypeEq,))
+
+@test Base.isType(Type{Vector})
+@test Base.isType(Type{Broadcast.Broadcasted})
+
+@test Base.type_parameter(Type{Vector}) ===
+      Base.type_parameter(TypeEq{Vector}) ===
+      Vector
 else
 @test (Union    isa supertype(Union))    === false
 @test (UnionAll isa supertype(UnionAll)) === false
-@test supertype(Type) <: Any
+@test supertype(Type)         <: Any
+@test supertype(Type{Vector}) <: Any
 end # if
 
 end # module test_base_core_typeeq

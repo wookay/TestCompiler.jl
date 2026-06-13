@@ -69,6 +69,8 @@ Base.unwrapva
 #     isa(t, Core.TypeofVararg) || return t
 #     return isdefined(t, :T) ? t.T : Any
 # end
+@test Base.unwrapva(Vararg{Any}) === Any
+@test Base.unwrapva(Vararg{Tuple{Int, String}}) === Tuple{Int64, String}
 
 
 #=

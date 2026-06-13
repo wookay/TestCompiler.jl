@@ -75,6 +75,10 @@ CC.argtype_by_index
 CC.argtype_tail
 # function argtype_tail(argtypes::Vector{Any}, i::Int)
 
+if VERSION >= v"1.14.0-DEV.2336" # julia commit 83323976df  inference: Add `widen_call_result` interface
+CC.widen_call_result
+end
+
 
 # from julia/Compiler/src/types.jl
 #=
