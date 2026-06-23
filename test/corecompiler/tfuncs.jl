@@ -52,4 +52,30 @@ struct S
 end
 @test egal_tfunc(S, S) == Bool
 
+
+# from julia/Compiler/src/stmtinfo.jl
+# struct CallMeta
+
+# from julia/Compiler/src/inferencestate.jl
+# struct Future{T}
+
+# from julia/Compiler/src/tfuncs.jl
+# function return_type_tfunc(interp::AbstractInterpreter, argtypes::Vector{Any}, si::StmtInfo, sv::AbsIntState)
+
+using .CC: CallMeta, Effects, EFFECTS_THROWS, NoCallInfo, CallInfo
+rt = Type
+exct = Any
+effects = Effects(EFFECTS_THROWS; nortcall=false)
+info = NoCallInfo() # NoCallInfo <: CallInfo
+refinements = nothing # ::Union{Nothing,SlotRefinement,Vector{Any}}
+
+if VERSION >= v"1.12"
+UNKNOWN = CallMeta(rt::Any, exct::Any, effects::Effects, info::CallInfo, refinements)
+@test UNKNOWN isa CallMeta
+
+using .CC: Future
+future = Future(UNKNOWN)
+@test future isa Future{CallMeta}
+end # if
+
 end # module test_corecompiler_tfuncs
