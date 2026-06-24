@@ -17,7 +17,13 @@ const PreNumber = Int
 const PostNumber = Int
 =#
 
-using .CC: IRCode, BasicBlock
+using .CC: IRCode, BasicBlock, StmtRange
+
+function Base.:(==)(a::T, b::T)::Bool where T <: BasicBlock
+    a.stmts == b.stmts &&
+    a.preds == b.preds &&
+    a.succs == b.succs
+end
 
 ir = IRCode()
 
@@ -28,7 +34,7 @@ end
 
 for (idx::Int, block::BasicBlock) in pairs(ir.cfg.blocks)
     @test idx == 1
-    @test block == first(ir.cfg.blocks)
+    @test block == BasicBlock(StmtRange(1:1))
 end
 
 
