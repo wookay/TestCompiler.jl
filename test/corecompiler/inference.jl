@@ -73,3 +73,23 @@ x = A{A{A{A{A{A{A{A{A{Int}}}}}}}}}(11480)
 end # let
 
 end # module test_corecompiler_concrete_evaluate
+
+
+module test_corecompiler_opaque_closure
+
+using Test
+using Core: Compiler as CC
+
+# from julia/Compiler/test/inference.jl
+
+oc = Base.Experimental.@opaque x::Int -> 2x
+@test oc isa Core.OpaqueClosure{Tuple{Int}, Int}
+@test Base.infer_return_type(oc, Tuple{Int}) === Int
+
+if VERSION >= v"1.14.0-DEV.2430" # julia commit 2e0a778b56
+@test CC.return_type(oc, Tuple{Int}) === Int
+else
+@test CC.return_type(oc, Tuple{Int}) === Any
+end
+
+end # module test_corecompiler_opaque_closure
