@@ -5,6 +5,7 @@ testcompiler/ext.jl
 core
 corecompiler
 base
+stdlibs
 src
 compiler
 testcompiler
