@@ -11,6 +11,7 @@ struct T36104
 end
 const orig_T36104 = T36104
 
+# WARNING: Method definition T36104(Any)
 # check that redefining it works  # julia issue #21816
 struct T36104
     x
@@ -27,6 +28,8 @@ end
 const orig_R61789 = R61789
 world1 = Base.get_world_counter()
 
+# WARNING: Method definition R61789(Any, R61789)
+# WARNING: Method definition R61789(Any, Any)
 struct R61789
     x
     next::R61789

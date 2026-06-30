@@ -18,6 +18,7 @@ end
 end # if !isdefined(Main, :__custom_compiler_active)
 
 
+# WARNING: Method definition typeinf(Nothing, Core.MethodInstance, UInt8)
 using Core: Compiler as CC
 CC.activate!(; codegen = true)
 # Compiling the compiler. This may take several minutes ...
