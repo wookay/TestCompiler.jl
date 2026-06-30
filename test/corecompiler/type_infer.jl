@@ -2,6 +2,8 @@ module test_corecompiler_type_infer
 
 using Test
 using Core: Compiler as CC
+using .CC: Future, MethodCallResult
+
 
 # from julia/Compiler/src/typeinfer.jl
 #=

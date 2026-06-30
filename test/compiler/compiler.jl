@@ -11,4 +11,6 @@ if on_ci
     @test C !== CC
 end
 
+# see also julia/doc/src/devdocs/agents/skills/compiler-jl/SKILL.md
+
 end # module test_compiler_compiler
