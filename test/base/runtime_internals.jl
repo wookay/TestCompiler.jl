@@ -65,6 +65,12 @@ UT = Union{Int, String}
 
 @test Base.signature_type(+, (Int,)) === Tuple{typeof(+), Int}
 
+@test Base.Bottom === Union{}
+@test Base.Bottom isa Core.TypeofBottom
+@test Base.Bottom <: Int
+@test_throws MethodError supertype(Base.Bottom)
+@test Base.issingletontype(Core.TypeofBottom)
+
 end # module test_base_runtime_internals
 
 
