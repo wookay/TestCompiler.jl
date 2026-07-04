@@ -5,6 +5,10 @@ using Test
 # from julia/base/runtime_internals.jl
 @test Base.aligned_sizeof(Int) == 8
 @test Base.aligned_sizeof(String) == 8
+@test Base.aligned_sizeof(Type{Union}) == 8
+if VERSION >= v"1.12"
+@test Base.aligned_sizeof(Type{Union{}}) == 0
+end # if
 
 @test Base.datatype_alignment(Int) == 8
 @test Base.datatype_alignment(String) == 1
