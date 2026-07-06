@@ -78,4 +78,13 @@ future = Future(UNKNOWN)
 @test future isa Future{CallMeta}
 end # if
 
+if VERSION >= v"1.14.0-DEV.2597" # julia commit e7fe47b022
+Core.TypeEgal
+
+CC.isTypeEgal
+CC.isTypeEq
+CC.isType
+CC.isconstType
+end
+
 end # module test_corecompiler_tfuncs
