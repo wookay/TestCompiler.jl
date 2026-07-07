@@ -1,6 +1,8 @@
 module test_corecompiler_tfuncs
 
 # see also base/runtime_internals.jl
+#          core/types.jl
+#          corecompiler/typeutils.jl
 
 using Test
 using Core: Compiler as CC
@@ -78,13 +80,22 @@ future = Future(UNKNOWN)
 @test future isa Future{CallMeta}
 end # if
 
-if VERSION >= v"1.14.0-DEV.2597" # julia commit e7fe47b022
-Core.TypeEgal
 
-CC.isTypeEgal
-CC.isTypeEq
-CC.isType
-CC.isconstType
-end
+@test typeintersect(Type{Int}, Union{}) === Union{}
+
+# from julia/Compiler/src/tfuncs.jl
+# tfuncs
+#
+# Note that in most places in the compiler here, we'll assume that T=Type{S} is well-formed,
+# and implies that `S <: Type`, not `1::Type{1}`, for example.
+# This means that isType(T) implies we can call subtype on type_parameter(T), etc.
+# Use isTypeEq(T) or isTypeEgal(T) where equality-only and egality-certain
+# type-object kinds need to be distinguished.
+
+if VERSION >= v"1.14.0-DEV.2597" # julia commit e7fe47b022
+@test typeintersect(Type{Int}, UnionAll) === Type{Int}
+else
+@test typeintersect(Type{Int}, UnionAll) === Union{}
+end # if
 
 end # module test_corecompiler_tfuncs

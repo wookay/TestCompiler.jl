@@ -102,6 +102,33 @@ inter_must_alias = InterMustAlias(2, Some{Any}, 1, Int)
 end # module test_core_types_InterMustAlias
 
 
+module test_core_types_TypeEgal
+
+using Test
+using InteractiveUtils: subtypes
+
+@test  isconcretetype(Union)
+@test !isconcretetype(Union{})
+
+function foo(::Union{T, Type{T}}) where T
+    T
+end
+
+if VERSION >= v"1.14.0-DEV.2597" # julia commit e7fe47b022
+@test foo(Type{Int}) === Type{Int} === Core.TypeEq{Int}
+
+@test Core.TypeEgal <: Core.AnyType <: Any
+@test isabstracttype(Core.AnyType)
+@test subtypes(Core.AnyType) == [Core.Intersect, Core.TypeEgal, Core.TypeofBottom, DataType, TypeEq, Union, UnionAll]
+
+else
+
+@test foo(Type{Int}) === Type{Int}
+
+end # if
+
+end # module test_core_types_TypeEgal
+
 #=
 help?> Core.Const
 
