@@ -1,3 +1,44 @@
+using Jive
+@If VERSION >= v"1.14.0-DEV.2597" module test_base_runtime_internals_typeutils
+# julia commit e7fe47b022
+
+# see also corecompiler/typeutils.jl
+
+# from julia/base/runtime_internals.jl
+
+Base.isType
+# Base.isType(t)
+#
+# Determine whether `t` is a kind whose values are Julia type objects. This is
+# true for both equality-keyed `Type{T}`/`TypeEq{T}` kinds and egality-keyed
+# `Core.TypeEgal{T}` kinds.
+#
+# Use [`Base.isTypeEq`](@ref) or [`Base.isTypeEgal`](@ref) when the distinction
+# between equality and egality matters.
+#
+# isType(@nospecialize t) = isTypeEq(t) || isTypeEgal(t)
+
+Base.isTypeEq
+# Base.isTypeEq(t)
+#
+# Determine whether `t` is an equality-keyed `Type{T}`/`TypeEq{T}` kind.
+#
+# isTypeEq(@nospecialize t) = isa(t, TypeEq)
+
+Base.isTypeEgal
+# Base.isTypeEgal(t)
+#
+# Determine whether `t` is an egality-keyed `Core.TypeEgal{T}` kind.
+#
+# isTypeEgal(@nospecialize t) = isa(t, Core.TypeEgal)
+
+Base.type_parameter
+# type_parameter(t::TypeEq) = getfield(t, :T)
+# type_parameter(t::Core.TypeEgal) = getfield(t, :T)
+
+end # module test_base_runtime_internals_typeutils
+
+
 module test_base_runtime_internals
 
 # see also base/partition_kind.jl
@@ -69,6 +110,7 @@ UT = Union{Int, String}
 @test Base.Bottom isa Core.TypeofBottom
 @test Base.Bottom <: Int
 @test_throws MethodError supertype(Base.Bottom)
+@test typeof(Base.Bottom) === Core.TypeofBottom
 @test Base.issingletontype(Core.TypeofBottom)
 
 end # module test_base_runtime_internals
