@@ -4,7 +4,10 @@ using Jive
 
 # see also corecompiler/typeutils.jl
 
+using Test
+
 # from julia/base/runtime_internals.jl
+#      julia/test/core.jl
 
 Base.isType
 # Base.isType(t)
@@ -25,6 +28,9 @@ Base.isTypeEq
 #
 # isTypeEq(@nospecialize t) = isa(t, TypeEq)
 
+@test Base.isTypeEq(Type{Int})
+@test Base.isTypeEq(TypeEq{Int})
+
 Base.isTypeEgal
 # Base.isTypeEgal(t)
 #
@@ -32,9 +38,16 @@ Base.isTypeEgal
 #
 # isTypeEgal(@nospecialize t) = isa(t, Core.TypeEgal)
 
+@test Base.isTypeEgal(Core.TypeEgal{Int})
+
 Base.type_parameter
 # type_parameter(t::TypeEq) = getfield(t, :T)
 # type_parameter(t::Core.TypeEgal) = getfield(t, :T)
+
+@test Base.type_parameter(Type{Int})          === Int
+@test Base.type_parameter(TypeEq{Int})        === Int
+@test Base.type_parameter(Core.TypeEgal{Int}) === Int
+@test_throws MethodError Base.type_parameter(Type)
 
 end # module test_base_runtime_internals_typeutils
 

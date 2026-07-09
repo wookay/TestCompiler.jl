@@ -119,9 +119,20 @@ end
 if VERSION >= v"1.14.0-DEV.2597" # julia commit e7fe47b022
 @test foo(Type{Int}) === Type{Int} === Core.TypeEq{Int}
 
-@test Core.TypeEgal <: Core.AnyType <: Any
 @test isabstracttype(Core.AnyType)
 @test subtypes(Core.AnyType) == [Core.Intersect, Core.TypeEgal, Core.TypeofBottom, DataType, TypeEq, Union, UnionAll]
+
+@test Core.TypeEgal <: Core.AnyType <: Any
+@test      TypeEq   <: Core.AnyType <: Any
+@test isconcretetype(Core.TypeEgal)
+@test isconcretetype(TypeEq)
+
+@test Type === (Type{T} where T) === (TypeEq{T} where T)
+@test Type !== TypeEq
+
+@test  Type             isa Core.TypeEgal{Type}
+@test (Type{T} where T) isa Core.TypeEgal{Type}
+@test  Type{Int}        isa Core.TypeEgal{Type{Int}}
 
 else
 
