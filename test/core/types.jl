@@ -11,7 +11,9 @@ using Core: Const, InterConditional, PartialStruct, CodeInfo, CodeInstance, Meth
 @test Vector{Int} isa DataType
 @test (T where T) isa DataType
 
+if VERSION >= v"1.12"
 @test Tuple.name === Core.typename(Tuple)
+end # if
 
 end # module test_core_types
 
