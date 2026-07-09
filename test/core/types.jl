@@ -11,6 +11,8 @@ using Core: Const, InterConditional, PartialStruct, CodeInfo, CodeInstance, Meth
 @test Vector{Int} isa DataType
 @test (T where T) isa DataType
 
+@test Tuple.name === Core.typename(Tuple)
+
 end # module test_core_types
 
 
