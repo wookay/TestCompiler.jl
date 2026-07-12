@@ -58,7 +58,9 @@ end
 
 # from julia/Compiler/src/types.jl
 # Quickly and easily satisfy the AbstractInterpreter API contract
-@test CC.InferenceParams(interp) == CC.InferenceParams(3, 4, 8, 32, 3, true, false, false, false, false)
+if VERSION >= v"1.14.0-DEV.2628" # julia commit 5ef5b2dd16
+@test CC.InferenceParams(interp) == CC.InferenceParams(3, 4, 8, 32, 3, true, false, false, false, false, nothing)
+end
 @test CC.OptimizationParams(interp) == CC.OptimizationParams(true, 100, 1000, 250, 32, true, false, false)
 @test CC.get_inference_world(interp) == Base.get_world_counter()
 if VERSION >= v"1.14.0-DEV.1691"
