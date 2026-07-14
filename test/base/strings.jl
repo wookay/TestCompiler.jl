@@ -17,4 +17,16 @@ annostr = Base.AnnotatedString(SubString(s))
 @test Base.unannotate(annostr) == s
 end # if
 
+# julia commit 5b6c2bacec
+# @code_typed optimize=true string(5)
+n = 5
+n1 = Core.Intrinsics.flipsign_int(n, n)::Int64
+n2 = Core.Intrinsics.bitcast(UInt64, n1)::UInt64
+n3 = Core.Intrinsics.slt_int(n, 0)::Bool
+n4 = Base.dec(n2::Unsigned, 1::Int64, n3::Bool)
+@test n1 == 5
+@test n2 == 0x0000000000000005
+@test n3 === false
+@test n4 == "5"
+
 end # module test_base_strings
