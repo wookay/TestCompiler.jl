@@ -16,7 +16,6 @@ FemtoCompiler = {url = "https://github.com/wookay/FemtoCompiler.jl", rev = "main
 JuliaCore = {subdir = "JuliaCore", url = "https://github.com/wookay/FemtoCompiler.jl", rev = "main"}
 DumpTruck = {url = "https://github.com/wookay/DumpTruck.jl", rev = "main"}
 Doors = {url = "https://github.com/wookay/Doors.jl", rev = "main"}
-CompilerDevTools = {path = "sources/Compiler/extras/CompilerDevTools"}
 
 [extensions]
 TestCompilerExt = ["Compiler"]
@@ -46,8 +45,7 @@ JuliaCore = "4dea8d58-8095-4b52-84ae-e93c853b8479"
 DumpTruck = "1c7707eb-034e-4b2b-a9eb-f5ae3e79caea"
 Doors = "562d782d-cdb6-40a5-8f18-d6f69b5e6b90"
 JuliaInterpreter = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
-CompilerDevTools = "92b2d91f-d2bd-4c05-9214-4609ac33433f"
 
 [targets]
 test = ["Test", "UUIDs", "Pkg", "Markdown", "InteractiveUtils", "Profile",
-        "Jive", "FemtoCompiler", "JuliaCore", "DumpTruck", "Doors", "JuliaInterpreter", "CompilerDevTools"]
+        "Jive", "FemtoCompiler", "JuliaCore", "DumpTruck", "Doors", "JuliaInterpreter"]
