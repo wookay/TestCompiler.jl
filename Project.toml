@@ -39,6 +39,7 @@ Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 Profile = "9abbd945-dff8-562f-b5e8-e1ebf5ef1b79"
+CompilerSupportLibraries_jll = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 Jive = "ba5e3d4b-8524-549f-bc71-e76ad9e9deed"
 FemtoCompiler = "92d42091-2d14-46a9-a897-febf9702e17e"
 JuliaCore = "4dea8d58-8095-4b52-84ae-e93c853b8479"
@@ -47,5 +48,5 @@ Doors = "562d782d-cdb6-40a5-8f18-d6f69b5e6b90"
 JuliaInterpreter = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 
 [targets]
-test = ["Test", "UUIDs", "Pkg", "Markdown", "InteractiveUtils", "Profile",
+test = ["Test", "UUIDs", "Pkg", "Markdown", "InteractiveUtils", "Profile", "CompilerSupportLibraries_jll",
         "Jive", "FemtoCompiler", "JuliaCore", "DumpTruck", "Doors", "JuliaInterpreter"]

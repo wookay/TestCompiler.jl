@@ -144,6 +144,22 @@ end # if
 
 end # module test_core_types_TypeEgal
 
+
+module test_core_types_TypeVar
+
+using Test
+
+function Base.:(==)(a::T, b::T)::Bool where T <: TypeVar
+    a.name === b.name &&
+    a.lb   === b.lb &&
+    a.ub   === b.ub
+end
+
+@test Array.var == Vector.var == TypeVar(:T)
+
+end # module test_core_types_TypeVar
+
+
 #=
 help?> Core.Const
 
