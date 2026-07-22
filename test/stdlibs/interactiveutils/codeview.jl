@@ -11,11 +11,12 @@ f = +
 types = (Int, Int)
 iob = IOBuffer()
 code_warntype(iob, f, types)
+lowered = String(take!(iob))
 
 if VERSION >= v"1.14-DEV"
-@test String(take!(iob)) == """
+    expected = """
 MethodInstance for +(::Int64, ::Int64)
-  from +(x::Int64, y::Int64) @ Base essentials.jl:1226
+  from +(x::Int64, y::Int64) @ Base essentials.jl:0000
 Arguments
   #self#::Core.Const(+)
   x::Int64
@@ -26,9 +27,10 @@ Body::Int64
 └──      return %2
 
 """
+    @test expected == replace(lowered, r"\d{4}" => "0000")
 
 elseif VERSION >= v"1.11"
-@test String(take!(iob)) == """
+    expected = """
 MethodInstance for +(::Int64, ::Int64)
   from +(x::T, y::T) where T<:Union{Int128, Int16, Int32, Int64, Int8, UInt128, UInt16, UInt32, UInt64, UInt8} @ Base int.jl:87
 Static Parameters
@@ -43,6 +45,7 @@ Body::Int64
 └──      return %2
 
 """
+    @test expected == lowered
 end # if
 
 end # module test_stdlibs_InteractiveUtils_codeview
