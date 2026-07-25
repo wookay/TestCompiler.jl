@@ -6,9 +6,9 @@ using Test
 
 Core.CancellationTokenSource
 Base.CancellationToken
+Base.CancellationRequest
 Base.iscancelled
 Base.cancel!
 Base.@cancel_check
-Base.CancellationRequest
 
 end # module test_base_cancellation
