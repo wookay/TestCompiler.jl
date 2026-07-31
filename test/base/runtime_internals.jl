@@ -126,6 +126,13 @@ UT = Union{Int, String}
 @test typeof(Base.Bottom) === Core.TypeofBottom
 @test Base.issingletontype(Core.TypeofBottom)
 
+if VERSION >= v"1.12.0-DEV.1405" # julia commit 222cde9c09
+Base.isfieldatomic
+end
+if VERSION >= v"1.14.0-DEV.2852" # julia commit 8a642642f1
+@test Base.ispublic(Base, Symbol(Base.isfieldatomic))
+end
+
 end # module test_base_runtime_internals
 
 
