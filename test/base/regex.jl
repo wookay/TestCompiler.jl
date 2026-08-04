@@ -17,4 +17,10 @@ m = match(r"\d{3}", "123")
 
 @test replace("123", r"\d{3}" => "0") == "0"
 
+
+s = "### [`JULIA_DEBUG`](@id JULIA_DEBUG)\n"
+@test (first ∘ match)(r"`(\w*)`", s) == "JULIA_DEBUG"
+s = "### `JULIA_FALLBACK_REPL`\n"
+@test (first ∘ match)(r"`(\w*)`", s) == "JULIA_FALLBACK_REPL"
+
 end # module test_base_regex
