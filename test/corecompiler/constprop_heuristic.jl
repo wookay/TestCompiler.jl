@@ -45,7 +45,7 @@ end
 using .CC: InternalCodeCache, code_cache
 if VERSION >= v"1.14.0-DEV.60"
     using .CC: OverlayCodeCache
-    @test code_cache(interp) isa OverlayCodeCache{InternalCodeCache}
+    @test code_cache(interp) isa CC.InternalCodeCache
 else
     using .CC: WorldView
     @test code_cache(interp) isa WorldView{InternalCodeCache}

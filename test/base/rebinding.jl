@@ -19,8 +19,8 @@ mi = Base.method_instance(caller, ())
 @test isdefined(mi, :cache) === true
 ci = mi.cache
 
-if VERSION >= v"1.14.0-DEV.2290"
-@test length(ci.edges[1].edges) == 2
+if VERSION >= v"1.14.0-DEV.2874"
+@test length(ci.edges[1].edges) == 4
 else
 @test length(ci.edges[1].edges) == 1
 end

@@ -17,12 +17,7 @@ interp = CC.NativeInterpreter()
 world = CC.get_inference_world(interp)
 
 wvc = CC.code_cache(interp)
-@test wvc isa OverlayCodeCache{InternalCodeCache}
-@test wvc.globalcache.worlds.max_world == world
-if VERSION >= v"1.14.0-DEV.1691"
-    @test wvc.localcache isa CC.InferenceCache
-else
-    @test wvc.localcache == CC.InferenceResult[]
-end
+@test wvc isa CC.InternalCodeCache
+@test wvc.worlds.max_world == world
 
 end # module test_corecompiler_cicache
