@@ -21,6 +21,7 @@ if !haskey(Base.loaded_modules, pkg)
 @test last(md.content).code == """
 consistent          :: UInt8
 effect_free         :: UInt8
+reset_safe          :: UInt8
 nothrow             :: Bool
 terminates          :: Bool
 notaskstate         :: Bool
@@ -38,6 +39,7 @@ using TestCompiler.EffectBits
 @test last(md.content).code == """
 +c ALWAYS_TRUE consistent          :: UInt8
 +e ALWAYS_TRUE effect_free         :: UInt8
++re ALWAYS_TRUE reset_safe          :: UInt8
 !n false       nothrow             :: Bool
 +t true        terminates          :: Bool
 +s true        notaskstate         :: Bool
@@ -55,6 +57,7 @@ effects = Effects(; consistent = CONSISTENT_IF_NOTRETURNED)
 @test last(md.content).code == """
 ?c CONSISTENT_IF_NOTRETURNED consistent          :: UInt8
 !e ALWAYS_FALSE              effect_free         :: UInt8
+!re ALWAYS_FALSE              reset_safe          :: UInt8
 !n false                     nothrow             :: Bool
 !t false                     terminates          :: Bool
 !s false                     notaskstate         :: Bool

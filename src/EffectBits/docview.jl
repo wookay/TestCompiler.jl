@@ -39,7 +39,7 @@ function summarize(io::IO, effects::CC.Effects, binding::Binding)
                 pad = max(pad, length(string(f)))
             end
             for (f, t) in zip(fieldnames(T), fieldtypes(T))
-                suffix::Char = effects_suffix(f)
+                suffix::String = effects_suffix(f)
                 letter = effectbits_letter(effects, f, suffix)
                 print(io, letter)
                 print(io, " ")

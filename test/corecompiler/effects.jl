@@ -5,19 +5,25 @@ using Core: Compiler as CC
 using .CC: ALWAYS_TRUE, ALWAYS_FALSE,
            CONSISTENT_IF_NOTRETURNED, CONSISTENT_IF_INACCESSIBLEMEMONLY,
            EFFECT_FREE_IF_INACCESSIBLEMEMONLY, EFFECT_FREE_GLOBALLY,
+           RESET_SAFE_IF_INACCESSIBLEMEMONLY,
            INACCESSIBLEMEM_OR_ARGMEMONLY,
            NOUB_IF_NOINBOUNDS,
            CONSISTENT_OVERLAY
-using .CC: EFFECTS_TOTAL, EFFECTS_THROWS, EFFECTS_UNKNOWN
+using .CC: EFFECTS_TOTAL, EFFECTS_THROWS, EFFECTS_UNKNOWN, EFFECTS_MINIMAL
 
 # julia/base/reflection.jl
 # julia/Compiler/src/effects.jl
 
+code_coverage = Base.JLOptions().code_coverage != 0
+
 f1(x) = x * 2
 effects = Base.infer_effects(f1, (Int,))
 @test effects isa CC.Effects
-# @test string(effects) == "(+c,+e,+n,+t,+s,+m,+u,+o,+r)"
-#                           (+c,!e,+n,+t,+s,+m,+u,+o,+r)
+if code_coverage
+@test string(effects) == "(+c,!e,+re,+n,+t,+s,+m,+u,+o,+r)" # !e
+else
+@test string(effects) == "(+c,+e,+re,+n,+t,+s,+m,+u,+o,+r)" # +e
+end
 @test effects.consistent == ALWAYS_TRUE
 # @test effects.effect_free == ALWAYS_TRUE
 #                              ALWAYS_FALSE
@@ -42,14 +48,15 @@ effects = Base.infer_effects(f1, (Int,))
 f2(x::Int) = x * 2
 effects = Base.infer_effects(f2, (Integer,))
 @test effects isa CC.Effects
-# @test string(effects) == "(+c,+e,!n,+t,+s,+m,+u,+o,+r)"
-#                           (+c,!e,!n,+t,+s,+m,+u,+o,+r)
+# @test string(effects) == "(+c,+e,+re,+n,+t,+s,+m,+u,+o,+r)"
+#                          "(+c,+e,+re,!n,+t,+s,+m,+u,+o,+r)"
 @test effects.nothrow === false
 @test !CC.is_nothrow(effects)            # !n
 
-@test string(EFFECTS_TOTAL)   == "(+c,+e,+n,+t,+s,+m,+u,+o,+r)"
-@test string(EFFECTS_THROWS)  == "(+c,+e,!n,+t,+s,+m,+u,+o,+r)"
-@test string(EFFECTS_UNKNOWN) == "(!c,!e,!n,!t,!s,!m,!u,+o,!r)" # unknown mostly, but it's not overlayed at least (e.g. it's not a call)
+@test string(EFFECTS_TOTAL)   == "(+c,+e,+re,+n,+t,+s,+m,+u,+o,+r)"
+@test string(EFFECTS_THROWS)  == "(+c,+e,+re,!n,+t,+s,+m,+u,+o,+r)"
+@test string(EFFECTS_UNKNOWN) == "(!c,!e,!re,!n,!t,!s,!m,!u,+o,!r)" # unknown mostly, but it's not overlayed at least (e.g. it's not a call)
+@test string(EFFECTS_MINIMAL) == "(!c,!e,!re,!n,!t,!s,!m,!u,!o,!r)"
 
 @test  EFFECT_FREE_IF_INACCESSIBLEMEMONLY == 0x02
 @test ~EFFECT_FREE_IF_INACCESSIBLEMEMONLY == 0xfd
@@ -111,17 +118,15 @@ effects_f1 = Base.infer_effects(f1, Tuple{})
 effects_f2 = Base.infer_effects(f2, Tuple{})
 effects_f3 = Base.infer_effects(f3, Tuple{})
 
-using .CC: Effects
-using TestCompiler.EffectBits
-code_coverage = Base.JLOptions().code_coverage != 0
 if code_coverage
-@test effects_f1 == effects_f2 == Effects(+c,!e,+n,+t,+s,+m,+u,+o,+r)
-@test effects_f3 ==               Effects(+c,!e,+n,!t,+s,+m,+u,+o,+r)
+@test string(effects_f1) == "(+c,!e,+re,+n,!t,+s,+m,+u,+o,+r)" # !e !t
+@test string(effects_f2) == "(+c,!e,+re,+n,+t,+s,+m,+u,+o,+r)" # !e +t
+@test string(effects_f3) == "(+c,!e,+re,+n,!t,+s,+m,+u,+o,+r)" # !e !t
 else
-# @test effects_f1 == effects_f2 == Effects(+c,+e,+n,+t,+s,+m,+u,+o,+r)
-@test effects_f3 ==               Effects(+c,+e,+n,!t,+s,+m,+u,+o,+r)
-end # if code_coverage
-
+@test string(effects_f1) == "(+c,+e,+re,+n,!t,+s,+m,+u,+o,+r)" # +e !t
+@test string(effects_f2) == "(+c,+e,+re,+n,+t,+s,+m,+u,+o,+r)" # +e +t
+@test string(effects_f3) == "(+c,+e,+re,+n,!t,+s,+m,+u,+o,+r)" # +e !t
+end
 
 # from julia/Compiler/test/effects.jl
 

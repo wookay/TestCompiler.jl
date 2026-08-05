@@ -1,6 +1,6 @@
 module EffectBits # TestCompiler
 
-export c, e, n, t, s, m, u, o, r
+export c, e, re, n, t, s, m, u, o, r
 export EffectLetter, EffectSuffix, EffectsArgumentError
 export effects_field_name
 export effects_suffix
@@ -14,9 +14,11 @@ using .CC: ALWAYS_TRUE,
            CONSISTENT_IF_INACCESSIBLEMEMONLY,
            EFFECT_FREE_IF_INACCESSIBLEMEMONLY,
            EFFECT_FREE_GLOBALLY,
+           RESET_SAFE_IF_INACCESSIBLEMEMONLY,
            INACCESSIBLEMEM_OR_ARGMEMONLY,
            NOUB_IF_NOINBOUNDS,
-           CONSISTENT_OVERLAY
+           CONSISTENT_OVERLAY,
+           EFFECTS_MINIMAL
 import .CC: Effects
 import Base: +, !, ~
 using LogicalOperators: AND, OR

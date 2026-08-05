@@ -2,29 +2,30 @@
 
 struct EffectLetter
     prefix::Char   # + ! ? _
-    suffix::Char   # c e n t s m u o r
+    suffix::String # c e re n t s m u o r
     bitmask::UInt8 # 0x02 CONSISTENT_IF_NOTRETURNED
                    # 0x04 CONSISTENT_IF_INACCESSIBLEMEMONLY
                    # 0x02 EFFECT_FREE_IF_INACCESSIBLEMEMONLY
                    # 0x03 EFFECT_FREE_GLOBALLY
                    # 0xFF
-    EffectLetter(prefix::Char, suffix::Char) = new(prefix, suffix, 0xFF)
-    EffectLetter(bitmask::UInt8, suffix::Char) = new('_', suffix, bitmask)
+    EffectLetter(prefix::Char, suffix::String) = new(prefix, suffix, 0xFF)
+    EffectLetter(bitmask::UInt8, suffix::String) = new('_', suffix, bitmask)
 end
 
 struct EffectSuffix
-    suffix::Char
+    suffix::String
 end
 
-c = EffectSuffix('c')
-e = EffectSuffix('e')
-n = EffectSuffix('n')
-t = EffectSuffix('t')
-s = EffectSuffix('s')
-m = EffectSuffix('m')
-u = EffectSuffix('u')
-o = EffectSuffix('o')
-r = EffectSuffix('r')
+c  = EffectSuffix("c")
+e  = EffectSuffix("e")
+re = EffectSuffix("re")
+n  = EffectSuffix("n")
+t  = EffectSuffix("t")
+s  = EffectSuffix("s")
+m  = EffectSuffix("m")
+u  = EffectSuffix("u")
+o  = EffectSuffix("o")
+r  = EffectSuffix("r")
 
 function +(effect_suffix::EffectSuffix)::EffectLetter # +
     EffectLetter('+', effect_suffix.suffix)
@@ -47,69 +48,73 @@ function effects_field_name(effect_suffix::EffectSuffix)::Symbol
      effects_field_name(effect_suffix.suffix)
 end
 
-function effects_field_name(char::Char)::Symbol
-    if char == 'c'
+function effects_field_name(name::String)::Symbol
+    if     "c"  == name
         :consistent
-    elseif char == 'e'
+    elseif "e"  == name
         :effect_free
-    elseif char == 'n'
+    elseif "re" == name
+        :reset_safe
+    elseif "n"  == name
         :nothrow
-    elseif char == 't'
+    elseif "t"  == name
         :terminates
-    elseif char == 's'
+    elseif "s"  == name
         :notaskstate
-    elseif char == 'm'
+    elseif "m"  == name
         :inaccessiblememonly
-    elseif char == 'u'
+    elseif "u"  == name
         :noub
-    elseif char == 'o'
+    elseif "o"  == name
         :nonoverlayed
-    elseif char == 'r'
+    elseif "r"  == name
         :nortcall
     else
-         throw(EffectsArgumentError(string("unsupported effectbits: ", char)))
+         throw(EffectsArgumentError(string("unsupported effectbits: ", name)))
     end
 end
 
-function effects_suffix(field_name::Symbol)::Char
-    if field_name === :consistent
-        'c'
+function effects_suffix(field_name::Symbol)::String
+    if     field_name === :consistent
+        "c"
     elseif field_name === :effect_free
-        'e'
+        "e"
+    elseif field_name === :reset_safe
+        "re"
     elseif field_name === :nothrow
-        'n'
+        "n"
     elseif field_name === :terminates
-        't'
+        "t"
     elseif field_name === :notaskstate
-        's'
+        "s"
     elseif field_name === :inaccessiblememonly
-        'm'
+        "m"
     elseif field_name === :noub
-        'u'
+        "u"
     elseif field_name === :nonoverlayed
-        'o'
+        "o"
     elseif field_name === :nortcall
-        'r'
+        "r"
     else
-         throw(EffectsArgumentError(string("unsupported effectbits: ", field_name)))
+        throw(EffectsArgumentError(string("unsupported effectbits: ", field_name)))
     end
 end
 
 # julia/Compiler/src/effects.jl
 function effect_bits_const_name(field_name::Symbol, effect::UInt8)::Symbol
-    if effect ==             ALWAYS_TRUE                        # 0x00
+    if     effect ==         ALWAYS_TRUE                        # 0x00
         return              :ALWAYS_TRUE
     elseif effect ==         ALWAYS_FALSE                       # 0x01
         return              :ALWAYS_FALSE
     else
-        if field_name === :consistent
+        if     field_name === :consistent
             if effect ==     CONSISTENT_IF_NOTRETURNED          # 0x01 << 1
                 return      :CONSISTENT_IF_NOTRETURNED
             elseif effect == CONSISTENT_IF_INACCESSIBLEMEMONLY  # 0x01 << 2
                 return      :CONSISTENT_IF_INACCESSIBLEMEMONLY
             end
         elseif field_name === :effect_free
-            if effect ==     EFFECT_FREE_IF_INACCESSIBLEMEMONLY # 0x02
+            if     effect == EFFECT_FREE_IF_INACCESSIBLEMEMONLY # 0x02
                 return      :EFFECT_FREE_IF_INACCESSIBLEMEMONLY
             elseif effect == EFFECT_FREE_GLOBALLY               # 0x03
                 return      :EFFECT_FREE_GLOBALLY
@@ -134,7 +139,7 @@ function effect_bits_const_name(field_name::Symbol, effect::UInt8)::Symbol
     throw(EffectsArgumentError(string("unsupported effectbits: ", field_name, " ", effect)))
 end
 
-function EffectLetter(effects::Effects, suffix::Char)::EffectLetter
+function EffectLetter(effects::Effects, suffix::String)::EffectLetter
     name::Symbol = effects_field_name(suffix)
     effect::Union{Bool, UInt8} = getfield(effects, name)
     typ = typeof(effect)
@@ -146,7 +151,7 @@ function EffectLetter(effects::Effects, suffix::Char)::EffectLetter
         elseif effect == ALWAYS_FALSE # 0x01
             return EffectLetter('!', suffix)
         else
-            if suffix in ('c', 'e')
+            if suffix in ("c", "e")
                 return EffectLetter(effect, suffix)
             else
                 if 0x02 == effect
@@ -157,7 +162,7 @@ function EffectLetter(effects::Effects, suffix::Char)::EffectLetter
             end
         end
     end
-end # function EffectLetter(effects::Effects, suffix::Char)::EffectLetter
+end # function EffectLetter(effects::Effects, suffix::String)::EffectLetter
 
 function Base.in(letter::EffectLetter, effects::Effects)
     name::Symbol = effects_field_name(letter)
@@ -191,17 +196,13 @@ end
 
 # import Core.Compiler: Effects
 function Effects(letters::Vararg{EffectLetter, N})::Effects where N
-    effects_dict = Dict{Symbol, Union{Bool, UInt8}}(
-        :consistent => ALWAYS_FALSE,
-        :effect_free => ALWAYS_FALSE,
-        :nothrow => false,
-        :terminates => false,
-        :notaskstate => false,
-        :inaccessiblememonly => ALWAYS_FALSE,
-        :noub => ALWAYS_FALSE,
-        :nonoverlayed => ALWAYS_FALSE,
-        :nortcall => false
-    )
+    effects_dict = Dict{Symbol, Union{Bool, UInt8}}()
+    fields = fieldnames(Effects)   
+    # (:consistent, :effect_free, :reset_safe, :nothrow, :terminates, :notaskstate, :inaccessiblememonly, :noub, :nonoverlayed, :nortcall)
+    for field in fields
+        value = getfield(EFFECTS_MINIMAL, field)
+        effects_dict[field] = value
+    end
     for letter::EffectLetter in letters
         name::Symbol = effects_field_name(letter)
         effect::Union{Bool, UInt8} = getindex(effects_dict, name)
@@ -230,8 +231,10 @@ function Effects(letters::Vararg{EffectLetter, N})::Effects where N
             end
         end
     end
-    Effects(getindex(effects_dict, :consistent),
+    Effects(
+            getindex(effects_dict, :consistent),
             getindex(effects_dict, :effect_free),
+            getindex(effects_dict, :reset_safe),
             getindex(effects_dict, :nothrow),
             getindex(effects_dict, :terminates),
             getindex(effects_dict, :notaskstate),
