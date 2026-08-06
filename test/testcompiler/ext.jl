@@ -1,7 +1,6 @@
 using Jive
 @If VERSION >= v"1.14-DEV" module test_testcompiler_ext
 
-#=
 Base.retry_load_extensions()
 
 
@@ -23,6 +22,5 @@ ext = Base.get_extension(TestCompiler, :TestCompilerExt)
 (C2, CC2) = TestCompiler.extension_interface()
 @test C2 === C
 @test CC2 === CC
-=#
 
 end # module test_testcompiler_ext

@@ -20,12 +20,11 @@ end # if !isdefined(Main, :__custom_compiler_active)
 
 # WARNING: Method definition typeinf(Nothing, Core.MethodInstance, UInt8)
 using Core: Compiler as CC
-# CC.activate!(; codegen = true)
+CC.activate!(; codegen = true)
 # Compiling the compiler. This may take several minutes ...
 # Base.Compiler ──── 3.9779188632965088 seconds
 
 @test isdefined(Main, :__custom_compiler_active)
-@test Base.REFLECTION_COMPILER[] === nothing
-# @test Base.REFLECTION_COMPILER[] == CC
+@test Base.REFLECTION_COMPILER[] === CC
 
 end # module test_corecompiler_reflection_REFLECTION_COMPILER
