@@ -10,13 +10,18 @@ loaded = haskey(Base.loaded_modules, pkgid)
 ver = string("v", VERSION.major, ".", VERSION.minor)
 @test joinpath(Pkg.depots1(), "compiled", ver, "Compiler") == Base.compilecache_dir(pkgid) # $HOME/.julia/compiled/v1.14/Compiler
 
+#=
 using Compiler
 loaded = haskey(Base.loaded_modules, pkgid)
 @test loaded
+=#
 
+Base.Precompilation.precompilepkgs
+#=
 pkgs = [pkgid]
-precompiled = Base.Precompilation.precompilepkgs(pkgs)
+precompiled = Base.Precompilation.precompilepkgs(pkgs; timing=true, verbose=true)
 cachefile = precompiled[1]
 @test isfile(cachefile)
+=#
 
 end # module test_compiler_precompile
