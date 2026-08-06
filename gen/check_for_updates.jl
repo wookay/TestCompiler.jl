@@ -10,6 +10,7 @@ const emojis = Dict(
     :TestJETLS => "✈️ ",
     :TestCompiler => "🚗",
     :TestJuliaLowering => "📉",
+    :ButterEffects => "🧈",
 )
 
 function get_target_modules(modules::Vector{Any})
@@ -59,4 +60,4 @@ if false
 @check_for_updates TestCompiler
 end
 
-@check_for_updates FemtoCompiler, Jive, TestJiveRunMoreTests, EmojiSymbols, DumpTruck, TestJETLS, TestJuliaLowering
+@check_for_updates FemtoCompiler, Jive, TestJiveRunMoreTests, EmojiSymbols, DumpTruck, TestJETLS, TestJuliaLowering, ButterEffects
