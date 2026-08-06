@@ -8,10 +8,9 @@
 
 
 ### repositories
- - FemtoCompiler 🛣️   https://github.com/wookay/FemtoCompiler.jl
- - Doors 🚪  https://github.com/wookay/Doors.jl
+ - FemtoCompiler 🛣️  https://github.com/wookay/FemtoCompiler.jl
+ - ButterEffects 🧈  https://github.com/wookay/ButterEffects.jl
  - TestCompiler 🚗  https://github.com/wookay/TestCompiler.jl
  - TestJuliaLowering 📉  https://github.com/wookay/TestJuliaLowering.jl
  - TestStdlibs 🏫  https://github.com/wookay/TestStdlibs.jl
- - TestLLM 💬  https://github.com/wookay/TestLLM.jl
- - TestPkgs 📦  https://github.com/wookay/TestPkgs.jl
+ - Doors 🚪  https://github.com/wookay/Doors.jl
