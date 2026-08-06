@@ -1,4 +1,5 @@
-module test_corecompiler_effects
+using Jive
+@If VERSION >= v"1.12" module test_corecompiler_effects
 
 using Test
 using Core: Compiler as CC
