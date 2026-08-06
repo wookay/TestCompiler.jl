@@ -1,6 +1,7 @@
 using Jive
-@If VERSION >= v"1.14.0-DEV.2734" module test_base_cancellation
-# julia commit 7afe4ed42e
+@If VERSION >= v"1.14.0-DEV.2875" module test_base_cancellation
+# v"1.14.0-DEV.2875"  julia commit 35b7e12113
+# v"1.14.0-DEV.2734"  julia commit 7afe4ed42e
 
 using Test
 using Base.ScopedValues: AbstractScopedValue
@@ -44,6 +45,9 @@ Base.CANCEL_TOKEN
 Base.cancel!
 Base.@cancel_check
 
+Core.WaitEntryN
+Base.WaitEntry
+
 
 #=
 const CancellationTokenSource = Core.CancellationTokenSource
@@ -63,6 +67,10 @@ const CANCEL_REQUEST_ABANDON_ALL = CancellationRequest(0x4)
 struct CancelTokenKey <: AbstractScopedValue{Union{Nothing, CancellationToken}} end
 
 const CANCEL_TOKEN = CancelTokenKey()
+
+const WaitEntryN = Core.WaitEntryN
+const WaitEntry = Union{WaitEntry1, WaitEntry2, WaitEntryN}
+
 =#
 
 end # module test_base_cancellation
