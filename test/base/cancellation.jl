@@ -3,21 +3,19 @@ using Jive
 # v"1.14.0-DEV.2875"  julia commit 35b7e12113
 # v"1.14.0-DEV.2734"  julia commit 7afe4ed42e
 
-using Test
-using Base.ScopedValues: AbstractScopedValue
-using Base: CancellationToken,
-            CancellationRequest,
-            CancelTokenKey
-
 # from julia/base/cancellation.jl
 #      julia/test/cancellation.jl
 
+using Test
+
 Core.CancellationTokenSource
 
-@test CancellationRequest <: Exception
+@test Base.CancellationRequest <: Exception
 Base.CANCEL_REQUEST_SAFE
 Base.CANCEL_REQUEST_ABANDON_EXTERNAL
 Base.CANCEL_REQUEST_ABANDON_ALL
+
+@test Base.severity(Base.CANCEL_REQUEST_ABANDON_ALL) == Base.CANCEL_REQUEST_ABANDON_ALL.request
 
 src = Core._new_cancel_source() # Base.CancellationTokenSource()
 @test src.child_head === nothing
@@ -25,7 +23,7 @@ src = Core._new_cancel_source() # Base.CancellationTokenSource()
 st = @atomic :acquire src.state
 @test st == 0x00
 
-tok = CancellationToken(src)
+tok = Base.CancellationToken(src)
 @test tok.source == src
 
 @test Base.cancel_severity(src) === nothing
@@ -35,8 +33,8 @@ tok = CancellationToken(src)
 @test Base.iscancelled(tok) === false
 
 Base.CANCEL_TOKEN
-@test CancelTokenKey <: AbstractScopedValue
-@test Base.CANCEL_TOKEN isa CancelTokenKey
+@test Base.CancelTokenKey <: Base.ScopedValues.AbstractScopedValue
+@test Base.CANCEL_TOKEN isa Base.CancelTokenKey
 @test Base.CANCEL_TOKEN[] === nothing
 
 @test Base.default_cancel_token() === nothing
@@ -47,6 +45,25 @@ Base.@cancel_check
 
 Core.WaitEntryN
 Base.WaitEntry
+
+
+function cancellable(f)
+    src = Base.CancellationTokenSource()
+    g() = @async f()
+    t = Base.ScopedValues.with(g, Base.CANCEL_TOKEN => Base.CancellationToken(src))
+    return t, src
+end
+
+t, src = cancellable() do
+    @sync begin
+        @async sleep(1000)
+    end
+end
+
+@test t isa Task
+@test Base.cancel!(src)
+@test_throws TaskFailedException wait(t)
+@test t.result isa Base.CancellationRequest
 
 
 #=
