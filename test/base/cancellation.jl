@@ -1,5 +1,6 @@
 using Jive
-@If VERSION >= v"1.14.0-DEV.2875" module test_base_cancellation
+@If VERSION >= v"1.14.0-DEV.2892" module test_base_cancellation
+# v"1.14.0-DEV.2892"  julia commit cbbb1702f7
 # v"1.14.0-DEV.2875"  julia commit 35b7e12113
 # v"1.14.0-DEV.2734"  julia commit 7afe4ed42e
 
@@ -47,6 +48,8 @@ Core.WaitEntryN
 Base.WaitEntry
 
 
+# from julia/test/cancellation.jl
+# @testset "structured cancellation of @sync" begin
 function cancellable(f)
     src = Base.CancellationTokenSource()
     g() = @async f()
@@ -63,7 +66,8 @@ end
 @test t isa Task
 @test Base.cancel!(src)
 @test_throws TaskFailedException wait(t)
-@test t.result isa Base.CancellationRequest
+@test t.result isa CompositeException
+@test first(t.result.exceptions) isa TaskFailedException
 
 
 #=
