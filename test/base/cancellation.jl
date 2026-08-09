@@ -7,6 +7,8 @@ using Jive
 # from julia/base/cancellation.jl
 #      julia/test/cancellation.jl
 
+# see also https://github.com/wookay/TestCancellation.jl
+
 using Test
 
 Core.CancellationTokenSource
@@ -36,16 +38,18 @@ tok = Base.CancellationToken(src)
 Base.CANCEL_TOKEN
 @test Base.CancelTokenKey <: Base.ScopedValues.AbstractScopedValue
 @test Base.CANCEL_TOKEN isa Base.CancelTokenKey
-@test Base.CANCEL_TOKEN[] === nothing
+@test Base.CANCEL_TOKEN[] isa Base.CancellationToken
 
-@test Base.default_cancel_token() === nothing
-@test Base.default_cancel_source() === nothing
+@test Base.default_cancel_token() isa Base.CancellationToken
+@test Base.default_cancel_source() isa Base.CancellationTokenSource
 
 Base.cancel!
 Base.@cancel_check
 
 Core.WaitEntryN
 Base.WaitEntry
+
+@test Base.DEFAULT_CANCEL isa Base.UseDefaultToken
 
 
 # from julia/test/cancellation.jl
@@ -68,6 +72,7 @@ end
 @test_throws TaskFailedException wait(t)
 @test t.result isa CompositeException
 @test first(t.result.exceptions) isa TaskFailedException
+
 
 
 #=
