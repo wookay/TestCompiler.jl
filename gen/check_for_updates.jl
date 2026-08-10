@@ -1,5 +1,4 @@
 using Test
-using Pkg
 
 const emojis = Dict(
     :FemtoCompiler => "🛣️ ",
@@ -32,7 +31,8 @@ end
 function check_for_updates(mod::Symbol)
     pkg = string(mod)
     printstyled(stdout, "### ", emojis[mod], " ", pkg, "\n"; color = :yellow, bold = true)
-    pkg_dir = normpath(Pkg.devdir(), pkg)
+    devdir = normpath(@__DIR__, "../../")
+    pkg_dir = normpath(devdir, pkg)
     script_path = normpath(pkg_dir, "gen/check_for_updates_using_sugar_cubes.jl")
     @test isfile(script_path)
     julia_cmd = Base.julia_cmd()
