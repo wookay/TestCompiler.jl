@@ -200,23 +200,52 @@ using Jive
 using Test
 
 module K
-f() = nothing
+f_kind_const() = nothing
+f_kind_global = +
 end
 
-using .K: f
+using .K: f_kind_const
 
-@test Base.binding_module(@__MODULE__, :f) === K
-@test Base.binding_kind(K, :f)           == Base.PARTITION_KIND_CONST
-@test Base.binding_kind(@__MODULE__, :f) == Base.PARTITION_KIND_EXPLICIT
+@test Base.binding_module(@__MODULE__, :f_kind_const) === K
+@test Base.binding_kind(K, :f_kind_const)           == Base.PARTITION_KIND_CONST
+@test Base.binding_kind(@__MODULE__, :f_kind_const) == Base.PARTITION_KIND_EXPLICIT
+@test Base.binding_kind(K, :f_kind_global) == Base.PARTITION_KIND_GLOBAL
 
-gr::Core.GlobalRef = Core.GlobalRef(K, :f)
+gr::Core.GlobalRef = Core.GlobalRef(K, :f_kind_const)
 world::UInt = Base.get_world_counter()
 bpart::Core.BindingPartition = Base.lookup_binding_partition(world, gr)
 @test Base.binding_kind(bpart) == Base.PARTITION_KIND_CONST
 
 b::Core.Binding = convert(Core.Binding, gr)
 (; restriction, min_world, max_world) = b.partitions
-@test restriction === f
+@test restriction === f_kind_const
 @test world in min_world:max_world
 
 end # module test_base_runtime_internals_binding
+
+
+@If VERSION >= v"1.14-DEV" module test_base_runtime_internals_get_ci_mi
+
+using Test
+using FemtoCompiler: code_typed1
+
+# from julia/test/jit.jl
+
+f = +
+argtypes = (Int, Int)
+mi = Base.method_instance(f, argtypes)
+source::Core.CodeInfo = code_typed1(f, argtypes)
+struct TestOwner end
+const owner = TestOwner()
+ci = Core.CodeInstance(
+    mi, owner, source.rettype, #=exctype=#Any, #=inferred_const=#nothing,
+    #=inferred=#nothing, #=const_flags=#Int32(0), source.min_world,
+    #=max_world=#typemax(UInt), #=effects=#UInt32(0),
+    #=analysis_results=#nothing, source.debuginfo, source.edges
+)
+@test ci.def isa Core.MethodInstance # MethodInstance for +(::Int64, ::Int64)
+
+mi = Base.get_ci_mi(ci)::Core.MethodInstance
+@test mi.def isa Method              # +(x::Int64, y::Int64) @ Base essentials.jl:1257
+
+end # module test_base_runtime_internals_get_ci_mi
