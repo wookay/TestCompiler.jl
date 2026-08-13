@@ -191,6 +191,11 @@ dtl = Base.DataTypeLayout(Int64::DataType)
 dtl_str = Base.DataTypeLayout(String::DataType)
 @test dtl_str.size == 0x00000000
 
+@test isbits(pi)
+@test isbitstype(Float64)
+@test Base.isbitsunion(Union{Float64}) === false
+@test Base.isbitsunion(Union{Float64, UInt8})
+
 end # module test_base_runtime_internals_DataTypeLayout
 
 
