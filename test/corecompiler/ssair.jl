@@ -110,6 +110,10 @@ dfs = DFS(blocks, false)
 @test dfs.to_parent_pre == [0]
 
 
+# from julia/Compiler/src/ssair/inlining.jl
+CC.MethodMatchInfo
+
+
 #=
 # from julia/Compiler/src/ssair/basicblock.jl
 struct BasicBlock
