@@ -91,6 +91,46 @@ import Test: Test
 @test Base.binding_kind(@__MODULE__, :Test) == Base.PARTITION_KIND_IMPORTED
 
 
+# from julia/test/worlds.jl
+# logging binding invalidations
+struct LogBindingInvalidation
+    x::Int
+end
+makelbi(x) = LogBindingInvalidation(x)
+const glbi = makelbi(1)
+oLBI, oglbi = LogBindingInvalidation, glbi
+flbi() = @__MODULE__().glbi.x
+flbi()
+milbi1 = only(Base.specializations(only(methods(makelbi))))
+milbi2 = only(Base.specializations(only(methods(flbi))))
+logmeths = ccall(:jl_debug_method_invalidation, Any, (Cint,), 1)
+struct LogBindingInvalidation
+    x::Float64
+end
+const glbi = makelbi(2.0)
+@test flbi() === 2.0
+ccall(:jl_debug_method_invalidation, Any, (Cint,), 0)
+@test milbi1.cache.def ∈ logmeths
+@test milbi2.cache.next.def ∈ logmeths
+i = findfirst(x -> isa(x, Core.BindingPartition), logmeths)
+bpart = logmeths[i]
+@test bpart isa Core.BindingPartition
+buf = IOBuffer()
+Base.print_partition(buf, bpart)
+s = String(take!(buf))
+@test contains(s, " - constant binding to @world(Main.test_base_partition_kind.LogBindingInvalidation, ")
+kind = Base.binding_kind(bpart)
+@test kind == Base.PARTITION_KIND_CONST
+restriction = Base.partition_restriction(bpart)
+@test oLBI === restriction
+T = logmeths[i].restriction
+@test T === oLBI
+@test logmeths[i+1] == "jl_maybe_log_binding_invalidation"
+T = logmeths[end-1].restriction
+@test T === oglbi
+@test logmeths[end] == "jl_maybe_log_binding_invalidation"
+
+
 # from julia/base/runtime_internals.jl
 #=
 # N.B.: Needs to be synced with julia.h
