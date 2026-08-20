@@ -136,6 +136,9 @@ if VERSION >= v"1.14.0-DEV.2597" # julia commit e7fe47b022
 @test (Type{T} where T) isa Core.TypeEgal{Type}
 @test  Type{Int}        isa Core.TypeEgal{Type{Int}}
 
+@test Core.typename(Core.AnyType) === Core.AnyType.name
+@test Core.AnyType.name isa Core.TypeName
+
 else
 
 @test foo(Type{Int}) === Type{Int}
