@@ -61,17 +61,20 @@ end # if
 @test sprint(Base.show_unquoted, Argument(-2)) == "_-2"
 
 φ = PhiNode()
-@test repr(φ) == ":(φ ())"
+@test repr(φ)                       == ":(φ ())"
+@test sprint(Base.show_unquoted, φ) == "φ ()"
 @test φ.edges == Int32[]
 @test φ.values == Any[]
 @test φ == PhiNode(Int32[], Any[])
 
 φᶜ = PhiCNode([])
-@test repr(φᶜ) == ":(φᶜ ())"
+@test repr(φᶜ)                       == ":(φᶜ ())"
+@test sprint(Base.show_unquoted, φᶜ) == "φᶜ ()"
 @test isempty(φᶜ.values)
 
 ϒ = UpsilonNode()
-@test repr(ϒ) == ":(ϒ (#undef))"
+@test repr(ϒ)                       == ":(ϒ (#undef))"
+@test sprint(Base.show_unquoted, ϒ) == "ϒ (#undef)"
 @test hasfield(typeof(ϒ), :val)
 @test !isdefined(ϒ, :val)
 
@@ -81,7 +84,7 @@ ssa_value = SSAValue(6)
 @test ssa_value.id == 6
 
 pi_node = PiNode(ssa_value, GotoNode)
-@test repr(pi_node) == "Core.PiNode(:(%6), Core.GotoNode)"
+@test sprint(Base.show_unquoted, pi_node) == "π (%6, Core.GotoNode)"
 @test pi_node.val == ssa_value
 @test pi_node.typ == GotoNode
 
