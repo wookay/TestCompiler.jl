@@ -77,3 +77,18 @@ else
 end
 
 end # module test_base_reflection_infer_effects
+
+
+module test_base_reflection_code_ircode
+
+using Test
+
+@test Base.code_ircode(()) == Any[]
+
+(code, ty) = only(Base.code_ircode(+, (Int, Int)))
+T = typeof(code)
+M = parentmodule(T) # Compiler
+@test code isa M.IRCode
+@test ty === Int
+
+end # module test_base_reflection_code_ircode
