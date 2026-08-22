@@ -1,6 +1,8 @@
 using Jive
 @If VERSION >= v"1.14-DEV" module test_corecompiler_effects
 
+# see also test/base/reflection.jl
+
 using Test
 using Core: Compiler as CC
 using .CC: ALWAYS_TRUE, ALWAYS_FALSE,
@@ -20,14 +22,15 @@ code_coverage = Base.JLOptions().code_coverage != 0
 f1(x) = x * 2
 effects = Base.infer_effects(f1, (Int,))
 @test effects isa CC.Effects
+@test effects.consistent == ALWAYS_TRUE
 if code_coverage
 @test string(effects) == "(+c,!e,+re,+n,+t,+s,+m,+u,+o,+r)" # !e
+@test effects.effect_free == ALWAYS_FALSE
 else
 @test string(effects) == "(+c,+e,+re,+n,+t,+s,+m,+u,+o,+r)" # +e
+@test effects.effect_free == ALWAYS_TRUE
 end
-@test effects.consistent == ALWAYS_TRUE
-# @test effects.effect_free == ALWAYS_TRUE
-#                              ALWAYS_FALSE
+@test effects.reset_safe == ALWAYS_TRUE
 @test effects.nothrow === true
 @test effects.terminates === true
 @test effects.notaskstate === true
@@ -89,8 +92,43 @@ CC.is_finalizer_inlineable # is_nothrow && is_notaskstate
 
 # from julia/base/essentials.jl
 Base._is_internal
+
+# can be used in place of `@assume_effects :total` (supposed to be used for bootstrapping)
+Base.@_total_meta
+
+# can be used in place of `@assume_effects :foldable` (supposed to be used for bootstrapping)
+Base.@_foldable_meta
+
 # can be used in place of `@assume_effects :terminates_locally` (supposed to be used for bootstrapping)
 Base.@_terminates_locally_meta
+
+# can be used in place of `@assume_effects :terminates_globally` (supposed to be used for bootstrapping)
+Base.@_terminates_globally_meta
+
+# can be used in place of `@assume_effects :terminates_globally :notaskstate` (supposed to be used for bootstrapping)
+Base.@_terminates_globally_notaskstate_meta
+
+# can be used in place of `@assume_effects :terminates_globally :noub` (supposed to be used for bootstrapping)
+Base.@_terminates_globally_noub_meta
+
+# can be used in place of `@assume_effects :effect_free :terminates_locally` (supposed to be used for bootstrapping)
+Base.@_effect_free_terminates_locally_meta
+
+# can be used in place of `@assume_effects :nothrow :noub` (supposed to be used for bootstrapping)
+Base.@_nothrow_noub_meta
+
+# can be used in place of `@assume_effects :nothrow` (supposed to be used for bootstrapping)
+Base.@_nothrow_meta
+
+# can be used in place of `@assume_effects :noub` (supposed to be used for bootstrapping)
+Base.@_noub_meta
+
+# can be used in place of `@assume_effects :notaskstate` (supposed to be used for bootstrapping)
+Base.@_notaskstate_meta
+
+# can be used in place of `@assume_effects :noub_if_noinbounds` (supposed to be used for bootstrapping)
+Base.@_noub_if_noinbounds_meta
+
 
 # from julia/base/expr.jl
 # macro assume_effects(args...)
@@ -130,7 +168,6 @@ else
 end
 
 # from julia/Compiler/test/effects.jl
-
 # `getfield_effects` handles access to union object nicely
 𝕃 = CC.fallback_lattice
 @test CC.is_consistent(CC.getfield_effects(𝕃, Any[Some{Symbol}, Core.Const(:value)], Symbol))
