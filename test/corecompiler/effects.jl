@@ -3,6 +3,33 @@ using Jive
 
 # see also test/base/reflection.jl
 
+#=
+:consistent            +c
+                       ?c                                       CONSISTENT_IF_NOTRETURNED
+                       ?c                                       CONSISTENT_IF_INACCESSIBLEMEMONLY
+:effect_free              +e
+                          ?e                                    EFFECT_FREE_IF_INACCESSIBLEMEMONLY
+:reset_safe                  +re
+                             ?re                                RESET_SAFE_IF_INACCESSIBLEMEMONLY
+:nothrow                         +n
+:terminates_globally                +t
+:terminates_locally                 +t
+:notaskstate                           +s
+:inaccessiblememonly                     +m
+                                         ?m                     INACCESSIBLEMEM_OR_ARGMEMONLY
+:noub                                        +u
+:noub_if_noinbounds                          ?u                 NOUB_IF_NOINBOUNDS
+:nonoverlayed                                   +o
+:consistent_overlay                             ?o              CONSISTENT_OVERLAY
+:nortcall                                          +r
+:foldable              +c,+e,       +t,      +u,   +r
+:removable                +e,    +n,+t
+:total                 +c,+e,    +n,+t,+s,+m,+u,   +r           :terminates_globally true
+                                                                :terminates_locally false
+                                                                :noub_if_noinbounds false
+                                                                :consistent_overlay false
+=#
+
 using Test
 using Core: Compiler as CC
 using .CC: ALWAYS_TRUE, ALWAYS_FALSE,
@@ -93,43 +120,6 @@ CC.is_finalizer_inlineable # is_nothrow && is_notaskstate
 # from julia/base/essentials.jl
 Base._is_internal
 
-# can be used in place of `@assume_effects :total` (supposed to be used for bootstrapping)
-Base.@_total_meta
-
-# can be used in place of `@assume_effects :foldable` (supposed to be used for bootstrapping)
-Base.@_foldable_meta
-
-# can be used in place of `@assume_effects :terminates_locally` (supposed to be used for bootstrapping)
-Base.@_terminates_locally_meta
-
-# can be used in place of `@assume_effects :terminates_globally` (supposed to be used for bootstrapping)
-Base.@_terminates_globally_meta
-
-# can be used in place of `@assume_effects :terminates_globally :notaskstate` (supposed to be used for bootstrapping)
-Base.@_terminates_globally_notaskstate_meta
-
-# can be used in place of `@assume_effects :terminates_globally :noub` (supposed to be used for bootstrapping)
-Base.@_terminates_globally_noub_meta
-
-# can be used in place of `@assume_effects :effect_free :terminates_locally` (supposed to be used for bootstrapping)
-Base.@_effect_free_terminates_locally_meta
-
-# can be used in place of `@assume_effects :nothrow :noub` (supposed to be used for bootstrapping)
-Base.@_nothrow_noub_meta
-
-# can be used in place of `@assume_effects :nothrow` (supposed to be used for bootstrapping)
-Base.@_nothrow_meta
-
-# can be used in place of `@assume_effects :noub` (supposed to be used for bootstrapping)
-Base.@_noub_meta
-
-# can be used in place of `@assume_effects :notaskstate` (supposed to be used for bootstrapping)
-Base.@_notaskstate_meta
-
-# can be used in place of `@assume_effects :noub_if_noinbounds` (supposed to be used for bootstrapping)
-Base.@_noub_if_noinbounds_meta
-
-
 # from julia/base/expr.jl
 # macro assume_effects(args...)
 
@@ -175,3 +165,86 @@ end
 @test CC.is_consistent(CC.getfield_effects(𝕃, Any[Union{Some{Symbol},Some{String}}, Core.Const(:value)], Union{Symbol,String}))
 
 end # module test_corecompiler_effects
+
+
+# from julia/base/expr.jl
+#=
+function compute_assumed_setting(override::EffectsOverride, @nospecialize(setting), val::Bool=true)
+    if isexpr(setting, :call) && setting.args[1] === :(!)
+        return compute_assumed_setting(override, setting.args[2], !val)
+    elseif isa(setting, QuoteNode)
+        return compute_assumed_setting(override, setting.value, val)
+    end
+    if setting === :consistent
+        return EffectsOverride(override; consistent = val)
+    elseif setting === :effect_free
+        return EffectsOverride(override; effect_free = val)
+    elseif setting === :nothrow
+        return EffectsOverride(override; nothrow = val)
+    elseif setting === :terminates_globally
+        return EffectsOverride(override; terminates_globally = val)
+    elseif setting === :terminates_locally
+        return EffectsOverride(override; terminates_locally = val)
+    elseif setting === :notaskstate
+        return EffectsOverride(override; notaskstate = val)
+    elseif setting === :inaccessiblememonly
+        return EffectsOverride(override; inaccessiblememonly = val)
+    elseif setting === :noub
+        return EffectsOverride(override; noub = val)
+    elseif setting === :noub_if_noinbounds
+        return EffectsOverride(override; noub_if_noinbounds = val)
+    elseif setting === :foldable
+        consistent = effect_free = terminates_globally = noub = nortcall = val
+        return EffectsOverride(override; consistent, effect_free, terminates_globally, noub, nortcall)
+    elseif setting === :removable
+        effect_free = nothrow = terminates_globally = val
+        return EffectsOverride(override; effect_free, nothrow, terminates_globally)
+    elseif setting === :total
+        consistent = effect_free = nothrow = terminates_globally = notaskstate =
+            inaccessiblememonly = noub = nortcall = val
+        return EffectsOverride(override;
+            consistent, effect_free, nothrow, terminates_globally, notaskstate,
+            inaccessiblememonly, noub, nortcall)
+    end
+    return nothing
+end # function compute_assumed_setting
+=#
+
+
+# from julia/Compiler/src/typeinfer.jl
+#=
+function adjust_effects(ipo_effects::Effects, def::Method)
+    # override the analyzed effects using manually annotated effect settings
+    override = decode_effects_override(def.purity)
+    if is_effect_overridden(override, :consistent)
+        ipo_effects = Effects(ipo_effects; consistent=ALWAYS_TRUE)
+    end
+    if is_effect_overridden(override, :effect_free)
+        ipo_effects = Effects(ipo_effects; effect_free=ALWAYS_TRUE)
+    end
+    if is_effect_overridden(override, :nothrow)
+        ipo_effects = Effects(ipo_effects; nothrow=true)
+    end
+    if is_effect_overridden(override, :terminates_globally)
+        ipo_effects = Effects(ipo_effects; terminates=true)
+    end
+    if is_effect_overridden(override, :notaskstate)
+        ipo_effects = Effects(ipo_effects; notaskstate=true)
+    end
+    if is_effect_overridden(override, :inaccessiblememonly)
+        ipo_effects = Effects(ipo_effects; inaccessiblememonly=ALWAYS_TRUE)
+    end
+    if is_effect_overridden(override, :noub)
+        ipo_effects = Effects(ipo_effects; noub=ALWAYS_TRUE)
+    elseif is_effect_overridden(override, :noub_if_noinbounds) && ipo_effects.noub !== ALWAYS_TRUE
+        ipo_effects = Effects(ipo_effects; noub=NOUB_IF_NOINBOUNDS)
+    end
+    if is_effect_overridden(override, :consistent_overlay)
+        ipo_effects = Effects(ipo_effects; nonoverlayed=CONSISTENT_OVERLAY)
+    end
+    if is_effect_overridden(override, :nortcall)
+        ipo_effects = Effects(ipo_effects; nortcall=true)
+    end
+    return ipo_effects
+end # function adjust_effects
+=#
