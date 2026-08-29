@@ -1,4 +1,5 @@
-module test_base_flfrontend
+using Jive
+@If VERSION >= v"1.14.0-DEV.3047" module test_base_flfrontend
 
 using Test
 
