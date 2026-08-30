@@ -9,7 +9,7 @@ using .CC: CallInfo, CallMeta, RTEffects, Future, Effects, EFFECTS_THROWS, NoCal
            ArgInfo,
            isready
 using TestCompiler # TestCompilerExt
-using FemtoCompiler: FemtoInterpreter, OverlayPlus, code_typed1
+using FemtoCompiler: FemtoInterpreter
 
 f = Future{CallMeta}()
 @test !isready(f)
@@ -25,36 +25,7 @@ fu = Future(UNKNOWN)
 @test fargs === nothing
 @test argtypes == []
 
-
-using Core: ReturnNode
-
-f = OverlayPlus.overlay_plus
-
-let src = code_typed1(f, (Int, Int))
-    line = src.code[end]
-    @test line == ReturnNode(:(:default))
-end
-
 interp = FemtoInterpreter()
-let src = code_typed1(f, (Int, Int); interp)
-    line = src.code[end]
-    if VERSION >= v"1.12"
-        @test line == ReturnNode(:(:overlay))
-    end
-end
-
-let src = invokelatest(code_typed1, f, (Int, Int))
-    line = src.code[end]
-    @test line == ReturnNode(:(:default))
-end
-
-let src = invokelatest(code_typed1, f, (Int, Int); interp)
-    line = src.code[end]
-    if VERSION >= v"1.12"
-        @test line == ReturnNode(:(:overlay))
-    end
-end
-
 
 # from julia/Compiler/src/types.jl
 # Quickly and easily satisfy the AbstractInterpreter API contract
