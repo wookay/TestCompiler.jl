@@ -1,4 +1,6 @@
-module test_stdlibs_Test_detect_unbound_args
+using Jive
+@If VERSION >= v"1.14.0-DEV.3072" module test_stdlibs_Test_detect_unbound_args
+# julia commit 801aaa0648
 
 # from julia/test/ambiguous.jl
 #      julia/stdlib/Test/src/Test.jl
@@ -6,17 +8,22 @@ module test_stdlibs_Test_detect_unbound_args
 using Test # detect_unbound_args
 
 module UnboundDetect
-    f(::Type{<:T}) where T = T
+    unbound1(x::Type{<:T}) where {T} = T                       # f(Union{})
+    unbound2(x::Vector{<:T}) where {T} = T                     # f(Vector{Union{}}())
+    unbound3(x::T) where {T>:Int} = T                          # f(2.0)
 end
 
-meths::Vector{Method} = detect_unbound_args(UnboundDetect)
-if VERSION >= v"1.14.0-DEV.2923" # julia commit be2a0c825c
+@test_throws UndefVarError UnboundDetect.unbound1(Union{})
+@test_throws UndefVarError UnboundDetect.unbound2(Vector{Union{}}())
+@test_throws UndefVarError UnboundDetect.unbound3(2.0)
+
+ambiguous_bottom = false
+meths::Vector{Method} = detect_unbound_args(UnboundDetect; ambiguous_bottom)
 @test !isempty(meths)
-using Test: unbound_sparams
+using .Test: unbound_sparams
 m = meths[1]
-@test unbound_sparams(m.sig) == [1]
-else
-@test isempty(meths)
-end
+@test m.name === :unbound3
+inhabited_params = !ambiguous_bottom
+@test unbound_sparams(m.sig, inhabited_params) == [1]
 
 end # module test_stdlibs_Test_detect_unbound_args
