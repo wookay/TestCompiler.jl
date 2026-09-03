@@ -13,4 +13,8 @@ if VERSION >= v"1.13.0-DEV.980"
 Meta.reescape
 end
 
+@test_nowarn                             1e308
+@test_nowarn                 Meta.parse("1e308")
+@test_throws Meta.ParseError Meta.parse("1e309")
+
 end # module test_base_meta
