@@ -2,20 +2,34 @@ module test_base_tasks
 
 using Test
 
-# from julia/test/threads_exec.jl
-
 f() = 42
 
 t = Task(f)
 @test t isa Task
-if VERSION >= v"1.14.0-DEV.2829" # julia commit 10d617e311
-@test Core.task_result_type(t) === Any
-end
 @test !istaskdone(t)
 
 ret = yield(t)
 @test ret === nothing
 @test istaskdone(t)
+
+end # module test_base_tasks
+
+
+using Jive
+@If VERSION >= v"1.12" module test_base_tasks_task_metrics
+
+using Test
+
+# from julia/test/threads_exec.jl
+
+f() = 42
+
+t = Task(f)
+yield(t)
+if VERSION >= v"1.14.0-DEV.2829" # julia commit 10d617e311
+@test Core.task_result_type(t) === Any
+end
+
 @test !t.metrics_enabled
 @test Base.Experimental.task_running_time_ns(t) ===
       Base.Experimental.task_wall_time_ns(t) ===
@@ -50,4 +64,4 @@ end
 
 Base.Experimental.task_metrics(false)
 
-end # module test_base_tasks
+end # module test_base_tasks_task_metrics
