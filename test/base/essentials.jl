@@ -116,3 +116,100 @@ using Test
 @test convert(Int, true) == 1
 
 end # module test_base_essentials_convert
+
+
+module test_base_essentials_compilerbarrier
+
+using Test
+
+Core.compilerbarrier
+Base.inferencebarrier # Core.compilerbarrier(:type, x)
+if VERSION >= v"1.14.0-DEV.1953" # julia commit 8ffcedf6cd
+Base.blackbox         # Core.compilerbarrier(:blackbox, x)
+end
+Base.donotdelete
+
+# from help?> Core.compilerbarrier
+
+T11 = (only ∘ Base.return_types)((Int,)) do a
+    x = Core.compilerbarrier(:type, a) # `x` won't be inferred as `x::Int`
+    return x
+end
+T12 = (only ∘ Base.return_types)((Int,)) do a
+    x = Base.inferencebarrier(a)
+    return x
+end
+@test T11 === T12 === Any
+
+f(x::Int) = x
+T15 = (only ∘ Base.return_types)(f)
+T16 = (only ∘ Base.return_types)((Int,)) do x
+    return x
+end
+@test T15 === T16 === Int
+
+T21 = (only ∘ Base.return_types)() do
+    x = Core.compilerbarrier(:const, 42)
+    if x == 42 # no constant information here, so inference also accounts for the else branch
+        return x # but `x` is still inferred as `x::Int` at least here
+    else
+        return nothing
+    end
+end
+@test T21 === Union{Nothing, Int}
+
+T25 = (only ∘ Base.return_types)() do
+    x = 42
+    if x == 42
+        return x
+    else
+        return nothing
+    end
+end
+@test T25 === Int
+
+T31 = (only ∘ Base.return_types)((Union{Int,Nothing},)) do a
+    if Core.compilerbarrier(:conditional, isa(a, Int))
+        # the conditional information `a::Int` isn't available here (leading to less accurate return type inference)
+        return a
+    else
+        return nothing
+    end
+end
+@test T31 === Union{Nothing, Int}
+
+function g1()
+    Core.compilerbarrier(:blackbox, 42)
+end
+function g2()
+    Base.blackbox(42)
+end
+function g5()
+    42
+end
+if VERSION >= v"1.14.0-DEV.1953" # julia commit 8ffcedf6cd
+    @test g1() == g2() == g5() == 42
+end
+#=
+julia> Base.code_typed(g1)[1]
+CodeInfo(
+1 ─ %1 =   builtin (Core.compilerbarrier)(:blackbox, 42)::Int64
+└──      return %1
+) => Int64
+
+julia> Base.code_typed(g2)[1]
+CodeInfo(
+1 ─ %1 =   builtin Base.compilerbarrier(:blackbox, 42)::Int64
+└──      return %1
+) => Int64
+
+julia> Base.code_typed(g5)[1]
+CodeInfo(
+1 ─     return 42
+) => Int64
+=#
+
+
+@test Base.donotdelete === Core.donotdelete === Core.Compiler.donotdelete
+
+end # module test_base_essentials_compilerbarrier

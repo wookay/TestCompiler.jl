@@ -1,12 +1,19 @@
 module test_base_boot
 
+# from julia/base/boot.jl
+
 using Test
 
-using Base: Const, PartialStruct, InterConditional
-# using Base: InterMustAlias
-using Core: PartialOpaque
+Core.BFloat16 # primitive type BFloat16 <: AbstractFloat 16 end
+b16 = Core.Intrinsics.fptrunc(Core.BFloat16, 3.14)
+@test bitstring(b16)           == "0100000001001001"
+@test bitstring(Float16(3.14)) == "0100001001001000"
 
-# from julia/base/boot.jl
+
+# lattice element types
+using Base: Const, PartialStruct, InterConditional
+# Base.InterMustAlias
+Core.PartialOpaque
 
 #=
 # inference lattice element types (moved from jltypes.c)
