@@ -1,5 +1,7 @@
 module test_corecompiler_type_infer
 
+# see also FemtoCompiler/test/femtocompiler/typeinf.jl
+
 using Test
 using Core: Compiler as CC
 using .CC: Future, MethodCallResult
