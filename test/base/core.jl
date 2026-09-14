@@ -39,13 +39,8 @@ world2 = Base.get_world_counter()
 # from julia/base/essentials.jl
 @test orig_R61789 === Base.invoke_in_world(world1, Core.getglobal, @__MODULE__, :R61789)
 
-if v"1.13" > VERSION >= v"1.12"
-@test orig_R61789 !== Base.invoke_in_world(world2, Core.getglobal, @__MODULE__, :R61789)
-@test orig_R61789 !== R61789
-else
 @test orig_R61789 === Base.invoke_in_world(world2, Core.getglobal, @__MODULE__, :R61789)
 @test orig_R61789 === R61789
-end
 
 
 # negative case: a field type that genuinely differs must produce a new type
