@@ -21,6 +21,8 @@ ci = mi.cache
 
 if VERSION >= v"1.14.0-DEV.2874"
 @test length(ci.edges[1].edges) == 4
+elseif VERSION >= v"1.13"
+@test length(ci.edges[1].edges) == 2
 else
 @test length(ci.edges[1].edges) == 1
 end

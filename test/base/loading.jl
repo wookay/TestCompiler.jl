@@ -49,7 +49,10 @@ end
 ### Base.isrelocatable
 @test Base.isrelocatable(pkgid) # Return whether a given PkgId within the active project is precompiled
                                 # and the associated cache is relocatable.
-if VERSION >= v"1.13.0-DEV.1253"
+
+if VERSION >= v"1.14.0-DEV.3193" # julia commit 415c71d448
+freshest_path = Base.compilecache_freshest_path(depuser; ignore_loaded=true)
+elseif VERSION >= v"1.13.0-DEV.1253"
 freshest_path = Base.compilecache_freshest_path(pkgid)
 else
 freshest_path = Base.compilecache_path(pkgid)
@@ -109,17 +112,18 @@ Base.module_build_id
 pkg_path::String = Base.find_package("Pkg")
 @test pathof(Pkg) == pkg_path
 
-pkgid_pkg::Base.PkgId = Base.identify_package("Pkg")
-@test Base.PkgId(Pkg) == pkgid_pkg
-@test pkgid_pkg == Base.identify_package(Pkg, "Pkg")
+@lock Base.require_lock begin
+    pkgid_pkg::Base.PkgId = Base.identify_package("Pkg")
+    @test Base.PkgId(Pkg) == pkgid_pkg
+    @test pkgid_pkg == Base.identify_package(Pkg, "Pkg")
 
-(pkgid, env) = Base.identify_package_env(Pkg, "Pkg")
-@test pkgid == pkgid_pkg
-@test env === nothing
+    (pkgid, env) = Base.identify_package_env(Pkg, "Pkg")
+    @test pkgid == pkgid_pkg
+    @test env === nothing
 
-@test Base.locate_package(pkgid_pkg) == pkg_path
-
-@test Base.is_stdlib(pkgid_pkg)
+    @test Base.locate_package(pkgid_pkg) == pkg_path
+    @test Base.is_stdlib(pkgid_pkg)
+end # @lock
 
 modbuild_id = Base.module_build_id(Pkg)
 @test modbuild_id isa UInt128

@@ -30,7 +30,8 @@ n4 = Base.dec(n2::Unsigned, 1::Int64, n3::Bool)::String
 @test n4 == "5"
 
 c = codeunits("")
-if VERSION >= v"1.14.0-DEV.2867" # julia commit c4dc4e24b0
+if VERSION >= v"1.14.0-DEV.2867" || # julia commit c4dc4e24b0
+   VERSION >= v"1.13"
     @test Base.dataids(c) == Base.dataids(c.s) == ()
 else
     @test Base.dataids(c) != ()
