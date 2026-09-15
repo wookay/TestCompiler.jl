@@ -51,7 +51,7 @@ end
                                 # and the associated cache is relocatable.
 
 if VERSION >= v"1.14.0-DEV.3193" # julia commit 415c71d448
-freshest_path = Base.compilecache_freshest_path(depuser; ignore_loaded=true)
+freshest_path = Base.compilecache_freshest_path(pkgid; ignore_loaded=true)
 elseif VERSION >= v"1.13.0-DEV.1253"
 freshest_path = Base.compilecache_freshest_path(pkgid)
 else
