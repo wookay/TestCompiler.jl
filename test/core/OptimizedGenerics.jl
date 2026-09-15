@@ -1,6 +1,8 @@
 using Jive
 @If VERSION >= v"1.12.0-DEV.1713" module test_core_OptimizedGenerics
 
+Core.OptimizedGenerics.KeyValue
+
 using Core.OptimizedGenerics.CompilerPlugins: typeinf, typeinf_edge
 
 # typeinf(owner, mi, source_mode)::CodeInstance

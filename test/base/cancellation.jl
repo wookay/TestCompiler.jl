@@ -14,13 +14,17 @@ using Test
 Core.CancellationTokenSource
 
 @test Base.CancellationRequest <: Exception
-Base.CANCEL_REQUEST_SAFE
-Base.CANCEL_REQUEST_ABANDON_EXTERNAL
-Base.CANCEL_REQUEST_ABANDON_ALL
+Base.CANCEL_REQUEST_SAFE             # 0x1
+Base.CANCEL_REQUEST_ABANDON_EXTERNAL # 0x3
+Base.CANCEL_REQUEST_ABANDON_ALL      # 0x4
+
+Base.STATUS_PREEMPT_BIT # 0x40
+Base.SEVERITY_MASK      # 0x3f
 
 @test Base.severity(Base.CANCEL_REQUEST_ABANDON_ALL) == Base.CANCEL_REQUEST_ABANDON_ALL.request
 
 src = Core._new_cancel_source() # Base.CancellationTokenSource()
+                                # Base.CancellationTokenSource(nothing)
 @test src.child_head === nothing
 @test src.nparents == 0x0000
 st = @atomic :acquire src.state
@@ -28,6 +32,8 @@ st = @atomic :acquire src.state
 
 tok = Base.CancellationToken(src)
 @test tok.source == src
+
+@test Base.cancel_source(tok) === src
 
 @test Base.cancel_severity(src) === nothing
 @test Base.cancel_severity(tok) === nothing
@@ -40,17 +46,35 @@ Base.CANCEL_TOKEN
 @test Base.CANCEL_TOKEN isa Base.CancelTokenKey
 @test Base.CANCEL_TOKEN[] isa Base.CancellationToken
 
-@test Base.default_cancel_token() isa Base.CancellationToken
-@test Base.default_cancel_source() isa Base.CancellationTokenSource
+d_tok = Base.default_cancel_token()
+d_src = Base.default_cancel_source()
+
+@test d_tok isa Base.CancellationToken
+@test d_src isa Base.CancellationTokenSource
+
+@test Base.cancel_severity(d_tok) === nothing
+@test Base.cancel_source(d_tok) === d_src
+
+# @inline function default_cancel_token()
+ct = current_task()
+@test getfield(ct, :bound_cancel_default) == Base.severity(Base.CANCEL_REQUEST_SAFE)
+s = @atomic :monotonic ct.bound_cancel_token
+@test s !== nothing
+@test Base.cancel_severity(s) === nothing
+
+# @noinline function _default_cancel_token_slow(ct::Task)
+scope = Core.current_scope()
+v = Core.OptimizedGenerics.KeyValue.get(scope.values, Base.CANCEL_TOKEN)
+@test something(v) === d_tok
 
 Base.cancel!
+Base.redeliver!
 Base.@cancel_check
 
 Core.WaitEntryN
 Base.WaitEntry
 
 @test Base.DEFAULT_CANCEL isa Base.UseDefaultToken
-
 
 # from julia/test/cancellation.jl
 # @testset "structured cancellation of @sync" begin
@@ -72,7 +96,6 @@ end
 @test_throws TaskFailedException wait(t)
 @test t.result isa CompositeException
 @test first(t.result.exceptions) isa TaskFailedException
-
 
 
 #=
