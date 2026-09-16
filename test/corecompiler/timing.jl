@@ -1,5 +1,7 @@
 module test_corecompiler_timing
 
+# see also TestCompiler/test/base/timing.jl
+
 # from julia/Compiler/src/timing.jl
 #      julia/Compiler/src/typeinfer.jl
 
