@@ -1,4 +1,5 @@
-module test_base_park
+using Jive
+@If VERSION >= v"1.14-DEV" module test_base_park
 
 using Test
 
