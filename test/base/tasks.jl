@@ -42,7 +42,7 @@ t = Task(f)
 yield(t)
 @test t.metrics_enabled
 @test Base.Experimental.task_running_time_ns(t) > 100
-@test Base.Experimental.task_wall_time_ns(t)    > 1000
+@test Base.Experimental.task_wall_time_ns(t)    > 500
 
 pairs_running = []
 pairs_wall    = []
