@@ -17,10 +17,10 @@ mi = Base.method_instance(caller, ())
 @test Base.return_types(caller, ()) == Any[String]
 mi = Base.method_instance(caller, ())
 @test isdefined(mi, :cache) === true
-ci = mi.cache
+ci::Core.CodeInstance = mi.cache
 
-if VERSION >= v"1.14.0-DEV.2874"
-@test length(ci.edges[1].edges) == 4
+if VERSION >= v"1.14-DEV"
+@test length(ci.edges[1].edges) == 6
 elseif VERSION >= v"1.13"
 @test length(ci.edges[1].edges) == 2
 else
