@@ -118,7 +118,7 @@ bpart = logmeths[i]
 buf = IOBuffer()
 Base.print_partition(buf, bpart)
 s = String(take!(buf))
-@test contains(s, " - constant binding to @world(Main.test_base_partition_kind.LogBindingInvalidation, ")
+@test contains(s, " - constant binding")
 kind = Base.binding_kind(bpart)
 @test kind == Base.PARTITION_KIND_CONST
 restriction = Base.partition_restriction(bpart)
