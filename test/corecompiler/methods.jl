@@ -30,6 +30,11 @@ ast = Base.uncompressed_ast(method)
 @test ast.code[1] === GlobalRef(Base, :open)
 bodyfunc = Base.bodyfunction(method)
 @test bodyfunc === Base.open
+if VERSION >= v"1.14.0-DEV.3277" # julia commit 346d02acc2
+    world = Base.get_world_counter()
+    bodyfunc = Base.bodyfunction(method; world)
+    @test bodyfunc === Base.open
+end
 
 
 f(x) = 42  # line 35
