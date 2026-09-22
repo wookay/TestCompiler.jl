@@ -254,3 +254,25 @@ mi = Base.get_ci_mi(ci)::Core.MethodInstance
 @test mi.def isa Method              # +(x::Int64, y::Int64) @ Base essentials.jl:1257
 
 end # module test_base_runtime_internals_get_ci_mi
+
+
+@If VERSION >= v"1.12" module test_base_runtime_internals_specialize_method
+
+using Test
+
+# from julia/base/runtime_internals.jl
+#      julia/Compiler/test/invalidation.jl
+
+f = +
+atype = Tuple{Int, Int}
+meths = methods(f, atype)
+meth::Method = first(meths)
+smeth::Core.MethodInstance = Base.specialize_method(meth, atype, Core.svec())
+@test smeth.def === meth
+@test smeth.specTypes === atype
+
+mi::Core.MethodInstance = Base.method_instance(f, atype)
+@test mi.def === meth
+@test mi.specTypes === Tuple{typeof(f), Int, Int}
+
+end # module test_base_runtime_internals_specialize_method
