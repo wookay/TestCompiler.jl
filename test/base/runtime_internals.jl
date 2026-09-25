@@ -121,10 +121,18 @@ UT = Union{Int, String}
 
 @test Base.Bottom === Union{}
 @test Base.Bottom isa Core.TypeofBottom
+@test Base.Bottom::Core.TypeofBottom === Union{}
 @test Base.Bottom <: Int
+@test Base.Bottom <: UnionAll
+@test Vector::UnionAll === (Vector{T} where T) === (Array{T, 1} where T)
+@test Any === (T where T)
+@test Vector{Any} === Vector{T where T}
+@test Vector{Any} !== Vector{T} where T
+@test Vector{Any} isa DataType
 @test_throws MethodError supertype(Base.Bottom)
 @test typeof(Base.Bottom) === Core.TypeofBottom
 @test Base.issingletontype(Core.TypeofBottom)
+
 
 if VERSION >= v"1.12.0-DEV.1405" # julia commit 222cde9c09
 Base.isfieldatomic
