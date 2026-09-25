@@ -29,6 +29,25 @@ e = Base.infer_effects(                         chomp,
 end # module test_base_reflection_infer_effects
 
 
+module test_base_reflection_infer_exception_type
+
+using Test
+using Core: Compiler as CC
+
+# help?> Base.infer_exception_type
+f1(x) = x * 2
+
+@test Base.infer_exception_type(f1, (Int,)) === Union{}
+@test Base.infer_exception_type(f1, (String,)) === MethodError
+
+@test Base.infer_return_type(f1, (Int,)) === Int
+@test Base.infer_return_type(f1, (String,)) === Union{}
+
+@test Base.infer_effects(f1, (Int,)) == CC.EFFECTS_TOTAL
+
+end # module test_base_reflection_infer_exception_type
+
+
 module test_base_reflection_code_ircode
 
 using Test
