@@ -105,12 +105,19 @@ end
 @test Base.isconcretetype(S2)
 @test !(Base.issingletontype(S2))
 
-UT = Union{Int, String}
-@test typeintersect(Int, UT) === Int
+UnionIntString = Union{Int, String}
+@test typeintersect(Int, UnionIntString) === Int
 
-@test Base.uniontypes(UT) == Any[Int, String]
-@test Base.unionlen(UT) == 2
-@test Union{Base.uniontypes(UT)...} === UT
+@test Base.uniontypes(UnionIntString) == Any[Int, String]
+@test Base.unionlen(UnionIntString) == 2
+@test Union{Base.uniontypes(UnionIntString)...} === UnionIntString
+
+U2 = Union{P, Q} where {P, Q}
+@test U2{} === U2
+@test U2{Int} === Union{Int, Q} where Q
+@test U2{Int} !== Union{Int, R} where R
+@test U2{Int, Bool} === Union{Bool, Int}
+@test_throws ErrorException U2{Int, Bool, String}
 
 @enum E a b
 @test instances(E) === (a, b)
