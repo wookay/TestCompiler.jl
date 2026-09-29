@@ -1,6 +1,5 @@
 # module TestCompiler
 
-using LogicalOperators: LogicalOperators
 using JSON3: JSON3
 using Dates: Dates
 
