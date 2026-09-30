@@ -128,4 +128,18 @@ end # @lock
 modbuild_id = Base.module_build_id(Pkg)
 @test modbuild_id isa UInt128
 
+function load_syms_action(m::Module)
+    @test isempty(keys(m.syms))
+end
+
+function load_syms()
+    code = """
+    const syms = Dict()
+    """
+    m = Module()
+    include_string(m, code, "syms.jl")
+    invokelatest(load_syms_action, m)
+end
+load_syms()
+
 end # module test_base_loading
