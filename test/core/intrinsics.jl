@@ -22,4 +22,13 @@ if VERSION >= v"1.12"
     @test count_intrinsics() == 92
 end # if
 
+if VERSION >= v"1.14-DEV"
+primitive type U8 8 end
+
+U8(n::UInt8) = Core.Intrinsics.bitcast(U8, n)
+
+@test U8(0b111) isa U8
+@test Core.bitsizeof(U8) == 8
+end # if
+
 end # module test_core_intrinsics
