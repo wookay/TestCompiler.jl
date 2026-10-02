@@ -76,7 +76,6 @@ end
 if VERSION >= v"1.14.0-DEV.1303" # julia commit 3484331cb1
     @test names(Base.__toplevel__, all = true) == [Symbol("#_internal_julia_parse"),
                                                    :__toplevel__,
-                                                   :_internal_julia_lower,
                                                    :_internal_syntax_version]
 else
     @test names(Base.__toplevel__, all = true) == [:__toplevel__]
