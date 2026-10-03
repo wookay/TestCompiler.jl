@@ -1,4 +1,4 @@
-module test_core_builtin
+module test_core_builtins
 
 using Test
 
@@ -28,4 +28,4 @@ void jl_check_valid_supertype(jl_value_t *super, const char *type_name)
 
 struct Eq <: supertype(typeof((==))) end
 
-end # module test_core_builtin
+end # module test_core_builtins

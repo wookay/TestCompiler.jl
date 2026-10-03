@@ -23,12 +23,17 @@ if VERSION >= v"1.12"
 end # if
 
 if VERSION >= v"1.14-DEV"
-primitive type U8 8 end
+primitive type U3 3 end
 
-U8(n::UInt8) = Core.Intrinsics.bitcast(U8, n)
+U3(n::UInt8)      = Core.Intrinsics.trunc_int(U3, n)
+Base.UInt8(x::U3) = Core.Intrinsics.zext_int(UInt8, x)
 
-@test U8(0b111) isa U8
-@test Core.bitsizeof(U8) == 8
+@test UInt8(U3(0b111)) == 0b111
+@test Core.bitsizeof(U3) == 3
 end # if
+
+@test Core.Intrinsics.bitcast(UInt8, Int8(0b111)) == 0b111
+@test Core.Intrinsics.trunc_int(UInt8, UInt16(0b111)) == 0b111
+@test Core.Intrinsics.zext_int(UInt16, 0b111) == UInt16(0b111)
 
 end # module test_core_intrinsics
