@@ -1,0 +1,10 @@
+[compat]
+julia = "1.14"
+Resolver = "0.2"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Resolver = "ecd60e94-5748-11e9-04dc-1fe0f95e4121"
+
+[targets]
+test = ["Test", "Resolver"]
