@@ -267,6 +267,7 @@ ci = Core.CodeInstance(
 
 mi = Base.get_ci_mi(ci)::Core.MethodInstance
 @test mi.def isa Method              # +(x::Int64, y::Int64) @ Base essentials.jl:1257
+@test mi.def.interferences == Any[]
 
 end # module test_base_runtime_internals_get_ci_mi
 
