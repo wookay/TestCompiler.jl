@@ -164,6 +164,16 @@ end
 @test CC.is_consistent(CC.getfield_effects(𝕃, Any[Some{String}, Core.Const(:value)], String))
 @test CC.is_consistent(CC.getfield_effects(𝕃, Any[Union{Some{Symbol},Some{String}}, Core.Const(:value)], Union{Symbol,String}))
 
+e = Base.infer_effects(supertype, (DataType,))
+effects = CC.encode_effects(e::CC.Effects)
+@test effects == 0x0000c0c0
+# from julia/src/staticdata.c    static int effects_foldable(uint32_t effects)
+@test ((effects & 0x7) == 0)          && CC.is_consistent(e)  # +c
+@test (((effects >> 10) & 0x03) == 0) && CC.is_noub(e)        # +e
+@test (((effects >>  3) & 0x03) == 0) && CC.is_effect_free(e) # +t
+@test (((effects >>  6) & 0x01) == 1) && CC.is_terminates(e)  # +u
+@test (((effects >> 14) & 0x01) == 1) && CC.is_nortcall(e)    # +r
+
 end # module test_corecompiler_effects
 
 
