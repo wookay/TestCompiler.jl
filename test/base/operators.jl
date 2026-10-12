@@ -26,4 +26,12 @@ unsplat
 @test (splat ∘ unsplat)(sum) === (unsplat ∘ splat)(sum) === sum
 end
 
+if VERSION >= v"1.14.0-DEV.2134" # julia commit 723828b2c4
+else
+    tap(f) = x -> (f(x); x)
+end
+A = []
+@test A |> tap(arr -> push!(arr, 1)) == [1]
+@test A == [1]
+
 end # module test_base_operators_wrapping_arithmetic_op
