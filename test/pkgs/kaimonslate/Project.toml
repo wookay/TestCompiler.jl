@@ -1,0 +1,10 @@
+[compat]
+julia = "1.11"
+KaimonSlate = "1.11"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+KaimonSlate = "f7b954f5-0334-4562-ac21-b005218ce1da"
+
+[targets]
+test = ["Test", "KaimonSlate"]
