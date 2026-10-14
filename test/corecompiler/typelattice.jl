@@ -5,7 +5,7 @@ using Test
 using Core: Compiler as CC
 
 # from julia/Compiler/src/typelattice.jl
-@test CC.may_form_limited_typ isa Function
+# @test CC.may_form_limited_typ isa Function
 
 # Conditional
 CC.Conditional

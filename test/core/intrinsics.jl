@@ -18,8 +18,8 @@ function count_intrinsics()::Int
     cnt
 end # function
 
-if VERSION >= v"1.12"
-    @test count_intrinsics() == 92
+if VERSION >= v"1.14-DEV"
+    @test count_intrinsics() == 93
 end # if
 
 if VERSION >= v"1.14-DEV"

@@ -9,6 +9,8 @@ module test_src_jltypes
 #    return has_free_typevars(v, NULL);
 # }
 
+if VERSION >= v"1.12"
 Core.has_free_typevars
+end
 
 end # module test_src_jltypes
