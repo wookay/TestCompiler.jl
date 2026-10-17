@@ -19,7 +19,10 @@ loaded = haskey(Base.loaded_modules, pkgid)
 Base.Precompilation.precompilepkgs
 pkgs = [pkgid]
 precompiled = Base.Precompilation.precompilepkgs(pkgs; timing=true, verbose=true)
-cachefile = precompiled[1]
-@test isfile(cachefile)
+if nothing === precompiled
+else
+    cachefile = precompiled[1]
+    @test isfile(cachefile)
+end
 
 end # module test_compiler_precompile

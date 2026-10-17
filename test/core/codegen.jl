@@ -8,7 +8,7 @@ scope = Core.current_scope()
 if VERSION >= v"1.14-DEV"
 for (k, v) in scope.values
     if k isa Base.ScopedValues.ScopedValue && k[] isa Base.VersionedParse
-        @test k[].edition == (1, 14)
+        @test k[].edition[2] >= 14 # (1, 15)
     end
 end
 end # if

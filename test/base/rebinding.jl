@@ -19,7 +19,9 @@ mi = Base.method_instance(caller, ())
 @test isdefined(mi, :cache) === true
 ci::Core.CodeInstance = mi.cache
 
-if VERSION >= v"1.14-DEV"
+if VERSION >= v"1.15-DEV"
+@test length(ci.edges[1].edges) == 4
+elseif VERSION >= v"1.14-DEV"
 @test length(ci.edges[1].edges) == 6
 elseif VERSION >= v"1.13"
 @test length(ci.edges[1].edges) == 2
