@@ -3,7 +3,8 @@ module test_core_types
 using Test
 using Core: Const, InterConditional, PartialStruct, CodeInfo, CodeInstance, MethodInstance
 
-# from julia/Compiler/src/abstractlattice.jl
+# from julia/Compiler/src/abstractinterpretation.jl
+#      julia/Compiler/src/abstractlattice.jl
 #      julia/Compiler/src/tfuncs.jl
 #      julia/Compiler/src/typelattice.jl
 #      julia/Compiler/src/typelimits.jl
@@ -46,22 +47,30 @@ end # module test_core_types_PartialStruct
 
 @If VERSION >= v"1.12" module test_core_types_widen
 
-using Test
 using Core.Compiler: Compiler as CC
 
 CC.widenlattice
 CC.widenconst
-CC.widenconditional
-CC.widenmustalias
 CC.widenslotwrapper
+CC.widenconditional
 CC.widenwrappedconditional
+CC.widenmustalias
 CC.widen_diagonal
 CC.widen_all_consts!
+CC.widenreturn
+CC.widenreturn_noslotwrapper
+if VERSION >= v"1.14-DEV"
+CC.widen_stale_slotwrapper
+CC.widen_call_result
+CC.partition_rt_widened
+CC.argextype_widened
+CC.globalref_rt_widened
+end
 
 end # module test_core_types_widen
 
 
-@If VERSION >= v"1.12" module test_core_types_Const
+@If VERSION >= v"1.14-DEV" module test_core_types_Const
 
 using Test
 using Core: Const
