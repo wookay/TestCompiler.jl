@@ -3,6 +3,12 @@ module test_core_types
 using Test
 using Core: Const, InterConditional, PartialStruct, CodeInfo, CodeInstance, MethodInstance
 
+# from julia/Compiler/src/abstractlattice.jl
+#      julia/Compiler/src/tfuncs.jl
+#      julia/Compiler/src/typelattice.jl
+#      julia/Compiler/src/typelimits.jl
+#      julia/Compiler/src/typeutils.jl
+
 @test Array{1} isa UnionAll
 @test (Array{T, 1} where T) isa UnionAll
 @test Vector isa UnionAll
@@ -38,14 +44,41 @@ end
 end # module test_core_types_PartialStruct
 
 
+@If VERSION >= v"1.12" module test_core_types_widen
+
+using Test
+using Core.Compiler: Compiler as CC
+
+CC.widenlattice
+CC.widenconst
+CC.widenconditional
+CC.widenmustalias
+CC.widenslotwrapper
+CC.widenwrappedconditional
+CC.widen_diagonal
+CC.widen_all_consts!
+
+end # module test_core_types_widen
+
+
+@If VERSION >= v"1.12" module test_core_types_Const
+
+using Test
+using Core: Const
+using Core.Compiler: Compiler as CC
+
+typea = Const(Int)
+@test CC.widenconst(typea) === Core.TypeEgal{Int}
+
+end # module test_core_types_Const
+
+
 @If VERSION >= v"1.14-DEV" module test_core_types_Conditional
 
 using Test
 using Core: Const
 using Core.Compiler: Compiler as CC
 using .CC: Conditional
-
-CC.widenconditional
 
 cnd = Conditional(#= slot =# 0, #= ssadef =# 0, Const(Union{}), Const(Union{}))
 @test cnd.slot == 0
@@ -56,6 +89,8 @@ cnd = Conditional(#= slot =# 0, #= ssadef =# 0, Const(Union{}), Const(Union{}))
 𝕃 = CC.fallback_lattice
 @test CC.egal_tfunc(𝕃, cnd, Const(Bool)) === Const(false)
 @test CC.subtype_tfunc(𝕃, cnd, Const(Bool)) === Const(true)
+
+@test CC.widenconditional(cnd) === Bool
 
 end # module test_core_types_Conditional
 
@@ -96,6 +131,8 @@ must_alias = MustAlias(2, 0, AliasableField{Any}, 1, Int)
 @test ⊑(CC.fallback_lattice, must_alias, Int)
 # from julia/Compiler/src/abstractlattice.jl
 # @nospecializeinfer @nospecialize(a) ⊑ @nospecialize(b) = ⊑(fallback_lattice, a, b)
+
+@test CC.widenmustalias(must_alias) === Int
 
 inter_must_alias = InterMustAlias(2, Some{Any}, 1, Int)
 @test inter_must_alias.slot == 2
