@@ -89,8 +89,13 @@ using Test
 if VERSION >= v"1.14.0-DEV.2291" # julia commit 26145852c4
 @test Union    isa supertype(Union)
 @test UnionAll isa supertype(UnionAll)
+if VERSION >= v"1.15.0-DEV.31" # julia commit e2f6355814
+@test                    supertype(Type)         <: Any
+@test                    supertype(Type{Vector}) <: Any
+else
 @test_throws MethodError supertype(Type)         <: Any
 @test_throws MethodError supertype(Type{Vector}) <: Any
+end # if if
 
 @test Union    <: Core.AnyType <: Any
 @test UnionAll <: Core.AnyType <: Any
