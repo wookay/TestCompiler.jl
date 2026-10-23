@@ -47,3 +47,19 @@ end
 @test array_equal(Char[], Char[])
 
 end # module test_base_array_equal
+
+
+module test_base_array_Cube
+
+using Test
+
+R = reshape(1:9,  (3, 3, 1))
+S = reshape(1:27, (3, 3, 3))
+@test R[:,:,1] == S[:,:,1] == [1 4 7; 2 5 8; 3 6 9]
+
+const Cube = Array{T, 3} where T
+C = Cube(R)
+@test C == R
+@test C.size == R.dims == (3, 3, 1)
+
+end # module test_base_array_Cube
