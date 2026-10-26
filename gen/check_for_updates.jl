@@ -6,7 +6,6 @@ const emojis = Dict(
     :TestJiveRunMoreTests => "👟",
     :EmojiSymbols => "🤔",
     :DumpTruck => "🚚",
-    :TestJETLS => "✈️ ",
     :TestCompiler => "🚗",
     :TestJuliaLowering => "📉",
     :HelpMode => "❓",
@@ -60,4 +59,4 @@ if false
 @check_for_updates TestCompiler
 end
 
-@check_for_updates FemtoCompiler, Jive, TestJiveRunMoreTests, EmojiSymbols, DumpTruck, TestJETLS, TestJuliaLowering, HelpMode
+@check_for_updates FemtoCompiler, Jive, TestJiveRunMoreTests, EmojiSymbols, DumpTruck, TestJuliaLowering, HelpMode

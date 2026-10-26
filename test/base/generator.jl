@@ -19,7 +19,8 @@ g = (count(iszero, v .* i) for i in 1:2)
 nested_count(v::Vector{Float64}) = maximum(count(!iszero, v .* i) for i in 1:3)
 @test nested_count([1.0, 2.0]) == 2
 T = Base.infer_return_type(nested_count, (Vector{Float64},))
-if VERSION >= v"1.14.0-DEV.3115" # julia commit 10e7005f38
+if VERSION >= v"1.14.0-DEV.3115" || # julia commit 10e7005f38
+   VERSION >= v"1.13"
     @test T === Int
 else
     @test T === Any

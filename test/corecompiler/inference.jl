@@ -46,7 +46,8 @@ end == Val{true}
 
 @test concrete_eval_eligible_if_false(42., 5, false) == 5sin(42.) == -4.582607739578169
 
-if VERSION >= v"1.14.0-DEV.2108" # julia commit df12394092
+if VERSION >= v"1.14.0-DEV.2108" || # julia commit df12394092
+   VERSION >= v"1.13"
     @test Base.infer_return_type() do
         Val(concrete_eval_eligible_if_false(42., 5, false) == 5sin(42.))
     end == Val{true}
