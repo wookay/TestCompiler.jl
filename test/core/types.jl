@@ -65,7 +65,10 @@ CC.widen_call_result
 CC.partition_rt_widened
 CC.argextype_widened
 CC.globalref_rt_widened
-end
+if VERSION >= v"1.15.0-DEV.150" # julia commit 1a67b07b50
+CC.widenconst_split
+end # if if
+end # if
 
 end # module test_core_types_widen
 
