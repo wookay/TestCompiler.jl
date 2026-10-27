@@ -37,4 +37,6 @@ else
     @test Base.dataids(c) != ()
 end
 
+@test Base.containsnul("\0")
+
 end # module test_base_strings

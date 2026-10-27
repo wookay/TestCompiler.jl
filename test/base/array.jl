@@ -53,8 +53,8 @@ module test_base_array_Cube
 
 using Test
 
-R = reshape(1:9,  (3, 3, 1))
-S = reshape(1:27, (3, 3, 3))
+R = reshape(1:(3 ^ 2), (3, 3, 1))
+S = reshape(1:(3 ^ 3), (3, 3, 3))
 @test R[:,:,1] == S[:,:,1] == [1 4 7; 2 5 8; 3 6 9]
 
 const Cube = Array{T, 3} where T

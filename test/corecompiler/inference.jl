@@ -94,3 +94,20 @@ else
 end
 
 end # module test_corecompiler_opaque_closure
+
+
+module test_corecompiler_inference_AliasableField
+
+using Test
+
+# from julia/Compiler/test/inference.jl
+struct AliasableField{T}
+    f::T
+end
+
+check_aliased_field(a, v) = (x = a.f; x === v || throw("unexpected"); x)
+@test Base.infer_return_type(check_aliased_field, (AliasableField{Bool}, Bool)) === Bool
+af = AliasableField{Bool}(false)
+@test check_aliased_field(af, false) === false
+
+end # module test_corecompiler_inference_AliasableField
