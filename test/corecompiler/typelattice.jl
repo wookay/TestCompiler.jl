@@ -44,4 +44,9 @@ CC.widenconditional
 CC.widenwrappedconditional
 CC.widenmustalias
 
+CC.issubconditional
+CC.is_same_conditionals
+CC.is_lattice_bool
+CC.isalreadyconst
+
 end # module test_corecompiler_typelattice

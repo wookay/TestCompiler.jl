@@ -63,3 +63,33 @@ C = Cube(R)
 @test C.size == R.dims == (3, 3, 1)
 
 end # module test_base_array_Cube
+
+
+module test_base_array_filter
+
+using Test
+
+# indexing functions
+firstindex
+lastindex
+findfirst
+findall
+
+first
+# filterfirst
+filter
+
+@test firstindex(5:7) == 1
+@test lastindex(5:7) == 3
+@test findfirst(isodd, 5:9) == 1
+@test findfirst(isodd, [8, 10]) === nothing
+@test findall(isodd, 5:9) == 1:2:5
+
+@test first(5:7) == 5
+if VERSION >= v"1.15.0-DEV.315" # julia commit e0ff20a8ad
+@test filterfirst(isodd, 5:9) == 5
+@test_throws ArgumentError filterfirst(isodd, [8, 10])
+end
+@test filter(isodd, 5:9) == 5:2:9
+
+end # module test_base_array_filter
