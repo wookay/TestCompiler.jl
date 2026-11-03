@@ -53,4 +53,13 @@ identity
 
 @test Core.:(===) === ===
 
+Base.decompose
+(num, pow, den) = Base.decompose(2pi)
+@test num*2^(pow/den) == 2pi
+
+@test Base.decompose(0pi) == (0, -1074, 1)
+@test Base.decompose(1pi) == (7074237752028440, -51, 1)
+@test Base.decompose(2pi) == (7074237752028440, -50, 1)
+@test Base.decompose(3pi) == (5305678314021330, -49, 1)
+
 end # module test_base_hashing
