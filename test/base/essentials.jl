@@ -209,7 +209,12 @@ CodeInfo(
 ) => Int64
 =#
 
-
 @test Base.donotdelete === Core.donotdelete === Core.Compiler.donotdelete
+
+@test_throws BoundsError Base.throw_boundserror([], 1)
+if VERSION >= v"1.14.0-DEV.2015" || # julia commit 268f85e80b
+   VERSION >= v"1.13"
+    @test_throws BoundsError Base._throw_boundserror_indices([])
+end
 
 end # module test_base_essentials_compilerbarrier

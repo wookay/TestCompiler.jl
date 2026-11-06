@@ -18,6 +18,10 @@ end # if
 @test Base.allocatedinline(Int)
 @test Base.allocatedinline(String) === false
 
+if VERSION >= v"1.14.0-DEV.2015" # julia commit 268f85e80b
+Base.growat!
+end
+
 end # test_base_array
 
 

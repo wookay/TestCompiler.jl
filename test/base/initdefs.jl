@@ -48,9 +48,38 @@ Base._start
   # empty!(Base.postoutput_hooks)
   # ...
 
-
 if isdir(DEPOT_PATH[1])
     @test Pkg.devdir() == joinpath(DEPOT_PATH[1], "dev")
 end
 
 end # module test_base_initdefs
+
+
+using Jive
+@If VERSION >= v"1.15.0-DEV.503" module test_base_initdefs_sysimage_init
+# julia commit e1aa66fded
+
+# function __init_build()
+Base._atexit_hooks_finished
+Base.init_build_rng
+Sys.__init_build
+Base.reinit_stdio
+Base.init_depot_path
+Base.init_load_path
+Base.init_active_project
+Base.init_debuginfo_source_paths
+Base.init_frontend
+
+# function __uninit_build()
+Base.uninit_toml_cache
+Base.uninit_exec_options
+Base.uninit_args
+Base.uninit_frontend
+Base.uninit_debuginfo_source_paths
+Base.uninit_active_project
+Base.uninit_load_path
+Base.uninit_depot_path
+Base.uninit_stdio
+Sys.__uninit_build
+
+end # module test_base_initdefs_sysimage_init
