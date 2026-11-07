@@ -74,7 +74,17 @@ Base.@cancel_check
 Core.WaitEntryN
 Base.WaitEntry
 
+# struct CancellationToken
+#     source::CancellationTokenSource
+# end
+
+# struct UseDefaultToken end
+
+@test isstructtype(Base.CancellationToken)
+
 @test Base.DEFAULT_CANCEL isa Base.UseDefaultToken
+@test Base.CancelTokenArg === Union{Base.UseDefaultToken, Base.CancellationToken, Nothing}
+@test Base.MaybeToken === Union{Nothing, Base.CancellationToken}
 
 # from julia/test/cancellation.jl
 # @testset "structured cancellation of @sync" begin

@@ -69,12 +69,20 @@ using Test
 # from julia/base/runtime_internals.jl
 isconcretetype
 # isconcretetype(@nospecialize(t)) = (@_total_meta; isa(t, DataType) && (t.flags & 0x0002) == 0x0002)
+@test isconcretetype(Int) &&
+      isa(Int, DataType) &&
+      (Int.flags & 0x0002) == 0x0002
+
 isabstracttype
 # function isabstracttype(@nospecialize(t))
 #   @_total_meta
 #   t = unwrap_unionall(t)
 #   # TODO: what to do for `Union`?
 #   return isa(t, DataType) && (t.name.flags & 0x1) == 0x1
+@test isabstracttype(Integer) &&
+      isa(Integer, DataType) &&
+      (Integer.name.flags & 0x1) == 0x1
+
 Base.iskindtype # DataType, UnionAll, Union, Core.TypeofBottom
 # iskindtype(@nospecialize t) = (t === DataType || t === UnionAll || t === Union || t === typeof(Bottom))
 Base.isconcretedispatch  # isconcretetype ∘ !iskindtype
