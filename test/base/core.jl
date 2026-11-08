@@ -1,6 +1,7 @@
 module test_base_core_redefining_structs
 
-# see also base/essentials.jl
+# see also test/base/essentials.jl
+#          test/core/intrinsics.jl
 
 using Test
 

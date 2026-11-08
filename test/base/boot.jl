@@ -1,6 +1,9 @@
 module test_base_boot
 
+# see also test/base/typegroup.jl
+
 # from julia/base/boot.jl
+#      julia/test/typegroup.jl
 
 using Test
 
@@ -14,6 +17,10 @@ b16 = Core.Intrinsics.fptrunc(Core.BFloat16, 3.14)
 using Base: Const, PartialStruct, InterConditional
 # Base.InterMustAlias
 Core.PartialOpaque
+
+if VERSION >= v"1.14.0-DEV.1858" # julia commit 741f560dc4
+Core.TypeApp
+end
 
 #=
 # inference lattice element types (moved from jltypes.c)
@@ -53,6 +60,14 @@ struct PartialOpaque
     parent::MethodInstance
     source
     PartialOpaque(@nospecialize(typ::Type), @nospecialize(env), parent::MethodInstance, source) = new(typ, env, parent, source)
+end
+
+struct TypeApp
+    head::Any            # Type constructor (TypeVar, Type, or outer TypeApp)
+    param::Any           # Single type parameter
+    function TypeApp(@nospecialize(head), @nospecialize(param))
+        return new(head, param)
+    end
 end
 =#
 

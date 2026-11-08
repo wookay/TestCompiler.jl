@@ -1,11 +1,15 @@
 module test_core_intrinsics
 
+# see also test/base/core.jl
+
 using Test
 
 @test Core.Intrinsics.not_int(false) === true
 @test Core.Intrinsics.not_int(true) === false
 @test Core.Intrinsics.not_int(0) === -1
 @test Core.Intrinsics.not_int(-1) === 0
+
+@test Core.Intrinsics.or_int(0b01, 0b10) == 0b11
 
 function count_intrinsics()::Int
     cnt = 0

@@ -52,6 +52,10 @@ if VERSION >= v"1.14.0-DEV.2336" # julia commit 83323976df  inference: Add `wide
 CC.widen_call_result
 end
 
+CC.partialorder          # ⊑ partial order
+CC.strictneqpartialorder # ⊏ strict neq partial order
+CC.join                  # ⊔ join
+CC.meet                  # ⊓ meet
 
 # from julia/Compiler/src/types.jl
 #=
