@@ -73,12 +73,9 @@ end
 @test Base.loading_extension === false
 @test Base.loadable_extensions === nothing
 @test Base.precompiling_extension === false
-if VERSION >= v"1.14.0-DEV.1303" # julia commit 3484331cb1
-    @test names(Base.__toplevel__, all = true) == [Symbol("#_internal_julia_parse"),
-                                                   :__toplevel__,
+if VERSION >= v"1.15-DEV"
+    @test names(Base.__toplevel__, all = true) == [:__toplevel__,
                                                    :_internal_syntax_version]
-else
-    @test names(Base.__toplevel__, all = true) == [:__toplevel__]
 end
 if VERSION >= v"1.12.0-DEV.1400" # julia commit b7b79eb8f6
     @test Base.newly_inferred == Core.CodeInstance[]
