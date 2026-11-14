@@ -1,3 +1,4 @@
 .DS_Store
 *.cov
 sources
+test/base/jl_*
