@@ -40,4 +40,8 @@ if VERSION >= v"1.14.0-DEV.3221" # julia commit 07e2c78d9b
 @test  @allocations(String( lazy"item $(1)" )) <= 7
 end
 
+@test Base.format_bytes(0) == "0 bytes"
+@test Base.format_bytes(1) == "1 byte"
+@test Base.format_bytes(2) == "2 bytes"
+
 end # module test_base_timing
