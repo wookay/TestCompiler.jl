@@ -22,6 +22,19 @@ if VERSION >= v"1.14.0-DEV.1858" # julia commit 741f560dc4
 Core.TypeApp
 end
 
+end # module test_base_boot
+
+
+using Jive
+@If VERSION >= v"1.12" module test_base_boot_latestworld
+
+using Test
+Core.@latestworld
+Core.eval(@__MODULE__, Expr(:latestworld))
+
+end # module test_base_boot_latestworld
+
+
 #=
 # inference lattice element types (moved from jltypes.c)
 struct Const
@@ -70,5 +83,3 @@ struct TypeApp
     end
 end
 =#
-
-end # module test_base_boot

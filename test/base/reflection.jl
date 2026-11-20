@@ -43,7 +43,8 @@ f1(x) = x * 2
 @test Base.infer_return_type(f1, (Int,)) === Int
 @test Base.infer_return_type(f1, (String,)) === Union{}
 
-@test Base.infer_effects(f1, (Int,)) == CC.EFFECTS_TOTAL
+@test Base.infer_effects(f1, (Int,))    == CC.EFFECTS_TOTAL  # (+c,+e,+n,+t,+s,+m,+u,+o,+r)
+@test Base.infer_effects(f1, (String,)) == CC.EFFECTS_THROWS # (+c,+e,!n,+t,+s,+m,+u,+o,+r)
 
 end # module test_base_reflection_infer_exception_type
 
