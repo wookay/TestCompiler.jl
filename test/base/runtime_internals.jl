@@ -148,13 +148,17 @@ U2 = Union{P, Q} where {P, Q}
 @test typeof(Base.Bottom) === Core.TypeofBottom
 @test Base.issingletontype(Core.TypeofBottom)
 
-
 if VERSION >= v"1.12.0-DEV.1405" # julia commit 222cde9c09
 Base.isfieldatomic
 end
 if VERSION >= v"1.14.0-DEV.2852" # julia commit 8a642642f1
 @test Base.ispublic(Base, Symbol(Base.isfieldatomic))
 end
+
+@test @isdefined var"@eval"
+
+eval_macro_meths = methods(var"@eval")
+@test any(x -> x.file === Symbol("essentials.jl"), eval_macro_meths)
 
 end # module test_base_runtime_internals
 
